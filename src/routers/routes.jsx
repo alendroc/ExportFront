@@ -1,7 +1,7 @@
 import { BrowserRouter,Routes, Route } from "react-router-dom";
 import { Navegacion } from "../pages/Navegacion";
 import { Configuracion } from "../pages/Configuracion";
-import { ProgramaO } from "../pages/ProgramaO";
+import { Melones } from "../pages/Melones";
 import { Inicio } from "../pages/Inicio.JSX";
 
 export function MyRoutes(){
@@ -11,7 +11,7 @@ return(
         <Route path="/"  element={<Inicio />}/>
         <Route path="/Navegacion" element={<Navegacion />}/>
         <Route path="/Configuracion" element={<Configuracion />}/>
-        <Route path="/ProgramaO" element={<ProgramaO />}/>
+        <Route path="/Melones" element={<Melones />}/>
     </Routes> 
     );
 }

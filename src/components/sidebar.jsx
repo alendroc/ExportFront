@@ -3,7 +3,7 @@ import styled from "styled-components";
 
   import { NavLink } from "react-router-dom";
   import { NavbarP } from "./navbarP";
-export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, onMenuClick}) {
+export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2}) {
 
   const CambiarSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -42,6 +42,23 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
     </div>
     ))}
 
+    <DividerImbicible/>
+
+    {arreglo2.map(({ icon, label, to,submenu}) =>(
+      <div className=" " key={label}>
+      <NavLink 
+        to={to}
+        className={({ isActive }) => `flex items-center mb-3 mx-[15%] transition-colors duration-200 hover:bg-indigo-50 rounded-lg
+        ${isActive ? 'text-indigo-800 bg-gradient-to-tr from-indigo-200 to-indigo-100 rounded-lg' : ''} 
+        ${sidebarOpen ? '':'justify-center '}`}
+        /*onClick={() => onMenuClick(submenu)}*/>
+        <div className="Linkicon p-2 text-2xl">{icon}</div>
+        {sidebarOpen && <span className="ml-3 text-sm">{label}</span>}
+      </NavLink>
+      
+    </div>
+    ))}
+    
     <Divider /*Boton de claro o Oscuro*//>
   <div className={`flex items-center justify-between px-2`/*opacity-0 transition-opacity duration-300 whitespace-nowrap overflow-hidden*/ }>
   {sidebarOpen && <span className="text-xs py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">Dark mode</span>}
