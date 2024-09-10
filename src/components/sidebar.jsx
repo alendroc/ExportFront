@@ -1,29 +1,35 @@
 import logo from "../assets/react.svg"
 import styled from "styled-components";
+<<<<<<< HEAD
 import { NavLink } from "react-router-dom";
 import { Tooltip } from "@mui/material";
 export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2}) {
+=======
+import { NavLink, useLocation } from "react-router-dom";
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+
+export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2, arreglo3}) {
+  const location = useLocation();
+>>>>>>> 77550ad (arreglo detalles nombre usuario)
 
   const CambiarSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
   const handleThemeChange = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+    setTheme(prevTheme => prevTheme === "dark" ? "light" : "dark");
   };
 
   return (
   
-  <div className="bg-white dark:bg-blue-950 text-3xl  sticky pt-[20px] font-roboto font-medium"
+  <div className="bg-white dark:bg-blue-950 dark:text-slate-300 text-slate-500 text-3xl sticky top-0 h-screen pt-[20px] font-roboto font-medium"
   >
-
-
-    <div className={`cursor-pointer contenido flex justify-center items-center ${sidebarOpen ? 'text-base' : ''} pb-[20px] transition duration-150 ease-in`}
+    <div className={`cursor-pointer contenido flex justify-center items-center ${sidebarOpen ? 'text-2xl' : ''} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
       <img src={logo} className={`flex items-center max-w-[100%] h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[1.5]'}`}/>
       </div>
       {sidebarOpen && 
-      <h2 className={`font-medium whitespace-nowrap overflow-hidden ${sidebarOpen ? 'opacity-100' : 'opacity-0'}`}>ExportPack</h2>}
+      <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
     </div>
 
     {arreglo.map(({ icon, label, to}) =>(
@@ -31,11 +37,18 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
    
       <NavLink 
         to={to}
+<<<<<<< HEAD
         className={({ isActive }) => `flex items-center mb-3 mx-[15%] transition-colors duration-200 hover:bg-indigo-50 rounded-lg
         ${isActive ? 'text-indigo-800 bg-gradient-to-tr from-indigo-200 to-indigo-100 rounded-lg' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}>
+=======
+        className={`flex items-center over mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
+        ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+        ${sidebarOpen ? '':'justify-center '}`}
+       >
+>>>>>>> 77550ad (arreglo detalles nombre usuario)
         <div className="Linkicon p-2 text-2xl">{icon}</div>
-        {sidebarOpen && <span className="ml-3 text-sm">{label}</span>}
+        {sidebarOpen && <span className="ml-3 text-xs  overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>
 
     </div>
@@ -43,65 +56,96 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
     <DividerImbicible/>
 
+<<<<<<< HEAD
     {arreglo2.map(({ icon, label, to}) =>(
+=======
+    {arreglo2.map(({ icon, label, to, submenu}) =>(
+>>>>>>> 77550ad (arreglo detalles nombre usuario)
       <div className=" " key={label}>
-      <NavLink 
+     <NavLink 
         to={to}
-        className={({ isActive }) => `flex items-center mb-3 mx-[15%] transition-colors duration-200 hover:bg-indigo-50 rounded-lg
-        ${isActive ? 'text-indigo-800 bg-gradient-to-tr from-indigo-200 to-indigo-100 rounded-lg' : ''} 
-        ${sidebarOpen ? '':'justify-center '}`}
-        /*onClick={() => onMenuClick(submenu)}*/>
+        className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+        ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+        ${sidebarOpen ? '':'justify-center'}`}
+       >
         <div className="Linkicon p-2 text-2xl">{icon}</div>
+<<<<<<< HEAD
 
         {sidebarOpen && <span className="ml-3 text-sm">{label}</span>}
+=======
+        {sidebarOpen && <span className="ml-3 text-sm whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
+>>>>>>> 77550ad (arreglo detalles nombre usuario)
       </NavLink>
       
     </div>
     ))}
-    
-    <Divider /*Boton de claro o Oscuro*//>
-  <div className={`flex items-center justify-between px-2`/*opacity-0 transition-opacity duration-300 whitespace-nowrap overflow-hidden*/ }>
-  {sidebarOpen && <span className="text-xs py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">Dark mode</span>}
-    <label className={`inline-flex items-center relative transition-transform duration-300`}>
-     
-     <input 
-     className="peer hidden" 
-    id="toggle" 
-    type="checkbox" 
-    checked={theme === "dark"} 
-    onChange={handleThemeChange} />
-    <div
-    className="relative w-[70px] h-[30px] bg-white peer-checked:bg-zinc-500 rounded-full after:absolute after:content-[''] after:w-[28px] after:h-[28px] after:bg-gradient-to-r from-orange-500 to-yellow-400 peer-checked:after:from-zinc-900 peer-checked:after:to-zinc-900 after:rounded-full after:top-[1px] after:left-[7px] active:after:w-[70px] peer-checked:after:left-[62px] peer-checked:after:translate-x-[-100%] shadow-sm duration-300 after:duration-300 after:shadow-md"
-     >
-  </div>
-  <svg
-    height="0"
-    width="10"
-    viewBox="0 0 24 24"
-    data-name="Layer 1"
-    id="Layer_1"
-    xmlns="http://www.w3.org/2000/svg"
-    className="fill-white peer-checked:opacity-60 absolute w-5 h-5 left-[13px]"
-  >
-    <path
-      d="M12,17c-2.76,0-5-2.24-5-5s2.24-5,5-5,5,2.24,5,5-2.24,5-5,5ZM13,0h-2V5h2V0Zm0,19h-2v5h2v-5ZM5,11H0v2H5v-2Zm19,0h-5v2h5v-2Zm-2.81-6.78l-1.41-1.41-3.54,3.54,1.41,1.41,3.54-3.54ZM7.76,17.66l-1.41-1.41-3.54,3.54,1.41,1.41,3.54-3.54Zm0-11.31l-3.54-3.54-1.41,1.41,3.54,3.54,1.41-1.41Zm13.44,13.44l-3.54-3.54-1.41,1.41,3.54,3.54,1.41-1.41Z"
-    ></path>
-  </svg>
-  <svg
-    height="512"
-    width="512"
-    viewBox="0 0 24 24"
-    data-name="Layer 1"
-    id="Layer_1"
-    xmlns="http://www.w3.org/2000/svg"
-    className="fill-black opacity-60 peer-checked:opacity-70 peer-checked:fill-white absolute w-5 h-5 right-[13px]"
-  >
-    <path
-      d="M12.009,24A12.067,12.067,0,0,1,.075,10.725,12.121,12.121,0,0,1,10.1.152a13,13,0,0,1,5.03.206,2.5,2.5,0,0,1,1.8,1.8,2.47,2.47,0,0,1-.7,2.425c-4.559,4.168-4.165,10.645.807,14.412h0a2.5,2.5,0,0,1-.7,4.319A13.875,13.875,0,0,1,12.009,24Zm.074-22a10.776,10.776,0,0,0-1.675.127,10.1,10.1,0,0,0-8.344,8.8A9.928,9.928,0,0,0,4.581,18.7a10.473,10.473,0,0,0,11.093,2.734.5.5,0,0,0,.138-.856h0C9.883,16.1,9.417,8.087,14.865,3.124a.459.459,0,0,0,.127-.465.491.491,0,0,0-.356-.362A10.68,10.68,0,0,0,12.083,2ZM20.5,12a1,1,0,0,1-.97-.757l-.358-1.43L17.74,9.428a1,1,0,0,1,.035-1.94l1.4-.325.351-1.406a1,1,0,0,1,1.94,0l.355,1.418,1.418.355a1,1,0,0,1,0,1.94l-1.418.355-.355,1.418A1,1,0,0,1,20.5,12ZM16,14a1,1,0,0,0,2,0A1,1,0,0,0,16,14Zm6,4a1,1,0,0,0,2,0A1,1,0,0,0,22,18Z"
-    ></path>
-  </svg>
-</label>
+     <DividerImbicible/>
+
+{arreglo3.map(({ icon, label, to, submenu}) =>(
+  <div className=" " key={label}>
+ <NavLink 
+    to={to}
+    className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+    ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+    ${sidebarOpen ? '':'justify-center'}`}
+   >
+    <div className="Linkicon p-2 text-2xl">{icon}</div>
+    {sidebarOpen && <span className="ml-3 text-sm overflow-hidden transition-opacity duration-300">{label}</span>}
+  </NavLink>
+  
 </div>
+))}
+    
+  <Divider/>
+  <div className={`flex items-center  px-2
+   ${sidebarOpen ? 'justify-between':'justify-center'}`}>
+  {sidebarOpen && <span className="text-xs py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">Dark mode</span>}
+  
+  <Swichito >
+    <input type="checkbox" onClick={handleThemeChange}/>
+    <span className="slider"></span>
+  </Swichito>
+
+ </div>
+
+ <Divider/>
+ <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+
+            <Menu as="div" className="relative">
+              <div className="felx">
+                <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex  rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ?'w-[90%]':'w-[100%]'}`}>
+                  <img
+                    alt=""
+                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                    className={`h-12 w-12 rounded-md`}
+                  />
+                  {sidebarOpen&&<span className="pr-3 overflow-hidden ">Jose alejandro Chaves </span>}
+                </MenuButton>
+                
+              </div>
+              <MenuItems
+                transition
+                className={`absolute  mb-2 z-10 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
+                ${sidebarOpen ?'right-[-80%]  -bottom-3':'right-[-185px]  -bottom-3'}`}
+              >
+                <MenuItem>
+                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Your Profile
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Settings
+                  </a>
+                </MenuItem>
+                <MenuItem>
+                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+                    Sign out
+                  </a>
+                </MenuItem>
+              </MenuItems>
+            </Menu>
+          </div>
     </div>
   
   );
@@ -110,7 +154,62 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
 
 
+const Swichito = styled.label`
+  display: block;
+  --width-of-switch: 2em;
+  --height-of-switch: 1em;
+  /* size of sliding icon -- sun and moon */
+  --size-of-icon: 0.7em;
+  /* it is like a inline-padding of switch */
+  --slider-offset: 0.2em;
+  position: relative;
+  width: var(--width-of-switch);
+  height: var(--height-of-switch);
 
+  input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgb(101 163 13);
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: var(--size-of-icon,1.4em);
+  width: var(--size-of-icon,1.4em);
+  border-radius: 20px;
+  left: var(--slider-offset,0.3em);
+  top: 50%;
+  transform: translateY(-50%);
+  background: white;
+  ;
+ transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #303136;
+}
+
+input:checked + .slider:before {
+  left: calc(100% - (var(--size-of-icon,1.4em) + var(--slider-offset,0.3em)));
+  background: #303136;
+  /* change the value of second inset in box-shadow to change the angle and direction of the moon  */
+  box-shadow: inset -3px -2px 5px -2px #8983f7, inset -10px -4px 0 0 #a3dafb;
+}
+  
+`
 
 const Divider = styled.div`
   height: 1px;

@@ -10,17 +10,11 @@ import styled from "styled-components"; // Si usas styled-components
 
 function App() {
   const [theme, setTheme] = useState(()=>{
-    if(window.matchMedia('(prefers-color-scheme: dark)').matches)
+    if(window.matchMedia('dark').matches)
     {return "dark"}
-    return "light"
+    return "ligth"
   });
   const [isActive, setIsActive] = useState(true);
-  /*
-  const [activeSubmenu, setActiveSubmenu] = useState(() => {
-    // Recupera el submenú activo del almacenamiento local
-    const savedSubmenu = localStorage.getItem('activeSubmenu');
-    return savedSubmenu ? JSON.parse(savedSubmenu) : [];
-  });*/
 
   useEffect(() => {
     if (theme === "dark") {
@@ -37,10 +31,10 @@ function App() {
       icon: <AiOutlineHome />,
       to: "/Navegacion",
       submenu: [
-        { name: "Navegacion1", href: "/config/sub1" },
-        { name: "Navegacion2", href: "/config/sub2" },
-        { name: "Navegacion3", href: "/config/sub1" },
-        { name: "Navegacion4", href: "/config/sub1" },
+        { name: "Navegacion1", href: "/Navegacion1/sub1" },
+        { name: "Navegacion2", href: "/Navegacion1/sub2" },
+        { name: "Navegacion3", href: "/Navegacion1/sub3" },
+        { name: "Navegacion4", href: "/Navegacion1/sub4" },
       ]
     },
     {
@@ -56,34 +50,34 @@ function App() {
   const arrayModules = [
     {
       label: "Melones",
-      icon: <GiWatermelon/>,
+      icon: <GiWatermelon />,
       to: "/Melones",
       submenu: [
-        { name: "Asignar Lotes", href: "/config/sub1" },
-        { name: "Asignar Híbridos", href: "/config/sub2" },
-        { name: "Asignar Labores", href: "/config/sub1" },
-        { name: "Asignar DDT por Labor", href: "/config/sub1" },
-        { name: "Diseñar Prog.Operativo", href: "/config/sub1" },
-        { name: "Actualizar versión P.O", href: "/config/sub1" },
-        { name: "Camas", href: "/config/sub1" },
-        { name: "Actualizar Lotes P.O", href: "/config/sub1" },
-        { name: "Actualizar Programa Opera", href: "/config/sub1" },
+        { name: "Asignar Lotes", href: "/melones/asignar-lotes" },
+        { name: "Asignar Híbridos", href: "/melones/asignar-hibridos" },
+        { name: "Asignar Labores", href: "/melones/asignar-labores" },
+        { name: "Asignar DDT por Labor", href: "/melones/asignar-ddt" },
+        { name: "Diseñar Prog. Operativo", href: "/melones/disenar-programa" },
+        { name: "Actualizar versión P.O", href: "/melones/actualizar-po" },
+        { name: "Camas", href: "/melones/camas" },
+        { name: "Actualizar Lotes P.O", href: "/melones/actualizar-lotes" },
+        { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa" },
       ]
     },
     {
       label: "Caña",
-      icon: <GiSugarCane/>,
-      to: "/Caña",
+      icon: <GiSugarCane />,
+      to: "/Cana",
       submenu: [
-        { name: "Lotes de Caña", href: "/config/sub1" },
-        { name: "Asignar Labores y DDC/S", href: "/config/sub2" },
-        { name: "Asignar Productos", href: "/config/sub2" },
-        { name: "Corta de Caña", href: "/config/sub2" },
-        { name: "Registrar boletas", href: "/config/sub2" },
-        { name: "Ajustar miel azúcar", href: "/config/sub2" },
-        { name: "Ver registro de boletas", href: "/config/sub2" },
-        { name: "Ver cosecha por zafra", href: "/config/sub2" },
-        { name: "Ver cosecha por lote", href: "/config/sub2" },
+        { name: "Lotes de Caña", href: "/cana/lotes" },
+        { name: "Asignar Labores y DDC/S", href: "/cana/asignar-labores" },
+        { name: "Asignar Productos", href: "/cana/asignar-productos" },
+        { name: "Corta de Caña", href: "/cana/corta" },
+        { name: "Registrar boletas", href: "/cana/registrar-boletas" },
+        { name: "Ajustar miel azúcar", href: "/cana/ajustar-miel" },
+        { name: "Ver registro de boletas", href: "/cana/ver-boletas" },
+        { name: "Ver cosecha por zafra", href: "/cana/ver-zafra" },
+        { name: "Ver cosecha por lote", href: "/cana/ver-lote" },
       ]
     },
     {
@@ -91,74 +85,54 @@ function App() {
       icon: <FaDroplet />,
       to: "/Riego",
       submenu: [
-        { name: "Asignar productos", href: "/config/sub1" },
-        { name: "Hacer pedidos", href: "/config/sub2" },
-        { name: "Modificar o añadir otros pedidos", href: "/config/sub2" },
-        { name: "Registro de boletas más productos", href: "/config/sub2" },
-        { name: "Registro de boletas solo agua", href: "/config/sub2" },
+        { name: "Asignar productos", href: "/riego/asignar-productos" },
+        { name: "Hacer pedidos", href: "/riego/hacer-pedidos" },
+        { name: "Modificar o añadir otros pedidos", href: "/riego/modificar-pedidos" },
+        { name: "Registro de boletas más productos", href: "/riego/registro-boletas-productos" },
+        { name: "Registro de boletas solo agua", href: "/riego/registro-boletas-agua" },
       ]
     },
     {
-      label: "Fitoproteccion",
-      icon: <GiPlantsAndAnimals/>,
+      label: "Fitoprotección",
+      icon: <GiPlantsAndAnimals />,
       to: "/Fitoproteccion",
       submenu: [
-        { name: "Asignar productos", href: "/config/sub1" },
-        { name: "Monitoreo de plagas", href: "/config/sub2" },
-        { name: "Monitoreo de frutas", href: "/config/sub2" },
-        { name: "Registro de aplicaciones", href: "/config/sub2" },
-        { name: "Motivo de aplicación", href: "/config/sub2" },
-        { name: "Código trazabilidad", href: "/config/sub1" },
-        { name: "Hacer pedidos", href: "/config/sub2" },
-        { name: "Modificar pedidos", href: "/config/sub2" },
-        { name: "Ver monitoreo de plagas", href: "/config/sub2" },
-        { name: "Estados y nombres de plagas", href: "/config/sub2" },
-        { name: "Ver cosecha por lote", href: "/config/sub1" },
-        { name: "Ver monitoreo de frutas", href: "/config/sub2" },
-        { name: "Ver motivo de aplicación", href: "/config/sub2" },
+        { name: "Asignar", href: "/fitoproteccion/asignar" },
+        { name: "Monitoreo", href: "/fitoproteccion/monitoreo" },
+        { name: "Registro", href: "/fitoproteccion/registro" },
+        { name: "Motivo", href: "/fitoproteccion/motivo" },
+        { name: "Código", href: "/fitoproteccion/codigo" },
       ]
     },
     {
       label: "Bodega",
-      icon: <FaStore/>,
+      icon: <FaStore />,
       to: "/Bodega",
       submenu: [
-        { name: "Ver pedidos", href: "/config/sub1" },
-        { name: "Buscar boletas", href: "/config/sub2" },
-        { name: "Ver pedidos", href: "/config/sub2" },
-        { name: "Buscar boletas", href: "/config/sub2" },
-        { name: "Motivo de aplicación", href: "/config/sub2" },
-        { name: "Código trazabilidad", href: "/config/sub1" },
-        { name: "Hacer pedidos", href: "/config/sub2" },
-        { name: "Modificar pedidos", href: "/config/sub2" },
-        { name: "Ver monitoreo de plagas", href: "/config/sub2" },
-        { name: "Estados y nombres de plagas", href: "/config/sub2" },
-        { name: "Ver cosecha por lote", href: "/config/sub1" },
-        { name: "Ver monitoreo de frutas", href: "/config/sub2" },
-        { name: "Ver motivo de aplicación", href: "/config/sub2" },
+        { name: "Ver pedidos", href: "/bodega/ver-pedidos" },
+        { name: "Buscar boletas", href: "/bodega/buscar-boletas" },
+        { name: "Motivo de aplicación", href: "/bodega/motivo-aplicacion" },
+        { name: "Código trazabilidad", href: "/bodega/codigo-trazabilidad" },
       ]
     },
     {
-      label: "Meteorologia",
+      label: "Meteorología",
       icon: <FaCloudRain />,
       to: "/Meteorologia",
       submenu: [
-        { name: "Registro de pluviometros", href: "/config/sub1" },
-        { name: "Registro de Lluvias", href: "/config/sub2" },
-        { name: "Registro de meteorologia", href: "/config/sub2" },
-        { name: "Consulta de lluvias", href: "/config/sub2" },
-        { name: "Reporte de lluvias", href: "/config/sub2" },
+        { name: "Registro de pluviometros", href: "/meteorologia/registro-pluviometros" },
+        { name: "Registro de Lluvias", href: "/meteorologia/registro-lluvias" },
+        { name: "Consulta de lluvias", href: "/meteorologia/consulta-lluvias" },
       ]
     },
     {
-      label: "LaboresCulturales",
+      label: "Labores Culturales",
       icon: <FaHandHoldingDroplet />,
       to: "/LaboresCulturales",
       submenu: [
-        { name: "Bolestas y Programas de riego", href: "/config/sub1" },
-        { name: "Programa por lote", href: "/config/sub2" },
-        { name: "Buscar boletas", href: "/config/sub2" },
-        { name: "Ver registros y aplicaciones", href: "/config/sub2" },
+        { name: "Boletas y Programas de riego", href: "/labores/boletas-programas" },
+        { name: "Programa por lote", href: "/labores/programa-lote" },
+        { name: "Buscar boletas", href: "/labores/buscar-boletas" },
       ]
     },
     {
@@ -166,27 +140,59 @@ function App() {
       icon: <GiFactory />,
       to: "/Planta",
       submenu: [
-        { name: "Labores", href: "/config/sub1" },
-        { name: "Consultas de riego", href: "/config/sub2" },
-        { name: "Datos", href: "/config/sub2" },
-        { name: "Programas", href: "/config/sub2" },
-        { name: "Productos reales aplicados", href: "/config/sub2" },
+        { name: "Labores", href: "/planta/labores" },
+        { name: "Consultas de riego", href: "/planta/consultas-riego" },
+        { name: "Datos", href: "/planta/datos" },
+        { name: "Programas", href: "/planta/programas" },
+        { name: "Productos aplicados", href: "/planta/productos-aplicados" },
+      ]
+    }
+  ];
+  const linksArrayExtras = [
+    {
+      label: "Consultas",
+      icon: <AiOutlineHome />,
+      to: "/Consultas",
+      submenu: [
+        { name: "Navegacion1", href: "/Navegacion1/sub1" },
+        { name: "Navegacion2", href: "/Navegacion1/sub2" },
+        { name: "Navegacion3", href: "/Navegacion1/sub3" },
+        { name: "Navegacion4", href: "/Navegacion1/sub4" },
+      ]
+    },
+    {
+      label: "Reportes",
+      icon: <AiOutlineHome />,
+      to: "/Reportes",
+      submenu: [
+        { name: "Configuracion1", href: "/config/sub1" },
+        { name: "Configuracion2", href: "/config/sub2" }
       ]
     },
   ];
-  const location = useLocation();
-  
-  const handleMenuClick = (submenu) => {
-    setActiveSubmenu(submenu);
-  };
 
-  const activeSubmenu = linksArray
-  .find(link => link.to === location.pathname)
-  ?.submenu || [];
-  console.log("aa" + activeSubmenu);
+  const location = useLocation();
+  const arreglos = linksArray.concat(arrayModules);
+ /* const handleMenuClick = (submenu) => {
+    setActiveSubmenu(submenu);
+  };*/
+
+function navbar(location,arreglos){
+  for (const link of arreglos)
+  if(link.to === location.pathname || link.submenu.find(sub => sub.href === location.pathname)){
+    return link.submenu || [];
+  }
+    console.log("aa" + location.pathname);
+  return [];
+
+}
+ const activeSubmenu = navbar(location,arreglos);
+
+  
+
   return (
     <>
-      <div className={`grid prefers-color-scheme ${isActive ? 'grid-cols-[200px_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
+      <div className={`grid ${isActive ? 'grid-cols-[200px_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
         <Sidebar 
         theme={theme} 
         setTheme={setTheme}
@@ -194,16 +200,19 @@ function App() {
         setSidebarOpen={setIsActive}
         arreglo = {linksArray}
         arreglo2 = {arrayModules}
+        arreglo3 = {linksArrayExtras}
         />
-        <div className="grid">
+      <div className="flex flex-col w-full">
         {activeSubmenu.length > 0 && location.pathname !== '/' && (
-          <NavbarP menu={activeSubmenu} />
+          <div className="sticky top-0 z-10">
+            <NavbarP menu={activeSubmenu} />
+          </div>
         )}
-        <div className="px-4">
-           <MyRoutes/>
+         <div className="flex-1">
+            <MyRoutes />
         </div>
-        </div>
-       </div> 
+      </div>
+    </div> 
     </>
   );
 }
@@ -214,3 +223,22 @@ export default function WrappedApp(){
     </BrowserRouter>
   );
 };
+const ScrollableDiv = styled.div`
+  
+  /* Scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 90px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000000;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #ae0b0b;
+    border-radius: 10px;
+    border: 2px solid transparent;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: #fe0000;
+  }
+`;

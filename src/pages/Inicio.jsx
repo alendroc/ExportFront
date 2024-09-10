@@ -6,5 +6,5 @@ export function Inicio() {
     </Container>);
   }
   const Container =styled.div`
-    height:100vh;
+ 
   `

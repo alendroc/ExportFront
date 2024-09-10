@@ -1,10 +1,10 @@
 import styled from "styled-components";
-export function Caña() {
+export function NavegacionP() {
     return (
     <Container>
-  <h1>Caña</h1>
+  <h1>Prueba exitosa</h1>
     </Container>);
   }
   const Container =styled.div`
-
+ 
   `
