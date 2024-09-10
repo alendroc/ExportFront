@@ -1,16 +1,13 @@
 import logo from "../assets/react.svg"
 import styled from "styled-components";
-<<<<<<< HEAD
-import { NavLink } from "react-router-dom";
-import { Tooltip } from "@mui/material";
-export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2}) {
-=======
+
 import { NavLink, useLocation } from "react-router-dom";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { Tooltip } from "@mui/material";
 
 export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2, arreglo3}) {
   const location = useLocation();
->>>>>>> 77550ad (arreglo detalles nombre usuario)
+
 
   const CambiarSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -32,36 +29,37 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
     </div>
 
-    {arreglo.map(({ icon, label, to}) =>(
+    {arreglo.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
-   
+      <Tooltip
+      title={label}
+      arrow
+      disableHoverListener={sidebarOpen}
+      placement="right-end">  
       <NavLink 
         to={to}
-<<<<<<< HEAD
-        className={({ isActive }) => `flex items-center mb-3 mx-[15%] transition-colors duration-200 hover:bg-indigo-50 rounded-lg
-        ${isActive ? 'text-indigo-800 bg-gradient-to-tr from-indigo-200 to-indigo-100 rounded-lg' : ''} 
-        ${sidebarOpen ? '':'justify-center '}`}>
-=======
+
         className={`flex items-center over mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
         ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
->>>>>>> 77550ad (arreglo detalles nombre usuario)
+
         <div className="Linkicon p-2 text-2xl">{icon}</div>
         {sidebarOpen && <span className="ml-3 text-xs  overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>
-
+</Tooltip>
     </div>
     ))}
 
     <DividerImbicible/>
-
-<<<<<<< HEAD
-    {arreglo2.map(({ icon, label, to}) =>(
-=======
+   
     {arreglo2.map(({ icon, label, to, submenu}) =>(
->>>>>>> 77550ad (arreglo detalles nombre usuario)
-      <div className=" " key={label}>
+      <div className=" " key={label}> 
+      <Tooltip
+      title={label}
+      arrow
+      disableHoverListener={sidebarOpen}
+      placement="right-end">
      <NavLink 
         to={to}
         className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
@@ -69,20 +67,21 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
         ${sidebarOpen ? '':'justify-center'}`}
        >
         <div className="Linkicon p-2 text-2xl">{icon}</div>
-<<<<<<< HEAD
 
-        {sidebarOpen && <span className="ml-3 text-sm">{label}</span>}
-=======
         {sidebarOpen && <span className="ml-3 text-sm whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
->>>>>>> 77550ad (arreglo detalles nombre usuario)
+
       </NavLink>
-      
+      </Tooltip>
     </div>
     ))}
      <DividerImbicible/>
-
+    
 {arreglo3.map(({ icon, label, to, submenu}) =>(
-  <div className=" " key={label}>
+  <div className=" " key={label}> <Tooltip
+      title={label}
+      arrow
+      disableHoverListener={sidebarOpen}
+      placement="right-end">
  <NavLink 
     to={to}
     className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
@@ -92,7 +91,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
     <div className="Linkicon p-2 text-2xl">{icon}</div>
     {sidebarOpen && <span className="ml-3 text-sm overflow-hidden transition-opacity duration-300">{label}</span>}
   </NavLink>
-  
+  </Tooltip>
 </div>
 ))}
     
