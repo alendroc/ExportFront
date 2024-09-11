@@ -192,7 +192,7 @@ function navbar(location,arreglos){
 
   return (
     <>
-      <div className={`grid ${isActive ? 'grid-cols-[200px_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
+      <div className={`grid ${isActive ? 'grid-cols-[14rem_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
         <Sidebar 
         theme={theme} 
         setTheme={setTheme}

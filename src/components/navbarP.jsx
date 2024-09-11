@@ -42,7 +42,7 @@ export function NavbarP({ menu }){
                 
                     className={classNames(
                       location.pathname === item.href ? 'text-lime-600 scale-110 ' : 'text-slate-500 dark:hover:text-lime-400 hover:text-lime-600',
-                      'rounded-md  transform scale-90 w-auto font-medium py-2 text-[4px] flex justify-center items-center hover:-translate-y-1 hover:scale-110 transition ease-in-out delay-75')}
+                      'rounded-md  transform w-auto font-medium py-2 px-2 text-sm flex justify-center items-center hover:-translate-y-1 hover:scale-110 transition ease-in-out delay-75')}
                   >
                     {item.name}
                   </NavLink>

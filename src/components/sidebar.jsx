@@ -18,9 +18,8 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
   return (
   
-  <div className="bg-white dark:bg-blue-950 dark:text-slate-300 text-slate-500 text-3xl sticky top-0 h-screen pt-[20px] font-roboto font-medium"
-  >
-    <div className={`cursor-pointer contenido flex justify-center items-center ${sidebarOpen ? 'text-2xl' : ''} pb-[20px] transition duration-150 ease-in`}
+  <div className="flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300 text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
+    <div className={`sticky top-0 z-10 cursor-pointer contenido bg-white pt-[20px] flex justify-center items-center ${sidebarOpen ? 'text-2xl' : ''} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
       <img src={logo} className={`flex items-center max-w-[100%] h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[1.5]'}`}/>
@@ -28,7 +27,8 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       {sidebarOpen && 
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
     </div>
-
+    
+    <div className="overflow-y-auto ">
     {arreglo.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
       <Tooltip
@@ -45,7 +45,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
        >
 
         <div className="Linkicon p-2 text-2xl">{icon}</div>
-        {sidebarOpen && <span className="ml-3 text-xs  overflow-hidden transition-opacity duration-300">{label}</span>}
+        {sidebarOpen && <span className="ml-3 text-sm overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>
 </Tooltip>
     </div>
@@ -94,8 +94,10 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
   </Tooltip>
 </div>
 ))}
-    
-  <Divider/>
+</div> 
+
+<div className="sticky bottom-0 bg-white">
+<DividerImbicible/>
   <div className={`flex items-center  px-2
    ${sidebarOpen ? 'justify-between':'justify-center'}`}>
   {sidebarOpen && <span className="text-xs py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">Dark mode</span>}
@@ -104,11 +106,10 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
     <input type="checkbox" onClick={handleThemeChange}/>
     <span className="slider"></span>
   </Swichito>
-
  </div>
 
  <Divider/>
- <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+ <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 mb-2">
 
             <Menu as="div" className="relative">
               <div className="felx">
@@ -145,6 +146,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
               </MenuItems>
             </Menu>
           </div>
+        </div>
     </div>
   
   );
