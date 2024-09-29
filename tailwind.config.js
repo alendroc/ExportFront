@@ -7,8 +7,13 @@ export default {
   "darkMode":"class",
   theme: {
     extend: {
+      fontSize: {
+        'xxs': '6px', // Agregamos una clase personalizada para 6px
+        'xxxs': '4px', // Otra clase para 4px si lo necesitas
+      },
       fontFamily: {
         roboto: ['Roboto', 'sans-serif'],
+        poppi: ['Poppins', 'sans-serif']
       },
       colors:{
         

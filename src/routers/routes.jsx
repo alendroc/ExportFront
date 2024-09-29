@@ -1,19 +1,18 @@
-import { BrowserRouter,Routes, Route } from "react-router-dom";
-import { Navegacion } from "../pages/Navegacion";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { Configuracion } from "../pages/Configuracion";
 import { Melones } from "../pages/Melones";
-import { NavegacionP} from "../pages/Modulo Navegacion/navegacion1"
+import { Navegacion } from "../pages/Navegacion";
 import { Inicio } from "../pages/Inicio.JSX";
+import {NavegacionP} from "../pages/Modulo Navegacion/navegacion1.jsx"
 
-export function MyRoutes(){
-return(
 
+export const MyRoutes = () => {
+  return (
     <Routes>
-        <Route path="/"  element={<Inicio />}/>
-        <Route path="/Navegacion" element={<Navegacion />}/>
-        <Route path="/Navegacion1/sub1" element={<NavegacionP />}/>
-        <Route path="/Configuracion" element={<Configuracion />}/>
-        <Route path="/Melones" element={<Melones />}/>
-    </Routes> 
-    );
+      <Route path="/inicio"  element={<Inicio/>}  />
+      <Route path="/Navegacion" element={<Navegacion/>}/>
+      <Route path="/Navegacion1/sub1" element={<NavegacionP/>} />
+      <Route path="/Configuracion"element={<Configuracion/>}/>
+    </Routes>
+  );
 }

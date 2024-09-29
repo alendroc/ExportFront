@@ -7,14 +7,13 @@ import { AiFillMeh,AiOutlineLeft, AiOutlineHome, AiOutlineApartment} from "react
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
 import styled from "styled-components"; // Si usas styled-components
+import {Login } from "../src/pages/Login";
 
 function App() {
-  const [theme, setTheme] = useState(()=>{
-    if(window.matchMedia('dark').matches)
-    {return "dark"}
-    return "ligth"
-  });
   const [isActive, setIsActive] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [theme, setTheme] = useState(()=>{if(window.matchMedia('dark').matches){return "dark"} return "ligth"});
+  const location = useLocation();
 
   useEffect(() => {
     if (theme === "dark") {
@@ -24,6 +23,10 @@ function App() {
     }
     console.log(theme)
   }, [theme]);
+
+  const autenticacion = () =>{
+    setIsAuthenticated(true)
+   }
 
   const linksArray = [
     {
@@ -171,25 +174,22 @@ function App() {
     },
   ];
 
-  const location = useLocation();
   const arreglos = linksArray.concat(arrayModules);
- /* const handleMenuClick = (submenu) => {
-    setActiveSubmenu(submenu);
-  };*/
 
 function navbar(location,arreglos){
+
   for (const link of arreglos)
   if(link.to === location.pathname || link.submenu.find(sub => sub.href === location.pathname)){
     return link.submenu || [];
   }
     console.log("aa" + location.pathname);
   return [];
-
 }
  const activeSubmenu = navbar(location,arreglos);
 
-  
-
+ if(!isAuthenticated || location.pathname == "/"){
+  return(<Login sesion={autenticacion}/>)}
+ else{
   return (
     <>
       <div className={`grid ${isActive ? 'grid-cols-[14rem_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
@@ -209,12 +209,14 @@ function navbar(location,arreglos){
           </div>
         )}
          <div className="flex-1">
-            <MyRoutes />
+            <MyRoutes isAuthenticated={isAuthenticated} />
+       
         </div>
       </div>
-    </div> 
+    </div>
+
     </>
-  );
+  );}
 }
 export default function WrappedApp(){
   return (

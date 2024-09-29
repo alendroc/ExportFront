@@ -18,8 +18,8 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
   return (
   
-  <div className="flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300 text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
-    <div className={`sticky top-0 z-10 cursor-pointer contenido bg-white pt-[20px] flex justify-center items-center ${sidebarOpen ? 'text-2xl' : ''} pb-[20px] transition duration-150 ease-in`}
+  <div className="flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
+    <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[20px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
       <img src={logo} className={`flex items-center max-w-[100%] h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[1.5]'}`}/>
@@ -39,13 +39,13 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <NavLink 
         to={to}
 
-        className={`flex items-center over mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
+        className={`flex items-center over mb-2 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
         ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
 
         <div className="Linkicon p-2 text-2xl">{icon}</div>
-        {sidebarOpen && <span className="ml-3 text-sm overflow-hidden transition-opacity duration-300">{label}</span>}
+        {sidebarOpen && <span className="ml-3 text-base overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>
 </Tooltip>
     </div>
@@ -62,13 +62,13 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
      <NavLink 
         to={to}
-        className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+        className={`flex items-center mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
         ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center'}`}
        >
         <div className="Linkicon p-2 text-2xl">{icon}</div>
 
-        {sidebarOpen && <span className="ml-3 text-sm whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
+        {sidebarOpen && <span className="ml-3 text-base whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
 
       </NavLink>
       </Tooltip>
@@ -84,12 +84,12 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
  <NavLink 
     to={to}
-    className={`flex items-center mb-3 ml-[15%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+    className={`flex items-center mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
     ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
     ${sidebarOpen ? '':'justify-center'}`}
    >
     <div className="Linkicon p-2 text-2xl">{icon}</div>
-    {sidebarOpen && <span className="ml-3 text-sm overflow-hidden transition-opacity duration-300">{label}</span>}
+    {sidebarOpen && <span className="ml-3 text-base overflow-hidden transition-opacity duration-300">{label}</span>}
   </NavLink>
   </Tooltip>
 </div>
@@ -119,7 +119,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
                     src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                     className={`h-12 w-12 rounded-md`}
                   />
-                  {sidebarOpen&&<span className="pr-3 overflow-hidden ">Jose alejandro Chaves </span>}
+                  {sidebarOpen&&<span className="pr-3 overflow-hidden text-sm">Jose alejandro Chaves </span>}
                 </MenuButton>
                 
               </div>
