@@ -3,3 +3,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+a#logo {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    transform: translateX(9999px) !important;
+    pointer-events: none !important;
+}

@@ -23,15 +23,12 @@ export class UsuarioService {
             const data = await respuesta.json();
 
             if (data.isSuccess && data.status === 200) {
-                console.log('Login exitoso, usuario encontrado:', data.user);
                 return { success: true, user: data.user };
             } else {
                 console.log('Login fallido, credenciales incorrectas o usuario no encontrado.');
                 return { success: false, status: data.status };
             }
-            
         } catch (error) {
-            console.error('Error en login:', error);
             throw error;
         }
     }
