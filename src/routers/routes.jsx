@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Configuracion } from "../pages/Configuracion";
-import { Melones } from "../pages/Melones";
+
 import { Navegacion } from "../pages/Navegacion";
 import { Inicio } from "../pages/Inicio.JSX";
 import {NavegacionP} from "../pages/Modulo Navegacion/navegacion1.jsx"

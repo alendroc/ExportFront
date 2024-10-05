@@ -187,7 +187,7 @@ function navbar(location,arreglos){
 }
  const activeSubmenu = navbar(location,arreglos);
 
- if(!isAuthenticated || location.pathname == "/"){
+ if(!isAuthenticated || location.pathname === "/"){
   return(<Login sesion={autenticacion}/>)}
  else{
   return (
@@ -225,22 +225,4 @@ export default function WrappedApp(){
     </BrowserRouter>
   );
 };
-const ScrollableDiv = styled.div`
-  
-  /* Scrollbar styles */
-  ::-webkit-scrollbar {
-    width: 90px;
-  }
-  ::-webkit-scrollbar-track {
-    background: #000000;
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #ae0b0b;
-    border-radius: 10px;
-    border: 2px solid transparent;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #fe0000;
-  }
-`;
+

@@ -18,7 +18,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
   return (
   
-  <div className="flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
+  <div className="relative flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
     <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[20px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
@@ -28,7 +28,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
     </div>
     
-    <div className="overflow-y-auto ">
+    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
     {arreglo.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
       <Tooltip
@@ -39,7 +39,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <NavLink 
         to={to}
 
-        className={`flex items-center over mb-2 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
+        className={`flex items-center over mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
         ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
@@ -62,7 +62,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
      <NavLink 
         to={to}
-        className={`flex items-center mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+        className={`flex items-center mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
         ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center'}`}
        >
@@ -84,7 +84,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
  <NavLink 
     to={to}
-    className={`flex items-center mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+    className={`flex items-center mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
     ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
     ${sidebarOpen ? '':'justify-center'}`}
    >
@@ -96,59 +96,54 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 ))}
 </div> 
 
-<div className="sticky bottom-0 bg-white">
-<DividerImbicible/>
-  <div className={`flex items-center  px-2
-   ${sidebarOpen ? 'justify-between':'justify-center'}`}>
-  {sidebarOpen && <span className="text-xs py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">Dark mode</span>}
-  
-  <Swichito >
-    <input type="checkbox" onClick={handleThemeChange}/>
-    <span className="slider"></span>
-  </Swichito>
- </div>
-
- <Divider/>
- <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0 mb-2">
-
-            <Menu as="div" className="relative">
-              <div className="felx">
-                <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex  rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ?'w-[90%]':'w-[100%]'}`}>
-                  <img
-                    alt=""
-                    src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                    className={`h-12 w-12 rounded-md`}
-                  />
-                  {sidebarOpen&&<span className="pr-3 overflow-hidden text-sm">Jose alejandro Chaves </span>}
-                </MenuButton>
-                
-              </div>
-              <MenuItems
-                transition
-                className={`absolute  mb-2 z-10 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
-                ${sidebarOpen ?'right-[-80%]  -bottom-3':'right-[-185px]  -bottom-3'}`}
-              >
-                <MenuItem>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                    Your Profile
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                    Settings
-                  </a>
-                </MenuItem>
-                <MenuItem>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-                    Sign out
-                  </a>
-                </MenuItem>
-              </MenuItems>
-            </Menu>
-          </div>
-        </div>
+<div className="absolute bottom-0 w-full max-100%:static bg-white dark:bg-blue-950">
+    <DividerImbicible/>
+    <div className={`flex items-center px-2 ${sidebarOpen ? 'justify-between':'justify-center'}`}>
+      {sidebarOpen && <span className="text-sm py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">modo oscuro</span>}
+      <Swichito>
+        <input type="checkbox" onClick={handleThemeChange}/>
+        <span className="slider"></span>
+      </Swichito>
     </div>
-  
+
+    <Divider/>
+    <div className="flex items-center pr-2 mb-2">
+      <Menu as="div" className="relative w-full">
+        <div className="flex justify-center w-full">
+          <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ? 'w-[90%]' : 'w-[80%] justify-center'}`}>
+            <img
+              alt=""
+              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+              className="h-12 w-12 rounded-md"
+            />
+            {sidebarOpen && <span className="pr-3 overflow-hidden text-sm">Jose Alejandro Chaves</span>}
+          </MenuButton>
+        </div>
+        <MenuItems
+          transition
+          className={`absolute z-10 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
+          ${sidebarOpen ? 'right-[-90%]  -bottom-1' : 'right-[-185px]  -bottom-1'}`}
+        >
+          <MenuItem>
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+              Your Profile
+            </a>
+          </MenuItem>
+          <MenuItem>
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+              Settings
+            </a>
+          </MenuItem>
+          <MenuItem>
+            <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
+              Sign out
+            </a>
+          </MenuItem>
+        </MenuItems>
+      </Menu>
+    </div>
+        </div>
+  </div>
   );
 }
 
@@ -159,9 +154,7 @@ const Swichito = styled.label`
   display: block;
   --width-of-switch: 2em;
   --height-of-switch: 1em;
-  /* size of sliding icon -- sun and moon */
   --size-of-icon: 0.7em;
-  /* it is like a inline-padding of switch */
   --slider-offset: 0.2em;
   position: relative;
   width: var(--width-of-switch);

@@ -22,8 +22,13 @@ export default {
         '90px-auto': '90px auto',
         '300px-auto': '300px auto',
       },
+      screens: {
+        '100%':'1600px'
+      }
     },
   },
-  plugins: [],
+  plugins: [
+    require('tailwind-scrollbar')
+  ],
 }
 
