@@ -81,7 +81,7 @@ export function Login({ sesion }) {
 
           
             <button
-             type="submit" 
+            type="submit" 
             class="cursor-pointer transition-all bg-green-500 text-white px-6 py-2 rounded-lg
             border-green-600
             border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px]
