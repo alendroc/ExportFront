@@ -60,7 +60,7 @@ export function Login({ sesion }) {
             <div className="flex flex-col mb-6">
               <label className="mb-3 text-sm">Nombre de usuario</label>
               <input 
-               placeholder="increse su nombre de usuario" 
+               placeholder="Ingrese su nombre de usuario" 
                 type="text" 
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
@@ -71,7 +71,7 @@ export function Login({ sesion }) {
             <div className="flex flex-col mb-6">
               <label className="mb-3 text-sm">Contraseña</label>
               <input
-              placeholder="increse su contraseña" 
+              placeholder="Ingrese su contraseña" 
                 class="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
                 type="password"
                 value={pass}
