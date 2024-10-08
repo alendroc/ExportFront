@@ -11,7 +11,7 @@ import {Login } from "../src/pages/Login";
 
 function App() {
   const [isActive, setIsActive] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(()=>{return sessionStorage.getItem('sesion') === 'activa' ? true : false;});
   const [theme, setTheme] = useState(()=>{if(window.matchMedia('dark').matches){return "dark"} return "ligth"});
   const location = useLocation();
 
@@ -24,9 +24,7 @@ function App() {
     console.log(theme)
   }, [theme]);
 
-  const autenticacion = () =>{
-    setIsAuthenticated(true)
-   }
+  const autenticacion = () =>{sessionStorage.getItem('sesion') === 'activa' ? setIsAuthenticated(true) : setIsAuthenticated(false);}
 
   const linksArray = [
     {
@@ -182,7 +180,7 @@ function navbar(location,arreglos){
   if(link.to === location.pathname || link.submenu.find(sub => sub.href === location.pathname)){
     return link.submenu || [];
   }
-    console.log("aa" + location.pathname);
+    //console.log("aa" + location.pathname);
   return [];
 }
  const activeSubmenu = navbar(location,arreglos);

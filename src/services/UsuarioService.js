@@ -16,8 +16,12 @@ export class UsuarioService {
                 body: JSON.stringify(user)
             });
 
+            if (respuesta.status === 401) {
+                throw new Error('Ingreso fallido, credenciales incorrectas o usuario no encontrado.');
+            }
+
             if (!respuesta.ok) {
-                throw new Error(`Error en el inicio de sesión: ${respuesta.statusText}`);
+                throw new Error(`En el inicio de sesión: ${respuesta.statusText}`);
             }
 
             const data = await respuesta.json();
@@ -29,7 +33,9 @@ export class UsuarioService {
                 return { success: false, status: data.status };
             }
         } catch (error) {
-            throw error;
+            
+            //TRATAR DE SER MÁS ESPECÍFICOS EN LOS ERRRORES DE BACKEND
+            throw new Error('En el backend: ',error);
         }
     }
 }
