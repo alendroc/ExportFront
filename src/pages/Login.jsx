@@ -57,7 +57,7 @@ export function Login({ sesion }) {
                 type="text" 
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
-                class="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
+                className="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
 />
             </div>
 
@@ -65,7 +65,7 @@ export function Login({ sesion }) {
               <label className="mb-3 text-sm">Contraseña</label>
               <input
               placeholder="increse su contraseña" 
-                class="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
+                className="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
                 type="password"
                 value={pass}
                 onChange={(e) => setPass(e.target.value)}
@@ -75,7 +75,7 @@ export function Login({ sesion }) {
           
             <button
              type="submit" 
-            class="cursor-pointer transition-all bg-green-500 text-white px-6 py-2 rounded-lg
+            className="cursor-pointer transition-all bg-green-500 text-white px-6 py-2 rounded-lg
             border-green-600
             border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px]
             active:border-b-[2px] active:brightness-90 active:translate-y-[2px]">
