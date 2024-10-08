@@ -36,13 +36,6 @@ export function Login({ sesion }) {
       });
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false); // Simula que la carga ha terminado después de 2 segundos
-    }, 20000); // Cambia este tiempo según sea necesario
-
-    return () => clearTimeout(timer); // Limpia el temporizador al desmontar el componente
-  }, []);
 
   return (
     <div className="bg-[#CFE3F8] w-full h-screen font-poppi flex justify-center items-center relative">
@@ -81,7 +74,7 @@ export function Login({ sesion }) {
 
           
             <button
-             type="submit" 
+            type="submit" 
             class="cursor-pointer transition-all bg-green-500 text-white px-6 py-2 rounded-lg
             border-green-600
             border-b-[4px] hover:brightness-110 hover:-translate-y-[1px] hover:border-b-[6px]
