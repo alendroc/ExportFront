@@ -24,7 +24,16 @@ export default {
       },
       screens: {
         '100%':'1600px'
-      }
+      },
+      keyframes: {
+        bounce: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-5px)' },
+        },
+      },
+      animation: {
+        'bounce-text': 'bounce 0.3s ease-in-out',
+      },
     },
   },
   plugins: [

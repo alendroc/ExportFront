@@ -15,6 +15,7 @@ export function Login({ sesion }) {
   
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
+  const [alerta, setAlerta] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -37,13 +38,15 @@ export function Login({ sesion }) {
           navigate("/inicio");
         } else {
           showToast('error', 'Login fallido','#e31115');
+          setAlerta(false);
           console.log('Login fallido, status:', response.status);
         }
       })
       .catch(error => {
-        if(user.length===0 || pass.length===0){ showToast('error', 'Debe rellenar todos los espacios','#e31115');}
+        if(user.length===0 || pass.length===0){  setAlerta(false); showToast('error', 'Debe rellenar todos los espacios','#e31115');}
         else{
         //console.log('error tipo ',error)
+        setAlerta(false);
         showToast('error', error,'#e31115');
         //console.error('Error durante el login:', error);
         }
@@ -72,10 +75,10 @@ export function Login({ sesion }) {
             <h1 className="text-[32px] mb-8">Iniciar sesión</h1>
 
             <div className="flex flex-col mb-6">
-              <label className="mb-3 text-sm">Nombre de usuario</label>
+              <label className={`mb-3 text-sm ${alerta ? '':'text-red-600 animate-bounce-text'}`}>Nombre de usuario</label>
               <input 
                placeholder="Ingrese su nombre de usuario" 
-                type="text" 
+                type="text"
                 value={user}
                 onChange={(e) => setUser(e.target.value)}
                 className="w-full max-w-[300px] h-[30px]  p-3 rounded-[12px] text-xs border-[1.5px] border-lightgrey outline-none transition-all duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] shadow-[0px_0px_20px_-18px] hover:border-2 hover:border-lightgrey hover:shadow-[0px_0px_20px_-17px] active:scale-[0.95] focus:border-2 focus:border-grey"
@@ -83,7 +86,7 @@ export function Login({ sesion }) {
             </div>
 
             <div className="flex flex-col mb-6">
-              <label className="mb-3 text-sm">Contraseña</label>
+              <label className={`mb-3 text-sm ${alerta ? '':'text-red-600  animate-bounce-text'}`}>Contraseña</label>
               <input
 
               placeholder="Ingrese su contraseña" 
