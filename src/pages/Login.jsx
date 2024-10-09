@@ -33,19 +33,18 @@ export function Login({ sesion }) {
           //showToast('success', 'Login exitoso');
           console.log('Login exitoso:', response.user);
           sessionStorage.setItem('sesion','activa')
-
           sesion(true);
           navigate("/inicio");
         } else {
-          showToast('error', 'Login fallido');
+          showToast('error', 'Login fallido','#e31115');
           console.log('Login fallido, status:', response.status);
         }
       })
       .catch(error => {
-        if(user.length===0 || pass.length===0){  showToast('error', 'Verifica rellenar todos los espacios');}
+        if(user.length===0 || pass.length===0){ showToast('error', 'Debe rellenar todos los espacios','#e31115');}
         else{
         //console.log('error tipo ',error)
-        showToast('error', error);
+        showToast('error', error,'#e31115');
         //console.error('Error durante el login:', error);
         }
       })

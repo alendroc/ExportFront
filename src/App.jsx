@@ -7,7 +7,7 @@ import { AiFillMeh,AiOutlineLeft, AiOutlineHome, AiOutlineApartment} from "react
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
 import styled from "styled-components"; // Si usas styled-components
-import {Login } from "../src/pages/Login";
+import {Login } from "../src/pages/Login.jsx";
 
 function App() {
   const [isActive, setIsActive] = useState(true);
