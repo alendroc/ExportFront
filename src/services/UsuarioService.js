@@ -33,9 +33,12 @@ export class UsuarioService {
                 return { success: false, status: data.status };
             }
         } catch (error) {
-            
-            //TRATAR DE SER MÁS ESPECÍFICOS EN LOS ERRRORES DE BACKEND
-            throw new Error('En el backend: ',error);
+
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+              } else {
+                throw new Error(error.message, error);
+              }
         }
     }
 }
