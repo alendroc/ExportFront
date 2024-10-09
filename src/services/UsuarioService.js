@@ -39,6 +39,7 @@ export class UsuarioService {
               } else {
                 throw new Error(error.message, error);
               }
+
         }
     }
 }
