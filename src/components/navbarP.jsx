@@ -3,8 +3,6 @@ import { Disclosure, DisclosureButton, DisclosurePanel, Menu, MenuButton, MenuIt
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
  import { useLocation } from "react-router-dom";
 
-
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
@@ -19,10 +17,19 @@ export function NavbarP({ menu }){
     return null;
   }
 
+
+/*  const widthMap = {
+    "Registro de boletas más productos": "400px",
+    "Actualizar Programa Operativo": "380px",
+    "Otro Nombre": "350px", // Añade más nombres y anchos según sea necesario
+    // Puedes continuar añadiendo más nombres y anchos aquí
+  };*/
+
+
     return(
       <Disclosure as="nav" className="bg-white top-0  dark:bg-blue-950">
-      <div className=" px- ">
-        <div className="relative flex h-16 items-center">
+      <div className="">
+        <div className="relative flex max-sm:h-16 items-center">
           <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
             {/* Mobile menu button*/}
             <DisclosureButton className="group relative inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-700 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white">
@@ -32,17 +39,18 @@ export function NavbarP({ menu }){
               <XMarkIcon aria-hidden="true" className="hidden h-6 w-6 group-data-[open]:block" />
             </DisclosureButton>
           </div>
-          <div className="flex flex-1 items-center justify-center sm:items-stretch">
-            <div className="hidden sm:ml-6 sm:block">
-              <div className="flex space-x-4">
+          <div className="flex flex-1 ml-3 mt-2 mr-2 flex-nowrap justify-start sm:items-stretch">
+            <div className="hidden sm:block text-center">
+              <div className="flex flex-wrap ">
                 {menu.map((item) => (
                   <NavLink
                     key={item.name}
-                    to={item.href}
-                
+                    to={item.href }
                     className={classNames(
                       location.pathname === item.href ? 'text-lime-600 scale-110 ' : 'text-slate-500 dark:hover:text-lime-400 hover:text-lime-600',
-                      'rounded-md  transform w-auto font-medium py-2 px-2 text-sm flex justify-center items-center hover:-translate-y-1 hover:scale-110 transition ease-in-out delay-75')}
+                      'rounded-md mb-2 flex transform w-auto font-medium py-2 px-2 2xl:text-base text-xs  items-center hover:-translate-y-1 hover:scale-110 transition ease-in-out delay-75',
+                      item.name === "Registro de boletas más productos" ? 'w-[180px]' : item.name.length <= 5 ? 'w-auto' : 'min-w-[20px] max-w-[120px]')}
+                    
                   >
                     {item.name}
                   </NavLink>
@@ -63,7 +71,7 @@ export function NavbarP({ menu }){
               href={item.href}
               aria-current={item.current ? 'page' : undefined}
               className={classNames(
-                item.current ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
+                item.current ? 'bg-gray-900 text-white' : 'text-gray-600 hover:bg-gray-700 hover:text-white',
                 'block rounded-md px-3 py-2 text-base font-medium',
               )}
             >

@@ -3,8 +3,9 @@ import { BrowserRouter, Link, useLocation } from "react-router-dom";
 import { Sidebar } from "./components/sidebar";
 import React, { useState, useEffect } from "react";
 import { NavbarP } from "./components/navbarP";
-import { AiFillMeh,AiOutlineLeft, AiOutlineHome, AiOutlineApartment} from "react-icons/ai";
+import { AiOutlineHome, AiOutlineGlobal } from "react-icons/ai";
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
+import { IoMdSettings } from "react-icons/io";
 import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
 import styled from "styled-components"; // Si usas styled-components
 import {Login } from "../src/pages/Login.jsx";
@@ -29,22 +30,30 @@ function App() {
   const linksArray = [
     {
       label: "Navegacion",
-      icon: <AiOutlineHome />,
+      icon: <AiOutlineGlobal />,
       to: "/Navegacion",
       submenu: [
-        { name: "Navegacion1", href: "/Navegacion1/sub1" },
-        { name: "Navegacion2", href: "/Navegacion1/sub2" },
-        { name: "Navegacion3", href: "/Navegacion1/sub3" },
-        { name: "Navegacion4", href: "/Navegacion1/sub4" },
+        { name: "Ver navegador", href: "/Navegacion/ver" },
+        { name: "Ingresar datos", href: "/Navegacion/ingreso" }
       ]
     },
     {
       label: "Configuracion",
-      icon: <AiOutlineHome />,
+      icon: <IoMdSettings  />,
       to: "/Configuracion",
       submenu: [
-        { name: "Configuracion1", href: "/config/sub1" },
-        { name: "Configuracion2", href: "/config/sub2" }
+        { name: "UMC", href: "/Configuracion/umc" },//unidad de medidas y certificacion
+        { name: "Articulos", href: "/Configuracion/articulos"},
+        { name: "Temporada", href: "/Configuracion/temporada"},
+        { name: "Lotes", href: "/Configuracion/lotes"},
+        { name: "Variedades", href: "/Configuracion/variedades"},
+        { name: "Hibridos", href: "/Configuracion/Hibirdos"},
+        { name: "Departamentos", href: "/Configuracion/Departamentos"},
+        { name: "Labores", href: "/Configuracion/labores"},
+        { name: "Productos", href: "/Configuracion/productos"},
+        { name: "Camas y valvulas", href: "/Configuracion/camasValvulas"},
+        { name: "Administracion de usuarios", href: "/Configuracion/AdministrarUsuario"},
+        { name: "Cambiar contraseña", href: "/Configuracion/cambiarContra"},
       ]
     },
   ];
@@ -206,15 +215,15 @@ function navbar(location,arreglos){
             <NavbarP menu={activeSubmenu} />
           </div>
         )}
-         <div className="flex-1">
+         <div>
             <MyRoutes isAuthenticated={isAuthenticated} />
-       
         </div>
       </div>
     </div>
 
     </>
-  );}
+  );
+}
 }
 export default function WrappedApp(){
   return (

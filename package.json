@@ -16,6 +16,7 @@
     "@heroicons/react": "^2.1.5",
     "@mui/material": "^6.0.2",
     "@mui/styled-engine-sc": "^6.0.2",
+    "@mui/x-data-grid": "^7.21.0",
     "@splinetool/react-spline": "^4.0.0",
     "@splinetool/runtime": "^1.9.28",
     "next": "^14.2.13",
