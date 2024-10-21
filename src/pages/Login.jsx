@@ -35,7 +35,7 @@ export function Login({ sesion }) {
           console.log('Login exitoso:', response.user);
           sessionStorage.setItem('sesion','activa')
           sesion(true);
-          navigate("/inicio");
+          navigate("/Navegacion");
         } else {
           showToast('error', 'Login fallido','#e31115');
           setAlerta(false);
