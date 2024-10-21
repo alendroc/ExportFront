@@ -1,17 +1,16 @@
 import styled from "styled-components";
+import { useEffect } from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 export function Navegacion() {
+  /*const navigate = useNavigate();
+  useEffect(() => {
+    navigate('ver');
+  }, [navigate]);
+   
+  */
     return (
     <Container>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
-  <h1>Navegacion</h1>
+      <Outlet />
     </Container>);
   }
   const Container =styled.div`

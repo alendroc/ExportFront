@@ -28,7 +28,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
     </div>
     
-    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
+    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-sm scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
     {arreglo.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
       <Tooltip
@@ -45,7 +45,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
        >
 
         <div className="Linkicon p-2 text-2xl">{icon}</div>
-        {sidebarOpen && <span className="ml-3 text-base overflow-hidden transition-opacity duration-300">{label}</span>}
+        {sidebarOpen && <span className="ml-3  overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>
 </Tooltip>
     </div>
@@ -62,18 +62,19 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
      <NavLink 
         to={to}
-        className={`flex items-center mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+        className={`flex items-center mb-4 max-2xl:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
         ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center'}`}
        >
         <div className="Linkicon p-2 text-2xl">{icon}</div>
 
-        {sidebarOpen && <span className="ml-3 text-base whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
+        {sidebarOpen && <span className="ml-3  whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
 
       </NavLink>
       </Tooltip>
     </div>
     ))}
+
      <DividerImbicible/>
     
 {arreglo3.map(({ icon, label, to, submenu}) =>(
@@ -84,19 +85,19 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       placement="right-end">
  <NavLink 
     to={to}
-    className={`flex items-center mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
+    className={`flex items-center mb-4 max-2xl:mb-2 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
     ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
     ${sidebarOpen ? '':'justify-center'}`}
    >
     <div className="Linkicon p-2 text-2xl">{icon}</div>
-    {sidebarOpen && <span className="ml-3 text-base overflow-hidden transition-opacity duration-300">{label}</span>}
+    {sidebarOpen && <span className="ml-3  overflow-hidden transition-opacity duration-300">{label}</span>}
   </NavLink>
   </Tooltip>
 </div>
 ))}
 </div> 
 
-<div className="absolute bottom-0 w-full max-100%:static bg-white dark:bg-blue-950">
+<div className="min-w-full:absolute bottom-0 w-full max-100%:static bg-white dark:bg-blue-950">
     <DividerImbicible/>
     <div className={`flex items-center px-2 ${sidebarOpen ? 'justify-between':'justify-center'}`}>
       {sidebarOpen && <span className="text-sm py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">modo oscuro</span>}

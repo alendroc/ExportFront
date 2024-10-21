@@ -1,10 +1,26 @@
 import styled from "styled-components";
+import * as React from 'react';
+import { useEffect } from 'react';
+import { useNavigate, Outlet } from 'react-router-dom';
 export function Configuracion() {
-    return (
-    <Container>
-        <h1>Configuracion</h1>
-    </Container>);
-  }
-  const Container =styled.div`
-   
-  `
+
+  /*const navigate = useNavigate();
+  useEffect(() => {
+    navigate('umc');
+  }, [navigate]);
+  
+  */
+
+  return (
+    <Container className="p-3">
+        <Outlet />
+    </Container>
+  );
+}
+
+const Container = styled.div`
+width: 90%;
+  display: flex;
+  flex-direction: column; /* Asegúrate de que el contenido se apile */
+  padding: 14px;
+`;
