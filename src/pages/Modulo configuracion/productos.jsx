@@ -2,66 +2,112 @@ import styled from "styled-components";
 import MaterialTable from "@material-table/core";
 import { useState, useEffect } from "react";
 import { ProductoService } from "../../services/ProductoService";
+import { Delete, Edit, AddBox } from '@mui/icons-material'; // Import icons
 
-var productoService = new ProductoService
+var productoService = new ProductoService();
 
 export function Productos() {
-
-    const [data, setData] = useState([]); 
-    const [loading, setLoading] = useState(true); 
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [maxBodyHeight, setMaxBodyHeight] = useState(480);
 
   useEffect(() => {
-    productoService.getAll().then((response) => {
-      if (response.success) {
-        setData(response.productos); 
-        console.log("Productos", response.productos);
-      } else {
-        console.log("No se pudieron obtener los productos.");
-      }
-      setLoading(false); 
-    }).catch(error => {
-      console.error("Error al obtener los productos:", error);
-      setLoading(false); 
-    });
+    productoService.getAll()
+      .then((response) => {
+        if (response.success) {
+          setData(response.productos);
+          console.log("Productos", response.productos);
+        } else {
+          console.log("No se pudieron obtener los productos.");
+        }
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error al obtener los productos:", error);
+        setLoading(false);
+      });
   }, []);
-   
+
   const EDITABLE_COLUMNS = [
-    { title: "Identificador", field: "identificador"},
+    { title: "IdProducto", field: "idProducto" },  // Asegúrate de que coincida con el backend
     { title: "Nombre Descriptivo", field: "nombreDescriptivo" },
     { title: "Tipo de Uso", field: "tipoUso" },
     { title: "Nombre Comercial", field: "nombreComercial" },
     { title: "Unidad de Medida", field: "unidadMedida" },
     { title: "Ingrediente Activo", field: "ingredienteActivo" },
-    { title: "Concentración Activo", field: "concentracionActivo"},
-    { title: "Restriccion Ingreso", field: "restriccionIngreso"},
+    { title: "ConcentracionIactivo", field: "concentracionIactivo" },
+    { title: "Restricción Ingreso", field: "restriccionIngreso" },
     { title: "Descripción", field: "descripcion" },
     { title: "Activo", field: "activo", type: "boolean" },
   ];
 
-function getNewDataBulkEdit(changes, copyData) {
+  function getNewDataBulkEdit(changes, copyData) {
     const keys = Object.keys(changes);
-    for (let i = 0; i < keys.length; i++) {
-      if (changes[keys[i]] && changes[keys[i]].newData) {
-        let targetData = copyData.find((el) => el.id === keys[i]);
-        if (targetData) {
-          let newTargetDataIndex = copyData.indexOf(targetData);
-          copyData[newTargetDataIndex] = changes[keys[i]].newData;
+    keys.forEach((key) => {
+      if (changes[key] && changes[key].newData) {
+        const targetDataIndex = copyData.findIndex((el) => el.idProducto === key);
+        if (targetDataIndex > -1) {
+          copyData[targetDataIndex] = changes[key].newData;
         }
       }
-    }
-    return copyData;
+    });
+    return [...copyData];  // Devuelve una copia nueva
   }
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1300) {
+        setMaxBodyHeight(470);
+      } else if (window.innerWidth < 2000) {
+        setMaxBodyHeight(580);
+      } else {
+        setMaxBodyHeight(480);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <Container>
-        
-      <MaterialTable  
+      <MaterialTable
+        key={data.length}  // Forzar re-renderizado con longitud de datos
+        size="small"
         title="Lista de Productos"
         columns={EDITABLE_COLUMNS}
         data={data}
+        options={{
+          actionsColumnIndex: -1,
+          maxBodyHeight: maxBodyHeight,
+          paging: false,
+          headerStyle: {
+            position: "sticky",
+            top: 0,
+            backgroundColor: "#fff",
+            zIndex: 9999,
+          },
+        }}
+        icons={{
+          Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />,
+          Edit: () => <Edit style={{ fontSize: "18px" }} />,
+          Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />,
+        }}
+        localization={{
+          body: {
+            editRow: {
+              deleteText: "¿Estás seguro de que deseas eliminar este producto?",
+              cancelTooltip: "Cancelar",
+              saveTooltip: "Confirmar",
+            },
+          },
+          header: {
+            actions: "Acciones",
+          },
+        }}
         editable={{
           onBulkUpdate: (changes) => {
-            return new Promise((resolve, reject) => {
+            return new Promise((resolve) => {
               setTimeout(() => {
                 let copyData = [...data];
                 setData(getNewDataBulkEdit(changes, copyData));
@@ -69,43 +115,126 @@ function getNewDataBulkEdit(changes, copyData) {
               }, 1000);
             });
           },
-          onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
-          onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+          onRowAddCancelled: (rowData) => console.log("Agregar cancelado"),
+          onRowUpdateCancelled: (rowData) => console.log("Edición cancelada"),
+
           onRowAdd: (newData) => {
             return new Promise((resolve, reject) => {
-              setTimeout(() => {
-                newData.id = "uuid-" + Math.random() * 10000000;
-                setData([...data, newData]);
-                resolve();
-              }, 1000);
+              console.log("Intentando agregar producto:", newData);
+              const newDataWithId = {
+                ...newData,
+                idProducto: newData.idProducto 
+              };
+              const requiredFields = [
+                "idProducto", 
+                "nombreDescriptivo",
+                "tipoUso",
+                "nombreComercial",
+                "unidadMedida",
+                "ingredienteActivo",
+                "concentracionIactivo",
+                "restriccionIngreso",
+                "descripcion",
+                "activo"
+              ];
+
+              const missingFields = requiredFields.filter(field => !newDataWithId[field]);
+              if (missingFields.length > 0) {
+                reject(`Faltan los siguientes campos: ${missingFields.join(", ")}`);
+                return;
+              }
+
+              productoService.create(newDataWithId)
+                .then(response => {
+                  if (response.success) {
+                    setData(prevData => [...prevData, response.producto]);
+                    resolve();
+                  } else {
+                    reject(`Error al crear el producto: ${response.message}`);
+                  }
+                })
+                .catch(error => {
+                  reject(`Error de red: ${error.message}`);
+                });
             });
           },
+
           onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataUpdate = [...data];
-                const target = dataUpdate.find((el) => el.id === oldData.id);
-                const index = dataUpdate.indexOf(target);
-                dataUpdate[index] = newData;
-                setData(dataUpdate);
-                resolve();
-              }, 1000);
+              productoService.update(oldData.idProducto, newData)
+                .then(response => {
+                  if (response.success) {
+                    setData(prevData => {
+                      const dataUpdate = [...prevData];
+                      const index = dataUpdate.indexOf(oldData);
+                      dataUpdate[index] = newData;
+                      return dataUpdate;
+                    });
+                    resolve();
+                  } else {
+                    reject("Error al actualizar el producto");
+                  }
+                })
+                .catch(error => {
+                  reject(error.message);
+                });
             });
           },
+
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
-              setTimeout(() => {
-                const dataDelete = data.filter((el) => el.id !== oldData.id);
-                setData(dataDelete);
-                resolve();
-              }, 1000);
+              productoService.delete(oldData.idProducto)  
+                .then(response => {
+                  if (response.success) {
+                    setData(prevData => prevData.filter((el) => el.idProducto !== oldData.idProducto));
+                    resolve();
+                  } else {
+                    reject("Error al eliminar el producto");
+                  }
+                })
+                .catch(error => {
+                  reject(error.message);
+                });
             });
           },
+
         }}
       />
     </Container>
   );
 }
 
-const Container = styled.div``;
+const Container = styled.div`
+  display: block;
+  width: 90%;
+  max-width: 1800px;
 
+  .MuiToolbar-root {
+    background-color: #060270;
+    color: white;
+  }
+
+  .MuiTableCell-root {
+    border-radius: 20px;
+    padding: 4px 8px;
+    font-size: 12px !important;
+  }
+
+  .MuiTableRow-root {
+    height: 30px;
+  }
+
+  .MuiTypography-h6 {
+    font-size: 16px;
+  }
+
+  @media (min-width: 1600px) {
+    .MuiTypography-h6 {
+      font-size: 20px;
+    }
+    .MuiTableCell-root {
+      padding: 0 8px;
+      font-size: 16px !important;
+    }
+  }
+`;
