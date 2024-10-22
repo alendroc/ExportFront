@@ -19,7 +19,6 @@ export function Configuracion() {
 }
 
 const Container = styled.div`
-width: 90%;
   display: flex;
   flex-direction: column; /* Asegúrate de que el contenido se apile */
   padding: 14px;

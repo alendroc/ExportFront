@@ -7,6 +7,7 @@ import { Variedades } from "../pages/Modulo configuracion/variedades.jsx";
 import { Articulos } from "../pages/Modulo configuracion/articulos.jsx";
 import { IngresarDatos } from "../pages/Modulo Navegacion/ingresarDatos.jsx";
 import { Productos } from "../pages/Modulo configuracion/productos.jsx";
+import { Temporada } from "../pages/Modulo configuracion/temporada.jsx";
 
 
 export const MyRoutes = () => {
@@ -23,6 +24,7 @@ export const MyRoutes = () => {
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>
         <Route path="productos" element={<Productos/>}/>
+        <Route path="temporadas" element={<Temporada/>}/>
       </Route>
     </Routes>
   );

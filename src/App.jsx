@@ -44,7 +44,7 @@ function App() {
       submenu: [
         { name: "UMC", href: "/Configuracion/umc" },//unidad de medidas y certificacion
         { name: "Articulos", href: "/Configuracion/articulos"},
-        { name: "Temporada", href: "/Configuracion/temporada"},
+        { name: "Temporada", href: "/Configuracion/temporadas"},
         { name: "Lotes", href: "/Configuracion/lotes"},
         { name: "Variedades", href: "/Configuracion/variedades"},
         { name: "Hibridos", href: "/Configuracion/Hibirdos"},
