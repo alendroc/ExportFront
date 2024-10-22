@@ -7,33 +7,67 @@ import { TemporadasService } from "../../services/TemporadasService";
 var temporadasService = new TemporadasService
 
   const columns = [
-    { title: "Temporada", field: "temporada", },
+    { title: "Temporada", field: "temporada", editable: 'onAdd', validate: row => {
+        // Verificar si el objeto row está definido
+        if (!row || typeof row.temporada === 'undefined') {
+            return {
+                isValid: false,
+                helperText: "El campo temporada no puede estar vacío"
+            };
+        }
+
+        // Verificar si el campo temporada no está vacío
+        if (row.temporada.trim() === "") {
+            return {
+                isValid: false,
+                helperText: "El campo temporada no puede estar vacío"
+            };
+        }
+        const yearFormat = /^(\d{4})-(\d{4})$/;
+        const match = row.temporada.match(yearFormat);
+        if (!match) {
+            return {
+                isValid: false,
+                helperText: "El formato debe ser '2002-2003'"
+            };
+        }
+        const startYear = parseInt(match[1]);
+        const endYear = parseInt(match[2]);
+        if (startYear >= endYear) {
+            return {
+                isValid: false,
+                helperText: "El primer año debe ser menor que el segundo"
+            };
+        }
+        return { isValid: true };
+    }
+},
     { title: "Actual", field: "actual", type: "boolean",  },
     { title: "Descripción", field: "descripcion", },
     { title: "Fecha Inicio", field: "fechaInicio", type: "date",},
-    { title: "Fecha Fin", field: "fechaFin", type: "date", },
-];
+    { title: "Fecha Final", field: "fechaFin", type: "date", },
+] || [];
 
 export function Temporada() {
 const [data, setData] = useState([]);
 const [maxBodyHeight, setMaxBodyHeight] = useState(480);
 
 useEffect(() => {
-    temporadasService.getAll()
-        .then((response) => {
+    const fetchData = async () => {
+        try {
+            const response = await temporadasService.getAll();
             if (response.success) {
-                setData(response.temporadas); // Aquí cambié 'temporada' a 'temporadas'
+                setData(response.temporadas); // Asegúrate de que la propiedad sea correcta
                 console.log("Temporadas", response.temporadas);
             } else {
                 console.log("No se pudieron obtener las temporadas.");
             }
-        })
-        .catch(error => {
+        } catch (error) {
             console.error("Error al obtener las temporadas:", error);
-        });
+        }
+    };
+    fetchData();
 }, []);
-   
-
 // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
 useEffect(() => {
   const handleResize = () => {
@@ -69,7 +103,7 @@ useEffect(() => {
             position: 'sticky', 
             top: 0, // Hace que el encabezado de la tabla sea fijo
             backgroundColor: '#fff',
-            zIndex: 9999,
+
           },
       }}
       icons={{
@@ -93,47 +127,66 @@ useEffect(() => {
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
+           
             return new Promise((resolve, reject) => {
-              const { temporada, actual, descripcion, fechaInicio, fechaFinal } = newData;
-              const nuevaTemporada = { temporada, actual, descripcion, fechaInicio, fechaFinal }; // Asegúrate de que este sea el formato correcto
-          
-              temporadasService.create(nuevaTemporada).then(response => {
-               
-                if (response.success) {
-                  // Si la creación fue exitosa, actualiza el estado
-                  setData([...data, response.temporadas]); // Asegúrate de usar response.temporadas según lo que retorne tu API
-                  resolve();
-                } else {
-                  reject("Error al crear la temporada.");
-                }
-              })
-              .catch(error => {
-                console.error("Error al agregar la temporada:", error);
-                reject(error.message || "Error inesperado.");
-              });
+                const fechaInicioFormatted = newData.fechaInicio ? newData.fechaInicio.toISOString().split('T')[0] : null;
+                const fechaFinFormatted = newData.fechaFin ? newData.fechaFin.toISOString().split('T')[0] : null;
+                const newDataWithId = {
+                    ...newData,
+                    temporada: newData.temporada,
+                    fechaInicio: fechaInicioFormatted,
+                    fechaFin: fechaFinFormatted,
+                    activacion: newData.activacion !== undefined ? newData.activacion : false,
+                    descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion : null,
+                }; 
+            
+                const requiredFields = [
+                    "temporada", 
+                    "actual",
+                    "descripcion",
+                    "fechaInicio",
+                    "fechaFin",
+                ];console.log(newDataWithId)
+                
+                temporadasService.create(newDataWithId)
+                    .then(response => {
+                        if (response.success) {
+                            console.log("aaa");
+                            
+                            resolve();
+                            
+                        } else {
+                            reject(`Error al crear el producto: ${response.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        reject(`Error de red: ${error.message}`);
+                    });
             });
-          },
-        onRowUpdate: (newData, oldData) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              const dataUpdate = [...data];
-              // In dataUpdate, find target
-              const target = dataUpdate.find((el) => el.temporada === oldData.temporada);
-              const index = dataUpdate.indexOf(target);
-              dataUpdate[index] = newData;
-              setData(dataUpdate);
-              resolve();
-            }, 1000);
-          });
         },
+          onRowUpdate: (newData, oldData) => {
+            console.log("Fila actualizada:", newData);
+            const dataUpdate = [...data];
+            const index = dataUpdate.findIndex((item) => item.temporada === oldData.temporada);
+            dataUpdate[index] = newData;
+            setData(dataUpdate);
+          },
         onRowDelete: (oldData) => {
-          return new Promise((resolve, reject) => {
-            setTimeout(() => {
-              const dataDelete = data.filter((el) => el.temporada !== oldData.temporada);
-              setData(dataDelete);
-              resolve();
-            }, 1000);
-          });
+            return new Promise((resolve, reject) => {
+                temporadasService.delete(oldData.temporada) // Llama a la función de eliminación
+                .then(response => {
+                    if (response.success) {
+                        const dataDelete = data.filter((el) => el.temporada !== oldData.temporada);
+                        setData(dataDelete);
+                        resolve();
+                    } else {
+                        reject('No se pudo eliminar la temporada.');
+                    }
+                })
+                .catch(error => {
+                    reject(`Error al eliminar: ${error.message}`);
+                });
+            });
         },
       }}
     />

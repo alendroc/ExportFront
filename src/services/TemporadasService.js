@@ -64,7 +64,7 @@ export class TemporadasService {
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
-                
+
                 throw new Error(error.message, error);
             }
         }
@@ -135,6 +135,7 @@ export class TemporadasService {
 
     async delete(id) {
         try {
+            console.log(id)
             const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
                 method: 'DELETE',
                 headers: {
