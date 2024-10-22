@@ -72,9 +72,11 @@ export class ProductoService {
         }
     }
 
-    // Crear un nuevo producto
     async create(producto) {
         try {
+            console.log("URL de la API:", `${this.apiUrl}productos`);
+            console.log("Producto a crear:", producto); // Imprime el producto que estás enviando
+    
             const response = await fetch(`${this.apiUrl}productos`, {
                 method: 'POST',
                 headers: {
@@ -82,27 +84,34 @@ export class ProductoService {
                 },
                 body: JSON.stringify(producto)
             });
-
+    
             if (!response.ok) {
-                throw new Error(`Error al crear el producto: ${response.statusText}`);
+                const errorData = await response.json();
+                console.error("Datos de error:", errorData); // Muestra los datos del error
+                throw new Error(`Error al crear el producto: ${errorData.message || response.statusText}`);
             }
-
+    
             const data = await response.json();
-
+            console.log("Datos de respuesta:", data); // Imprime la respuesta del servidor
+    
+            // Verifica la estructura de la respuesta
             if (data.isSuccess && data.status === 201) {
                 return { success: true, producto: data.producto };
             } else {
                 console.log('Error al crear el producto.');
-                return { success: false, status: data.status };
+                return { success: false, status: data.status || 400 };
             }
         } catch (error) {
+            console.error("Error en el método create:", error);
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
-                throw new Error(error.message, error);
+                throw new Error(error.message);
             }
         }
     }
+    
+    
 
     // Actualizar un producto por ID
     async update(id, producto) {
@@ -136,8 +145,11 @@ export class ProductoService {
         }
     }
 
-    // Eliminar un producto por ID
     async delete(id) {
+        if (!id) {
+            throw new Error('ID del producto no proporcionado.');
+        }
+    
         try {
             const response = await fetch(`${this.apiUrl}productos/${id}`, {
                 method: 'DELETE',
@@ -145,17 +157,18 @@ export class ProductoService {
                     'Content-Type': 'application/json'
                 }
             });
-
+    
             if (response.status === 404) {
                 throw new Error('Producto no encontrado.');
             }
-
+    
             if (!response.ok) {
-                throw new Error(`Error al eliminar el producto: ${response.statusText}`);
+                const errorData = await response.json();
+                throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
             }
-
+    
             const data = await response.json();
-
+    
             if (data.isSuccess && data.status === 200) {
                 return { success: true, message: data.message };
             } else {
@@ -166,8 +179,9 @@ export class ProductoService {
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
-                throw new Error(error.message, error);
+                throw new Error(error.message);
             }
         }
     }
+    
 }
