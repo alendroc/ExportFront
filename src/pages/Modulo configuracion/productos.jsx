@@ -2,7 +2,7 @@ import styled from "styled-components";
 import MaterialTable from "@material-table/core";
 import { useState, useEffect } from "react";
 import { ProductoService } from "../../services/ProductoService";
-import { Delete, Edit, AddBox } from '@mui/icons-material'; // Import icons
+import { Delete, Edit, AddBox } from '@mui/icons-material';
 
 var productoService = new ProductoService();
 
@@ -29,7 +29,7 @@ export function Productos() {
   }, []);
 
   const EDITABLE_COLUMNS = [
-    { title: "IdProducto", field: "idProducto" },  // Asegúrate de que coincida con el backend
+    { title: "IdProducto", field: "idProducto" }, 
     { title: "Nombre Descriptivo", field: "nombreDescriptivo" },
     { title: "Tipo de Uso", field: "tipoUso" },
     { title: "Nombre Comercial", field: "nombreComercial" },
@@ -51,7 +51,7 @@ export function Productos() {
         }
       }
     });
-    return [...copyData];  // Devuelve una copia nueva
+    return [...copyData];
   }
 
   useEffect(() => {
@@ -72,7 +72,7 @@ export function Productos() {
   return (
     <Container>
       <MaterialTable
-        key={data.length}  // Forzar re-renderizado con longitud de datos
+        key={data.length}
         size="small"
         title="Lista de Productos"
         columns={EDITABLE_COLUMNS}
@@ -123,8 +123,10 @@ export function Productos() {
               console.log("Intentando agregar producto:", newData);
               const newDataWithId = {
                 ...newData,
-                idProducto: newData.idProducto 
+                idProducto: newData.idProducto,
+                activo: newData.activo !== undefined ? newData.activo : false  
               };
+          
               const requiredFields = [
                 "idProducto", 
                 "nombreDescriptivo",
@@ -135,15 +137,15 @@ export function Productos() {
                 "concentracionIactivo",
                 "restriccionIngreso",
                 "descripcion",
-                "activo"
+                "activo"  
               ];
-
-              const missingFields = requiredFields.filter(field => !newDataWithId[field]);
+          
+              const missingFields = requiredFields.filter(field => !newDataWithId[field] && newDataWithId[field] !== false);
               if (missingFields.length > 0) {
                 reject(`Faltan los siguientes campos: ${missingFields.join(", ")}`);
                 return;
               }
-
+          
               productoService.create(newDataWithId)
                 .then(response => {
                   if (response.success) {
@@ -158,29 +160,34 @@ export function Productos() {
                 });
             });
           },
-
+          
           onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
               productoService.update(oldData.idProducto, newData)
                 .then(response => {
                   if (response.success) {
-                    setData(prevData => {
-                      const dataUpdate = [...prevData];
-                      const index = dataUpdate.indexOf(oldData);
-                      dataUpdate[index] = newData;
-                      return dataUpdate;
-                    });
-                    resolve();
+                    productoService.getAll()
+                      .then((getAllResponse) => {
+                        if (getAllResponse.success) {
+                          setData(getAllResponse.productos); 
+                          resolve();
+                        } else {
+                          reject("Error al obtener los productos actualizados");
+                        }
+                      })
+                      .catch(error => {
+                        reject(`Error al obtener los productos actualizados: ${error.message}`);
+                      });
                   } else {
                     reject("Error al actualizar el producto");
                   }
                 })
                 .catch(error => {
-                  reject(error.message);
+                  reject(`Error: ${error.message}`);
                 });
             });
           },
-
+          
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
               productoService.delete(oldData.idProducto)  
