@@ -20,3 +20,24 @@ export const showToast = (icon, title,background, position = 'top-end', timer = 
     title: title
   });
 };
+
+export const showToastTable = (icon, title,background, position = 'top-end', timer = 3000, ) => {
+  const Toast = Swal.mixin({
+    toast: true,
+    position: position,
+    showConfirmButton: false,
+    timer: timer,
+    background: background,
+    color:'#ffff',
+    timerProgressBar: true,
+    didOpen: (toast) => {
+      toast.onmouseenter = Swal.stopTimer;
+      toast.onmouseleave = Swal.resumeTimer;
+    }
+  });
+
+  Toast.fire({
+    icon: icon,
+    title: title
+  });
+};

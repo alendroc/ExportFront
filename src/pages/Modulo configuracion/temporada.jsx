@@ -3,49 +3,70 @@ import MaterialTable from "@material-table/core";
 import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox } from '@mui/icons-material';
 import { TemporadasService } from "../../services/TemporadasService";
-
+import { showToast } from "../../components/helpers";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 var temporadasService = new TemporadasService
 
   const columns = [
     { title: "Temporada", field: "temporada", editable: 'onAdd', validate: row => {
-        // Verificar si el objeto row está definido
         if (!row || typeof row.temporada === 'undefined') {
             return {
                 isValid: false,
                 helperText: "El campo temporada no puede estar vacío"
-            };
-        }
-
-        // Verificar si el campo temporada no está vacío
+            };}
         if (row.temporada.trim() === "") {
             return {
                 isValid: false,
                 helperText: "El campo temporada no puede estar vacío"
-            };
-        }
+            };}
         const yearFormat = /^(\d{4})-(\d{4})$/;
         const match = row.temporada.match(yearFormat);
         if (!match) {
             return {
                 isValid: false,
                 helperText: "El formato debe ser '2002-2003'"
-            };
-        }
+            };}
         const startYear = parseInt(match[1]);
         const endYear = parseInt(match[2]);
         if (startYear >= endYear) {
             return {
                 isValid: false,
-                helperText: "El primer año debe ser menor que el segundo"
-            };
-        }
-        return { isValid: true };
-    }
+                helperText: "El primer año debe ser menor que el segundo"};}
+        return { isValid: true };}
 },
     { title: "Actual", field: "actual", type: "boolean",  },
     { title: "Descripción", field: "descripcion", },
-    { title: "Fecha Inicio", field: "fechaInicio", type: "date",},
-    { title: "Fecha Final", field: "fechaFin", type: "date", },
+    { title: "Fecha Inicio", field: "fechaInicio", type: "date",  editComponent: props => (
+      <input
+        type="date"
+        value={props.value || ''} // Para manejar el valor actual del input
+        onChange={e => props.onChange(e.target.value)}
+        style={{     // Ancho del input
+        padding: '8px',      // Espaciado interno
+        border: '1px solid #ccc',  // Borde gris claro
+        borderRadius: '4px', // Bordes redondeados
+        fontSize: '14px',    // Tamaño del texto
+        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',  // Sombra ligera para darle profundidad
+        outline: 'none',     // Eliminar el borde azul por defecto al hacer clic
+        margin: '5px 0',  }} // Ajusta el ancho del input aquí
+      />) },
+    { title: "Fecha Final", field: "fechaFin", type: "date",   
+    editComponent: props => (
+      <input
+        type="date"
+        value={props.value || ''} // Para manejar el valor actual del input
+        onChange={e => props.onChange(e.target.value)}
+        style={{     // Ancho del input
+        padding: '8px',      // Espaciado interno
+        border: '1px solid #ccc',  // Borde gris claro
+        borderRadius: '4px', // Bordes redondeados
+        fontSize: '14px',    // Tamaño del texto
+        boxShadow: '0 1px 2px rgba(0,0,0,0.1)',  // Sombra ligera para darle profundidad
+        outline: 'none',     // Eliminar el borde azul por defecto al hacer clic
+        margin: '5px 0',  }} // Ajusta el ancho del input aquí
+      />) },
 ] || [];
 
 export function Temporada() {
@@ -92,8 +113,7 @@ useEffect(() => {
        <MaterialTable size="small"
        title="Gestión de Temporadas"
       data={data}
-      columns={columns}
-    
+      columns={columns || []}
       options={{
         actionsColumnIndex: -1,
         maxBodyHeight: maxBodyHeight, 
@@ -101,9 +121,9 @@ useEffect(() => {
         paging: false, 
         headerStyle: {
             position: 'sticky', 
-            top: 0, // Hace que el encabezado de la tabla sea fijo
+            top: 0,
+            zIndex: 1,
             backgroundColor: '#fff',
-
           },
       }}
       icons={{
@@ -127,50 +147,75 @@ useEffect(() => {
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
-           
-            return new Promise((resolve, reject) => {
-                const fechaInicioFormatted = newData.fechaInicio ? newData.fechaInicio.toISOString().split('T')[0] : null;
-                const fechaFinFormatted = newData.fechaFin ? newData.fechaFin.toISOString().split('T')[0] : null;
+            return new Promise((resolve, reject) => { 
                 const newDataWithId = {
                     ...newData,
                     temporada: newData.temporada,
-                    fechaInicio: fechaInicioFormatted,
-                    fechaFin: fechaFinFormatted,
                     activacion: newData.activacion !== undefined ? newData.activacion : false,
                     descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion : null,
                 }; 
-            
-                const requiredFields = [
-                    "temporada", 
-                    "actual",
-                    "descripcion",
-                    "fechaInicio",
-                    "fechaFin",
-                ];console.log(newDataWithId)
-                
-                temporadasService.create(newDataWithId)
-                    .then(response => {
-                        if (response.success) {
-                            console.log("aaa");
-                            
-                            resolve();
-                            
-                        } else {
-                            reject(`Error al crear el producto: ${response.message}`);
-                        }
-                    })
-                    .catch(error => {
-                        reject(`Error de red: ${error.message}`);
-                    });
-            });
+
+           if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
+               showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
+               reject(`Error al crear el producto: ${response.message}`);
+              }else{
+                  const isDuplicate = data.some(season => season.temporada = newDataWithId.temporada)
+                  if(isDuplicate){
+                    showToast('error', 'Ya existe esa temporada','#9c1010'); 
+                    reject(`Error al crear el producto: ${response.message}`);
+                  }else{
+                    temporadasService.create(newDataWithId)
+                        .then(response => {
+                            if (response.success) {
+                                console.log("Temporada creada exitosamente");
+                                showToast('success', 'Temporada creada', '#2d800e');
+                                resolve(); // Resolvemos la promesa si todo fue bien
+                            } else {
+                                reject(`Error al crear el producto: ${response.message}`);
+                            }
+                        })
+                        .catch(error => {
+                            reject(`Error de red: ${error.message}`);
+                        });
+                      }
+                }
+          });
         },
-          onRowUpdate: (newData, oldData) => {
-            console.log("Fila actualizada:", newData);
-            const dataUpdate = [...data];
-            const index = dataUpdate.findIndex((item) => item.temporada === oldData.temporada);
-            dataUpdate[index] = newData;
-            setData(dataUpdate);
-          },
+        onRowUpdate: (newData, oldData) => {
+          return new Promise((resolve, reject) => {
+              const index = data.findIndex(item => item.temporada === oldData.temporada);
+              const updatedData = [...data];
+
+              if (newData.fechaInicio >= newData.fechaFin) {
+                  showToast('error', 'La fecha inicio debe ser menor a fecha final', '#9c1010');
+                  reject('Error al actualizar el producto: Fecha inválida');
+                  return;
+              }
+
+              const isDuplicate = updatedData.some((season, idx) => season.temporada === newData.temporada && idx !== index);
+              if (isDuplicate) {
+                  showToast('error', 'Ya existe esa temporada', '#9c1010');
+                  reject('Error al actualizar el producto: La temporada ya existe');
+                  return;
+              }
+
+              updatedData[index] = newData;
+
+              temporadasService.update(oldData.temporada, newData) // Asumiendo que `oldData` tiene un campo `id`
+                  .then(response => {
+                      if (response.success) {
+                          setData(updatedData);
+                          showToast('success', 'Temporada actualizada', '#2d800e');
+                          resolve();
+                      } else {
+                          reject(`Error al actualizar la temporada: ${response.message}`);
+                      }
+                  })
+                  .catch(error => {
+                      reject(`Error de red: ${error.message}`);
+                  });
+          });
+        },
         onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
                 temporadasService.delete(oldData.temporada) // Llama a la función de eliminación
@@ -198,9 +243,9 @@ useEffect(() => {
    display: block;
    width: 90%;
    max-width: 1100px;
-
+   z-index: 1;
         .MuiToolbar-root {
-         background-color: #4caf50; /* Cambia el color del fondo del toolbar */
+         background-color: #50ad53; /* Cambia el color del fondo del toolbar */
          color: white; /* Cambia el color del texto del toolbar */
          }
 

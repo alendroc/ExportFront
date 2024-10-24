@@ -22,4 +22,4 @@ const Container = styled.div`
   display: flex;
   flex-direction: column; /* Asegúrate de que el contenido se apile */
   padding: 14px;
-`;
+  `;

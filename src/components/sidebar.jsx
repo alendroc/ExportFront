@@ -18,7 +18,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 
   return (
   
-  <div className="flex flex-col bg-white dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
+  <div className="flex flex-col bg-white z-40 dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
     <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[20px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
@@ -122,7 +122,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
         </div>
         <MenuItems
           transition
-          className={`absolute z-10 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
+          className={`absolute z-40 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
           ${sidebarOpen ? 'right-[-90%]  -bottom-1' : 'right-[-185px]  -bottom-1'}`}
         >
           <MenuItem>

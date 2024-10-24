@@ -1,28 +1,27 @@
 import { server } from './global.js';
 
-export class TemporadasService {
-
+export class LoteService{
     constructor() {
         this.apiUrl = server.url;
     }
 
     async getAll() {
         try {
-            const response = await fetch(`${this.apiUrl}temporadas`, {
+            const response = await fetch(`${this.apiUrl}Lotes`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             if (!response.ok) {
-                throw new Error(`Error al obtener las temporadas: ${response.statusText}`);
+                throw new Error(`Error al obtener los lostes: ${response.statusText}`);
             }
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, temporadas: data.temporadas };
+                return { success: true, lotes: data.lostes };
             } else {
-                console.log('No se encontraron temporadas.');
+                console.log('No se encontraron lotes.');
                 return { success: false, status: data.status };
             }
 
@@ -37,7 +36,7 @@ export class TemporadasService {
 
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
+            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -45,17 +44,17 @@ export class TemporadasService {
             });
 
             if (response.status === 404) {
-                throw new Error('Temporada no encontrada.');
+                throw new Error('Lote no encontrado.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al obtener la Temporada: ${response.statusText}`);
+                throw new Error(`Error al obtener el lote: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, temporadas: data.temporadas };
+                return { success: true, lotes: data.lostes };
             } else {
                 console.log('Temporada no encontrada.');
                 return { success: false, status: data.status };
@@ -70,25 +69,25 @@ export class TemporadasService {
         }
     }
 
-    async create(temporada) {
+    async create(lote) {
         try {
-            console.log("temporada por agregar:", temporada)
-            const response = await fetch(`${this.apiUrl}temporadas`, {
+            console.log("lote por agregar:", lote)
+            const response = await fetch(`${this.apiUrl}Lotes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(temporada)
+                body: JSON.stringify(lote)
             });
 
             if (!response.ok) {
-                throw new Error(`Error al crear la temporada: ${response.statusText}`);
+                throw new Error(`Error al crear el lote: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, temporadas: data.temporadas };
+                return { success: true, lotes: data.lostes };
             } else {
                 console.log('Error al crear la temporada.');
                 return { success: false, status: data.status };
@@ -102,27 +101,27 @@ export class TemporadasService {
         }
     }
 
-    async update(id, temporadas) {
+    async update(id, lotes) {
         try {
-            console.log("el ide: ",id,"la temporada: ",temporadas)
-            const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
+            console.log("el ide: ",id,"el Lote: ",lotes)
+            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(temporadas)
+                body: JSON.stringify(lotes)
             });
 
             if (!response.ok) {
-                throw new Error(`Error al actualizar la temporada: ${response.statusText}`);
+                throw new Error(`Error al actualizar el lotre: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, temporadas: data.temporadas };
+                return { success: true, lotes: data.lotes };
             } else {
-                console.log('Error al actualizarla temporada.');
+                console.log('Error al actualizar el lote.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -137,7 +136,7 @@ export class TemporadasService {
     async delete(id) {
         try {
             console.log(id)
-            const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
+            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -145,11 +144,11 @@ export class TemporadasService {
             });
 
             if (response.status === 404) {
-                throw new Error('Temporada no encontrado.');
+                throw new Error('Lote no encontrado.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al eliminar la temporada: ${response.statusText}`);
+                throw new Error(`Error al eliminar el Lote: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -157,7 +156,7 @@ export class TemporadasService {
             if (data.isSuccess && data.status === 200) {
                 return { success: true, message: data.message };
             } else {
-                console.log('Error al eliminar la temporada.');
+                console.log('Error al eliminar el lote.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -168,6 +167,4 @@ export class TemporadasService {
             }
         }
     }
-
-
 }

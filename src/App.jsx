@@ -216,7 +216,7 @@ function navbar(location,arreglos){
           </div>
         )}
          <div>
-            <MyRoutes isAuthenticated={isAuthenticated} />
+            <MyRoutes  isAuthenticated={isAuthenticated} />
         </div>
       </div>
     </div>
