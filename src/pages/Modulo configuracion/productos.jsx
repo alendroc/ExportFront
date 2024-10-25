@@ -28,8 +28,10 @@ export function Productos() {
       });
   }, []);
 
+
+  
   const EDITABLE_COLUMNS = [
-    { title: "IdProducto", field: "idProducto" }, 
+    { title: "Producto", field: "idProducto" }, 
     { title: "Nombre Descriptivo", field: "nombreDescriptivo" },
     { title: "Tipo de Uso", field: "tipoUso" },
     { title: "Nombre Comercial", field: "nombreComercial" },
