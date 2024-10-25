@@ -19,7 +19,8 @@ export class LoteService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, lotes: data.lostes };
+                console.log('exitooooo.');
+                return { success: true, lotes: data.lotes };
             } else {
                 console.log('No se encontraron lotes.');
                 return { success: false, status: data.status };

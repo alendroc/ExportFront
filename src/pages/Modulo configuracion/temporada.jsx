@@ -4,6 +4,7 @@ import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox } from '@mui/icons-material';
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
+
 var temporadasService = new TemporadasService
 
   const columns = [
@@ -75,7 +76,7 @@ useEffect(() => {
         try {
             const response = await temporadasService.getAll();
             if (response.success) {
-                setData(response.temporadas); // Asegúrate de que la propiedad sea correcta
+                setData(response.temporadas); 
                 console.log("Temporadas", response.temporadas);
             } else {
                 console.log("No se pudieron obtener las temporadas.");
@@ -156,8 +157,19 @@ useEffect(() => {
                showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
                reject(`Error al crear el producto: ${response.message}`);
               }else{
-                  const isDuplicate = data.some(season => season.temporada = newDataWithId.temporada)
+                const response = temporadasService.getAll();
+            if (response.success) {
+                setData(response.temporadas); 
+                console.log("Temporadas", response.temporadas);
+            } else {
+                console.log("No se pudieron obtener las temporadas.");
+            }
+                  const isDuplicate = data.some(season => season.temporada === newDataWithId.temporada)
+
+
+                  console.log(data)
                   if(isDuplicate){
+                    
                     showToast('error', 'Ya existe esa temporada','#9c1010'); 
                     reject(`Error al crear el producto: ${response.message}`);
                   }else{
@@ -165,8 +177,9 @@ useEffect(() => {
                         .then(response => {
                             if (response.success) {
                                 console.log("Temporada creada exitosamente");
+                                setData(prevData => [...prevData, newDataWithId]);
                                 showToast('success', 'Temporada creada', '#2d800e');
-                                resolve(); // Resolvemos la promesa si todo fue bien
+                                resolve();
                             } else {
                                 reject(`Error al crear el producto: ${response.message}`);
                             }
@@ -206,6 +219,7 @@ useEffect(() => {
                           resolve();
                       } else {
                           reject(`Error al actualizar la temporada: ${response.message}`);
+                          showToast('error', 'Error al actualizar la temporada', '#9c1010');
                       }
                   })
                   .catch(error => {
@@ -262,11 +276,9 @@ useEffect(() => {
      @media (max-width: 1200px){
        
      }
-    
      @media (min-width: 1600px) {
     .MuiTypography-h6 {
       font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
-      
     }
     .MuiTableCell-root {
         padding: 0 8px; 
