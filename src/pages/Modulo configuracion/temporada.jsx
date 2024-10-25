@@ -4,9 +4,6 @@ import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox } from '@mui/icons-material';
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 var temporadasService = new TemporadasService
 
   const columns = [

@@ -2,7 +2,7 @@ import styled from "styled-components";
 import MaterialTable from "@material-table/core";
 import { useState, useEffect } from "react";
 import { ProductoService } from "../../services/ProductoService";
-import { Delete, Edit, AddBox } from '@mui/icons-material';
+import { Delete, Edit, AddBox } from '@mui/icons-material'; 
 
 var productoService = new ProductoService();
 
