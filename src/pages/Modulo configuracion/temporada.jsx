@@ -136,10 +136,16 @@ useEffect(() => {
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
+          editTooltip: 'Editar',  
+          deleteTooltip: 'Eliminar',
+          addTooltip: 'Agregar'
         },
         header: {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-        }
+        },
+        toolbar: {
+          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+      },
       }}
       editable={{
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
@@ -152,7 +158,13 @@ useEffect(() => {
                     activacion: newData.activacion !== undefined ? newData.activacion : false,
                     descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion : null,
                 }; 
+          
 
+            if (newDataWithId.fechaInicio == null || newDataWithId.fechaFin == null) {
+                  showToast('error', 'Debe completar los campos fecha', '#9c1010');
+                  reject('Error al actualizar el producto: Fecha inválida');
+                  return;
+              }     
            if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
                reject(`Error al crear el producto: ${response.message}`);
@@ -196,11 +208,17 @@ useEffect(() => {
               const index = data.findIndex(item => item.temporada === oldData.temporada);
               const updatedData = [...data];
 
+            if (newData.fechaInicio == "" || newData.fechaFin == "" || newData.fechaInicio == null ||  newData.fechaFin == null) {
+                showToast('error', 'Debe completar los campos fecha', '#9c1010');
+                reject('Error al actualizar el producto: Fecha inválida');
+                return;
+            }
               if (newData.fechaInicio >= newData.fechaFin) {
                   showToast('error', 'La fecha inicio debe ser menor a fecha final', '#9c1010');
                   reject('Error al actualizar el producto: Fecha inválida');
                   return;
               }
+             
 
               const isDuplicate = updatedData.some((season, idx) => season.temporada === newData.temporada && idx !== index);
               if (isDuplicate) {

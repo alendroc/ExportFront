@@ -57,7 +57,7 @@ export class LoteService{
             if (data.isSuccess && data.status === 200) {
                 return { success: true, lotes: data.lostes };
             } else {
-                console.log('Temporada no encontrada.');
+                console.log('Lote no encontrada.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -88,9 +88,9 @@ export class LoteService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, lotes: data.lostes };
+                return { success: true, lotes: data.lotes };
             } else {
-                console.log('Error al crear la temporada.');
+                console.log('Error al crear el articulo.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -114,7 +114,7 @@ export class LoteService{
             });
 
             if (!response.ok) {
-                throw new Error(`Error al actualizar el lotre: ${response.statusText}`);
+                throw new Error(`Error al actualizar el lote: ${response.statusText}`);
             }
 
             const data = await response.json();

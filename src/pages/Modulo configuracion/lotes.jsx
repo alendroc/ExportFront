@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import MaterialTable from "@material-table/core";
-import React, { useState, useEffect  } from "react";
-import { Delete, Edit, AddBox } from '@mui/icons-material';
+import React, {forwardRef ,useState, useEffect  } from "react";
+import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { LoteService } from "../../services/LoteService";
 import { showToast } from "../../components/helpers";
 
 var loteService = new LoteService;
 
+
 const columns = [
-    { title: "Lote", field: "nombreLote", editable: 'onAdd' },
+    { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => (row.nombreLote || "").length !== 0, },
     { title: "Activo", field: "activo", type: "boolean" },
     { title: "Área", field: "area", type: "numeric", 
         validate: rowData => {
@@ -18,6 +19,7 @@ const columns = [
     },
     { title: "Descripción", field: "descripcion" },
 ];
+
 
 export function Lote(){
     const [data, setData] = useState([]);
@@ -56,6 +58,9 @@ export function Lote(){
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+
+
   return(
 <Container >
   <MaterialTable size="small"
@@ -78,7 +83,7 @@ export function Lote(){
         Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
         Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
         Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
-      }}
+    }}
       localization={{
         body: {
           editRow: {
@@ -86,27 +91,35 @@ export function Lote(){
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
+          editTooltip: 'Editar',  
+          deleteTooltip: 'Eliminar',
+          addTooltip: 'Agregar'
         },
         header: {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-        }
+        },
+        toolbar: {
+            searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+        },
       }}
       editable={{
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
+            return new Promise((resolve, reject) => { 
             const newDataWithId = {
                 ...newData,
+
             }
             const isDuplicate = data.some(lotes => lotes.nombreLote === newDataWithId.nombreLote)
             console.log(newDataWithId.nombreLote)
             if(isDuplicate){
-              
               showToast('error', 'Ya existe ese lote','#9c1010'); 
               reject(`Error al crear el producto: ${response.message}`);
-            }else{
-            return new Promise((resolve, reject) => { 
-                    loteService.create(newData)
+              return
+            }
+            
+                    loteService.create(newDataWithId)
                         .then(response => {
                             if (response.success) {
                                 console.log("Lote creado exitosamente");
@@ -121,7 +134,7 @@ export function Lote(){
                             reject(`Error de red: ${error.message}`);
                         });
               });
-            }
+            
         },
         onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
@@ -172,6 +185,7 @@ export function Lote(){
             });
         },
       }}
+ 
     />
 </Container>
   );
@@ -185,7 +199,6 @@ z-index: 1;
       background-color: #50ad53; /* Cambia el color del fondo del toolbar */
       color: white; /* Cambia el color del texto del toolbar */
       }
-
 
   .MuiTableCell-root {
      border-radius: 20px;
