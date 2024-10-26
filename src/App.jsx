@@ -52,7 +52,7 @@ function App() {
         { name: "Labores", href: "/Configuracion/labores"},
         { name: "Productos", href: "/Configuracion/productos"},
         { name: "Camas y valvulas", href: "/Configuracion/camasValvulas"},
-        { name: "Administracion de usuarios", href: "/Configuracion/AdministrarUsuario"},
+        { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
         { name: "Cambiar contraseña", href: "/Configuracion/cambiarContra"},
       ]
     },

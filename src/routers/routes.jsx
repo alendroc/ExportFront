@@ -8,7 +8,11 @@ import { Articulos } from "../pages/Modulo configuracion/articulos.jsx";
 import { IngresarDatos } from "../pages/Modulo Navegacion/ingresarDatos.jsx";
 import { Productos } from "../pages/Modulo configuracion/productos.jsx";
 import { Temporada } from "../pages/Modulo configuracion/temporada.jsx";
+import { Usuarios } from "../pages/Modulo configuracion/adminUsuarios.jsx";
 import { Lote } from "../pages/Modulo configuracion/lotes.jsx";
+import { Departamento } from "../pages/Modulo configuracion/departamentos.jsx";
+
+
 
 export const MyRoutes = () => {
   return (
@@ -25,7 +29,10 @@ export const MyRoutes = () => {
         <Route path="articulos" element={<Articulos/>}/>
         <Route path="productos" element={<Productos/>}/>
         <Route path="temporadas" element={<Temporada/>}/>
+        <Route path="adminUsuarios" element={<Usuarios/>}/>
         <Route path="lotes" element={<Lote/>}/>
+        <Route path="departamentos" element={<Departamento/>}/>
+
       </Route>
     </Routes>
   );
