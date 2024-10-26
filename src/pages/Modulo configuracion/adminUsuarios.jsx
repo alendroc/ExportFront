@@ -11,23 +11,22 @@ export function Usuarios() {
   const [loading, setLoading] = useState(true);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
 
-  useEffect(() => {
-    usuarioService.getAll()
-      .then((response) => {
-        if (response.isSuccess) {
-          setData(response.usuarios);
-          console.log("Usuarios", response.usuarios);
-        } else {
-          console.log("No se pudieron obtener los usuarios.");
-          console.error("Error al obtener los usuarios:", error);
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los usuarios:", error);
-        setLoading(false);
-      });
-  }, []);
+ useEffect(() => {
+  usuarioService.getAll()
+    .then((response) => {
+      if (response.success) { 
+        setData(response.usuarios);
+        console.log("Usuarios:", response.usuarios);
+      } else {
+        console.log("No se pudieron obtener los usuarios.");
+      }
+      setLoading(false);
+    })
+    .catch((error) => {
+      console.error("Error al obtener los usuarios:", error);
+      setLoading(false);
+    });
+}, []);
 
   const EDITABLE_COLUMNS = [
     { title: "Id", field: "idUsuario" }, 

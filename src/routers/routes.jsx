@@ -8,11 +8,9 @@ import { Articulos } from "../pages/Modulo configuracion/articulos.jsx";
 import { IngresarDatos } from "../pages/Modulo Navegacion/ingresarDatos.jsx";
 import { Productos } from "../pages/Modulo configuracion/productos.jsx";
 import { Temporada } from "../pages/Modulo configuracion/temporada.jsx";
-<<<<<<< HEAD
 import { Usuarios } from "../pages/Modulo configuracion/adminUsuarios.jsx";
-=======
 import { Lote } from "../pages/Modulo configuracion/lotes.jsx";
->>>>>>> b82d4d43ef44824f590c976172fc420a46cd03c1
+
 
 export const MyRoutes = () => {
   return (
@@ -29,11 +27,9 @@ export const MyRoutes = () => {
         <Route path="articulos" element={<Articulos/>}/>
         <Route path="productos" element={<Productos/>}/>
         <Route path="temporadas" element={<Temporada/>}/>
-<<<<<<< HEAD
         <Route path="adminUsuarios" element={<Usuarios/>}/>
-=======
         <Route path="lotes" element={<Lote/>}/>
->>>>>>> b82d4d43ef44824f590c976172fc420a46cd03c1
+
       </Route>
     </Routes>
   );
