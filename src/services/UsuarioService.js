@@ -127,8 +127,10 @@ export class UsuarioService {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                console.error("Error devuelto por la API:", errorData); // Agrega esta línea
                 throw new Error(`Error al crear el usuario: ${errorData.message || response.statusText}`);
             }
+            
 
             const data = await response.json();
 
@@ -178,7 +180,12 @@ export class UsuarioService {
     }
 
     // Eliminar un usuario por ID
+
     async delete(id) {
+        if (!id) {
+            throw new Error('ID del usuario no proporcionado.');
+        }
+
         try {
             const response = await fetch(`${this.apiUrl}usuarios/${id}`, {
                 method: 'DELETE',
@@ -186,6 +193,10 @@ export class UsuarioService {
                     'Content-Type': 'application/json'
                 }
             });
+
+            if (response.status === 404) {
+                throw new Error('Usuario no encontrado.');
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -197,6 +208,7 @@ export class UsuarioService {
             if (data.isSuccess && data.status === 200) {
                 return { success: true, message: data.message };
             } else {
+                console.log('Error al eliminar el usuario.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -207,4 +219,6 @@ export class UsuarioService {
             }
         }
     }
+
+    
 }
