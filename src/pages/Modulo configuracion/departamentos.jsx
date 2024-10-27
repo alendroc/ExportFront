@@ -8,7 +8,7 @@ import { showToast } from "../../components/helpers";
 var departamentoService = new DepartamentoService;
 
 const columns = [
-    { title: "Departamento", field: "departamento", editable: 'onAdd' },
+    { title: "Departamento", field: "departamento", editable: 'onAdd',validate: (row) => (row.departamento || "").length !== 0,  },
     { title: "Encargado", field: "encargado", type: "string" },
     { title: "Descripción", field: "descripcion" },
 ];
@@ -100,7 +100,7 @@ export function Departamento(){
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
             return new Promise((resolve, reject) => {
-                try{
+            try{
             const newDataWithId = {
                 departamento: newData.departamento.toUpperCase(),
                 encargado: newData.encargado ? newData.encargado.toUpperCase() : '',
@@ -110,7 +110,6 @@ export function Departamento(){
             const isDuplicate = data.some(departamentos => departamentos.departamento === newDataWithId.departamento)
             //console.log(newDataWithId.departamento)
             if(isDuplicate){
-              
               showToast('error', 'Ya existe ese departamento','#9c1010'); 
               reject(`Error al crear el producto: ${response.message}`);
               return
@@ -129,10 +128,13 @@ export function Departamento(){
                             }
                         })
                         .catch(error => {
-                            reject(`Error de red: ${error.message}`);
+                          //console.log(error)
+                          showToast('error', error,'#9c1010'); 
+                          reject(`Error de red: ${error.message}`);
                         });
                     }catch(error){
                         console.log(error)
+                        reject('Ocurrió un error inesperado');
                     }
 
               });
@@ -140,6 +142,7 @@ export function Departamento(){
         },
         onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
+            try{
             const index = data.findIndex(item => item.departamento === oldData.departamento);
             const updatedData = [...data];
             const newDataWithId = {
@@ -170,13 +173,19 @@ export function Departamento(){
                       }
                   })
                   .catch(error => {
-                      reject(`Error de red: ${error.message}`);
+                    showToast('error', error,'#9c1010'); 
+                    reject(`Error de red: ${error.message}`);
                   });
+               }catch(error){
+                  console.log(error)
+                  reject('Ocurrió un error inesperado');
+              }
             })
 
         },
         onRowDelete: (oldData) => { 
             return new Promise((resolve, reject) => {
+              try{
                 departamentoService.delete(oldData.departamento) // Llama a la función de eliminación
                 .then(response => {
                     if (response.success) {
@@ -188,8 +197,12 @@ export function Departamento(){
                     }
                 })
                 .catch(error => {
-                    reject(`Error al eliminar: ${error.message}`);
+                  showToast('error', error,'#9c1010'); 
+                  reject(`Error al eliminar: ${error.message}`);
                 });
+              }catch(error){
+                console.log(error)
+                reject('Ocurrió un error inesperado');}
             });
         },
       }}
