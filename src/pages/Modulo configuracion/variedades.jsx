@@ -7,7 +7,7 @@ import { VariedadesService } from "../../services/variedadesService";
 var variedadesService = new VariedadesService;
 
 const columns = [
-    { title: "Cultivo", field: "cultivo",validate: (row) => (row.cultivo || "").length !== 0, 
+    { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => (row.cultivo || "").length !== 0, 
     lookup: {
         MELON: 'MELÓN',
         CANA: 'CANA',
@@ -58,7 +58,7 @@ export function Variedades() {
     return (
 <Container >
   <MaterialTable size="small"
-       title="Gestión de lotes"
+       title="Gestión de variedades"
       data={data}
       columns={columns || []}
       options={{
@@ -163,7 +163,7 @@ export function Variedades() {
                   }
                   updatedData[index] = newDataWithId;
 
-                  variedadesService.update(oldData.variedad, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+                  variedadesService.update(oldData.cultivo, oldData.variedad, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);
@@ -182,7 +182,25 @@ export function Variedades() {
 
         },
         onRowDelete: (oldData) => { 
-          
+          return new Promise((resolve, reject) => {
+            variedadesService.delete(oldData.cultivo, oldData.variedad) // Llama a la función de eliminación
+            .then(response => {
+                if (response.success) {
+                  const dataDelete = data.filter(
+                    (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad)
+                );
+                    setData(dataDelete); 
+                    resolve();
+                } else {
+                 
+                  showToast('error', '`Error al elimanr el articulo', '#9c1010');
+                    reject('No se pudo eliminar el articulo.');
+                }
+            })
+            .catch(error => {
+                reject(`Error al eliminar: ${error.message}`);
+            });
+        });
         },
       }}
  
@@ -193,7 +211,7 @@ export function Variedades() {
   const Container =styled.div`
   display: block;
   width: 100%;
-  
+  max-width: 1100px;
   z-index: 1;
        .MuiToolbar-root {
         background-color: #50ad53; /* Cambia el color del fondo del toolbar */

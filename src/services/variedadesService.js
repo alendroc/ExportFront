@@ -101,10 +101,10 @@ export class VariedadesService {
         }
     }
 
-    async update(id, variedades) {
+    async update(cultivo, variedad, variedades) {
         try {
-            console.log("el ide: ",id,"la variedades: ",variedades)
-            const response = await fetch(`${this.apiUrl}variedades/${id}`, {
+            console.log("Cultivo:", cultivo, "Variedad:", variedad, "Datos a actualizar:", variedades)
+            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
                 
                 method: 'PUT',
                 headers: {
@@ -135,10 +135,10 @@ export class VariedadesService {
         }
     }
 
-    async delete(id) {
+    async delete(cultivo, variedad) {
         try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}variedades/${id}`, {
+            console.log(cultivo, variedad,)
+            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
