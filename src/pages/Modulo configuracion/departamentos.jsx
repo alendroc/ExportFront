@@ -25,10 +25,13 @@ export function Departamento(){
                     setData(response.departamentos); 
                     console.log("Departamentos", response.departamentos);
                 } else {
-                    console.log("No se pudieron obtener los departamentos.");
+                  
+                  setData([]); 
+                  console.log(response.message);
                 }
             } catch (error) {
-                console.error("Error al obtener los departamentos:", error);
+              showToast('error', error,'#9c1010'); 
+              console.error("Error al obtener los departamentos:", error);
             }
         };
         fetchData();

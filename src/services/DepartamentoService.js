@@ -13,27 +13,31 @@ export class DepartamentoService{
                     'Content-Type': 'application/json'
                 }
             });
+            if (response.status === 204) {
+                return { success: false, status: 204, message: 'No se encontraron departamentos.' };
+            } 
+            
             if (!response.ok) {
                 throw new Error(`Error al obtener los departamentos: ${response.statusText}`);
             }
+    
             const data = await response.json();
-
             if (data.isSuccess && data.status === 200) {
-                console.log('exitooooo.');
+                console.log('Departamentos obtenidos exitosamente.');
                 return { success: true, departamentos: data.departamentos };
             } else {
-                console.log('No se encontraron departamentos.');
                 return { success: false, status: data.status };
             }
-
-        }catch (error){
+    
+        } catch (error) {
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
-                throw new Error(error.message, error);
+                throw new Error(`Error: ${error.message}`);
             }
         }
     }
+    
 
     async getById(id) {
         try {
