@@ -20,7 +20,7 @@ export class DepartamentoService{
 
             if (data.isSuccess && data.status === 200) {
                 console.log('exitooooo.');
-                return { success: true, departamentos: data.Departamentos };
+                return { success: true, departamentos: data.departamentos };
             } else {
                 console.log('No se encontraron departamentos.');
                 return { success: false, status: data.status };
@@ -55,7 +55,7 @@ export class DepartamentoService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, departamentos: data.Departamentos };
+                return { success: true, departamentos: data.departamentos };
             } else {
                 console.log('Departamento no encontrado.');
                 return { success: false, status: data.status };
@@ -88,12 +88,13 @@ export class DepartamentoService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, departamentos: data.Departamentos };
+                return { success: true, departamentos: data.departamentos };
             } else {
                 console.log('Error al crear el departamento.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
+            //console.log(error.message)
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
@@ -120,7 +121,7 @@ export class DepartamentoService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, departamentos: data.Departamentos };
+                return { success: true, departamentos: data.departamentos };
             } else {
                 console.log('Error al actualizar el departamento.');
                 return { success: false, status: data.status };
