@@ -81,14 +81,15 @@ export function Productos() {
         data={data}
         options={{
           actionsColumnIndex: -1,
-          maxBodyHeight: maxBodyHeight,
-          paging: false,
+          maxBodyHeight: maxBodyHeight, 
+          padding: onabort,
+          paging: false, 
           headerStyle: {
-            position: "sticky",
-            top: 0,
-            backgroundColor: "#fff",
-            zIndex: 9999,
-          },
+              position: 'sticky', 
+              top: 0,
+              zIndex: 1,
+              backgroundColor: '#fff',
+            },
         }}
         icons={{
           Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />,
@@ -98,13 +99,19 @@ export function Productos() {
         localization={{
           body: {
             editRow: {
-              deleteText: "¿Estás seguro de que deseas eliminar este producto?",
-              cancelTooltip: "Cancelar",
-              saveTooltip: "Confirmar",
+              deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
+              cancelTooltip: 'Cancelar', // Texto del botón de cancelar
+              saveTooltip: 'Confirmar',  // Texto del botón de confirmar
             },
+            editTooltip: 'Editar',  
+            deleteTooltip: 'Eliminar',
+            addTooltip: 'Agregar'
           },
           header: {
-            actions: "Acciones",
+            actions: 'Acciones' // Cambia el encabezado de la columna de acciones
+          },
+          toolbar: {
+              searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
           },
         }}
         editable={{
@@ -213,37 +220,44 @@ export function Productos() {
   );
 }
 
-const Container = styled.div`
-  display: block;
-  width: 90%;
-  max-width: 1800px;
+const Container =styled.div`
+display: block;
+width: 95%;
+max-width: 1020px;
+z-index: 1;
+    .MuiToolbar-root {
+     background-color: #50ad53; /* Cambia el color del fondo del toolbar */
+     color: white; /* Cambia el color del texto del toolbar */
+     }
 
-  .MuiToolbar-root {
-    background-color: #060270;
-    color: white;
-  }
-
-  .MuiTableCell-root {
+ .MuiTableCell-root {
     border-radius: 20px;
-    padding: 4px 8px;
-    font-size: 12px !important;
+    padding: 4px 8px; 
+    font-size: 11px !important;
   }
 
   .MuiTableRow-root {
-    height: 30px;
+    height: 30px; /* Cambia la altura de las filas */
   }
-
   .MuiTypography-h6 {
-    font-size: 16px;
+font-size: 16px; /* Cambia este valor al tamaño deseado */
+ }
+ @media (min-width: 1400px){
+  max-width: 1250px;
+   .MuiTableCell-root {
+    padding: 0 8px; 
+    font-size: 12px !important;
   }
-
-  @media (min-width: 1600px) {
-    .MuiTypography-h6 {
-      font-size: 20px;
-    }
-    .MuiTableCell-root {
-      padding: 0 8px;
-      font-size: 16px !important;
-    }
+ }
+ @media (min-width: 1600px) {
+  width: 100%;
+  max-width: 1450px;
+.MuiTypography-h6 {
+  font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
+}
+.MuiTableCell-root {
+    padding: 0 8px; 
+    font-size: 16px !important;
   }
-`;
+}
+ `

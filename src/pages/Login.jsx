@@ -7,10 +7,6 @@ import { Usuario } from "../models/Usuario";
 import { showToast } from '../components/helpers';
 
 var usuarioService = new UsuarioService();
-
-
-
-
 export function Login({ sesion }) {
   
   const [user, setUser] = useState('');

@@ -136,10 +136,16 @@ useEffect(() => {
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
+          editTooltip: 'Editar',  
+          deleteTooltip: 'Eliminar',
+          addTooltip: 'Agregar'
         },
         header: {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-        }
+        },
+        toolbar: {
+          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+      },
       }}
       editable={{
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
@@ -150,9 +156,15 @@ useEffect(() => {
                     ...newData,
                     temporada: newData.temporada,
                     activacion: newData.activacion !== undefined ? newData.activacion : false,
-                    descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion : null,
+                    descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
                 }; 
+          
 
+            if (newDataWithId.fechaInicio == null || newDataWithId.fechaFin == null) {
+                  showToast('error', 'Debe completar los campos fecha', '#9c1010');
+                  reject('Error al actualizar el producto: Fecha inválida');
+                  return;
+              }     
            if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
                reject(`Error al crear el producto: ${response.message}`);
@@ -195,23 +207,36 @@ useEffect(() => {
           return new Promise((resolve, reject) => {
               const index = data.findIndex(item => item.temporada === oldData.temporada);
               const updatedData = [...data];
+              const newDataWithId = {
+                ...newData,
+                temporada: newData.temporada,
+                activacion: newData.activacion !== undefined ? newData.activacion : false,
+                descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
+            }; 
+            console.log(newDataWithId)
 
-              if (newData.fechaInicio >= newData.fechaFin) {
+            if (newDataWithId.fechaInicio == "" || newDataWithId.fechaFin == "" || newDataWithId.fechaInicio == null ||  newDataWithId.fechaFin == null) {
+                showToast('error', 'Debe completar los campos fecha', '#9c1010');
+                reject('Error al actualizar el producto: Fecha inválida');
+                return;
+            }
+              if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                   showToast('error', 'La fecha inicio debe ser menor a fecha final', '#9c1010');
                   reject('Error al actualizar el producto: Fecha inválida');
                   return;
               }
+             
 
-              const isDuplicate = updatedData.some((season, idx) => season.temporada === newData.temporada && idx !== index);
+              const isDuplicate = updatedData.some((season, idx) => season.temporada === newDataWithId.temporada && idx !== index);
               if (isDuplicate) {
                   showToast('error', 'Ya existe esa temporada', '#9c1010');
                   reject('Error al actualizar el producto: La temporada ya existe');
                   return;
               }
 
-              updatedData[index] = newData;
+              updatedData[index] = newDataWithId;
 
-              temporadasService.update(oldData.temporada, newData) // Asumiendo que `oldData` tiene un campo `id`
+              temporadasService.update(oldData.temporada, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);

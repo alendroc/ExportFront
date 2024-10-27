@@ -1,28 +1,28 @@
 import {server} from './global.js'
 
-export class ArticulosService {
+export class VariedadesService {
     constructor() {
         this.apiUrl = server.url;
     }
 
     async getAll() {
         try {
-            const response = await fetch(`${this.apiUrl}articulos`, {
+            const response = await fetch(`${this.apiUrl}variedades`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
             if (!response.ok) {
-                throw new Error(`Error al obtener los articulos: ${response.statusText}`);
+                throw new Error(`Error al obtener las variedades: ${response.statusText}`);
             }
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
                 console.log('exitooooo.');
-                return { success: true, articulos: data.articulos };
+                return { success: true, variedades: data.variedades };
             } else {
-                console.log('No se encontraron articulos.');
+                console.log('No se encontraron variedades.');
                 return { success: false, status: data.status };
             }
 
@@ -34,9 +34,10 @@ export class ArticulosService {
             }
         }
     }
+
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}articulos/${id}`, {
+            const response = await fetch(`${this.apiUrl}variedades/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,19 +45,19 @@ export class ArticulosService {
             });
 
             if (response.status === 404) {
-                throw new Error('Articulo no encontrado.');
+                throw new Error('variedad no encontrada.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al obtener el Articulo: ${response.statusText}`);
+                throw new Error(`Error al obtener la variedad: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, articulos: data.articulos };
+                return { success: true, variedades: data.variedades };
             } else {
-                console.log('Articulo no encontrado.');
+                console.log('variedad no encontrada.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -68,28 +69,27 @@ export class ArticulosService {
             }
         }
     }
-
-    async create(articulo) {
+    async create(variedad) {
         try {
-            console.log("Articulo por agregar:", articulo)
-            const response = await fetch(`${this.apiUrl}articulos`, {
+            console.log("Articulo por agregar:", variedad)
+            const response = await fetch(`${this.apiUrl}variedades`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(articulo)
+                body: JSON.stringify(variedad)
             });
 
             if (!response.ok) {
-                throw new Error(`Error al crear el articulo: ${response.statusText}`);
+                throw new Error(`Error al crear la variedad: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, articulo: data.articulo };
+                return { success: true, variedad: data.variedad };
             } else {
-                console.log('Error al crear el articulo.');
+                console.log('Error al crear la varidad.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -100,29 +100,30 @@ export class ArticulosService {
             }
         }
     }
-    async update(id, articulos) {
+
+    async update(cultivo, variedad, variedades) {
         try {
-            console.log("el ide: ",id,"el articulo: ",articulos)
-            const response = await fetch(`${this.apiUrl}articulos/${id}`, {
+            console.log("Cultivo:", cultivo, "Variedad:", variedad, "Datos a actualizar:", variedades)
+            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
                 
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(articulos)
+                body: JSON.stringify(variedades)
             });
             console.log(response)
 
             if (!response.ok) {
-                throw new Error(`Error al actualizar el articulo: ${response.statusText}`);
+                throw new Error(`Error al actualizar la variedad: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, articulos: data.articulos };
+                return { success: true, variedades: data.variedades };
             } else {
-                console.log('Error al actualizar el articulo.');
+                console.log('Error al actualizar la variedad.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -134,10 +135,10 @@ export class ArticulosService {
         }
     }
 
-    async delete(id) {
+    async delete(cultivo, variedad) {
         try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}articulos/${id}`, {
+            console.log(cultivo, variedad,)
+            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -145,11 +146,11 @@ export class ArticulosService {
             });
 
             if (response.status === 404) {
-                throw new Error('articulo no encontrado.');
+                throw new Error('variedad no encontrado.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al eliminar el articulo: ${response.statusText}`);
+                throw new Error(`Error al eliminar la variedad: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -157,7 +158,7 @@ export class ArticulosService {
             if (data.isSuccess && data.status === 200) {
                 return { success: true, message: data.message };
             } else {
-                console.log('Error al eliminar el articulo.');
+                console.log('Error al eliminar la variedad.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -168,6 +169,4 @@ export class ArticulosService {
             }
         }
     }
-
-    
 }
