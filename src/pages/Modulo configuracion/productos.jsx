@@ -3,6 +3,7 @@ import MaterialTable from "@material-table/core";
 import { useState, useEffect } from "react";
 import { ProductoService } from "../../services/ProductoService";
 import { Delete, Edit, AddBox } from '@mui/icons-material'; 
+import { showToast } from "../../components/helpers";
 
 var productoService = new ProductoService();
 
@@ -31,7 +32,7 @@ export function Productos() {
 
   
   const EDITABLE_COLUMNS = [
-    { title: "Producto", field: "idProducto" }, 
+    { title: "Producto", field: "idProducto", editable: 'never' }, 
     { title: "Nombre Descriptivo", field: "nombreDescriptivo" },
     { title: "Tipo de Uso", field: "tipoUso" },
     { title: "Nombre Comercial", field: "nombreComercial" },
@@ -99,7 +100,7 @@ export function Productos() {
         localization={{
           body: {
             editRow: {
-              deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
+              deleteText: '¿Estás seguro de que deseas eliminar este producto?', // Cambia el mensaje de confirmación
               cancelTooltip: 'Cancelar', // Texto del botón de cancelar
               saveTooltip: 'Confirmar',  // Texto del botón de confirmar
             },
@@ -151,6 +152,7 @@ export function Productos() {
           
               const missingFields = requiredFields.filter(field => !newDataWithId[field] && newDataWithId[field] !== false);
               if (missingFields.length > 0) {
+                showToast('error', `Faltan los siguientes campos: ${missingFields.join(", ")}`, '#9c1010');
                 reject(`Faltan los siguientes campos: ${missingFields.join(", ")}`);
                 return;
               }
@@ -159,12 +161,15 @@ export function Productos() {
                 .then(response => {
                   if (response.success) {
                     setData(prevData => [...prevData, response.producto]);
+                    showToast('success', 'Producto creado exitosamente', '#2d800e');
                     resolve();
                   } else {
+                    showToast('error', `Error al crear el producto: ${response.message}`, '#9c1010');
                     reject(`Error al crear el producto: ${response.message}`);
                   }
                 })
                 .catch(error => {
+                  showToast('error', `Error de red: ${error.message}`, '#9c1010');
                   reject(`Error de red: ${error.message}`);
                 });
             });
@@ -178,24 +183,30 @@ export function Productos() {
                     productoService.getAll()
                       .then((getAllResponse) => {
                         if (getAllResponse.success) {
-                          setData(getAllResponse.productos); 
+                          setData(getAllResponse.productos);
+                          showToast('success', 'Producto actualizado correctamente', '#2d800e');
                           resolve();
                         } else {
+                          showToast('error', "Error al obtener los productos actualizados", '#9c1010');
                           reject("Error al obtener los productos actualizados");
                         }
                       })
                       .catch(error => {
+                        showToast('error', `Error al obtener los productos actualizados: ${error.message}`, '#9c1010');
                         reject(`Error al obtener los productos actualizados: ${error.message}`);
                       });
                   } else {
+                    showToast('error', "Error al actualizar el producto", '#9c1010');
                     reject("Error al actualizar el producto");
                   }
                 })
                 .catch(error => {
+                  showToast('error', `Error: ${error.message}`, '#9c1010');
                   reject(`Error: ${error.message}`);
                 });
             });
           },
+          
           
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
@@ -203,12 +214,15 @@ export function Productos() {
                 .then(response => {
                   if (response.success) {
                     setData(prevData => prevData.filter((el) => el.idProducto !== oldData.idProducto));
+                    showToast('success', 'Producto eliminado exitosamente', '#2d800e');
                     resolve();
                   } else {
+                    showToast('error', "Error al eliminar el producto", '#9c1010');
                     reject("Error al eliminar el producto");
                   }
                 })
                 .catch(error => {
+                  showToast('error', error.message, '#9c1010');
                   reject(error.message);
                 });
             });

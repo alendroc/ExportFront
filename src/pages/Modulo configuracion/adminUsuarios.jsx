@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { UsuarioService } from "../../services/UsuarioService";
 import { DepartamentoService } from "../../services/DepartamentoService"; 
 import { Delete, Edit } from '@mui/icons-material';
+import { showToast } from "../../components/helpers";
 
 const usuarioService = new UsuarioService();
 const departamentoService = new DepartamentoService();
@@ -20,38 +21,35 @@ export function Usuarios() {
     idEmpleado: '',
     departamentos: []
   });
+  
+  const [isEditing, setIsEditing] = useState(false); // Estado para verificar si estamos en modo de edición
 
   useEffect(() => {
-    usuarioService.getAll()
-      .then((response) => {
-        if (response.success) {
-          setData(response.usuarios);
-          console.log("Usuarios:", response.usuarios);
+    const fetchData = async () => {
+      try {
+        const usuarioResponse = await usuarioService.getAll();
+        if (usuarioResponse.success) {
+          setData(usuarioResponse.usuarios);
         } else {
-          console.log("No se pudieron obtener los usuarios.");
+          showToast('error', 'No se pudieron obtener los usuarios.', '#9c1010');
         }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los usuarios:", error);
-        setLoading(false);
-      });
-      
-      departamentoService.getAll() 
-      .then(response => {
-        if (response.success) {
-          setDepartamentos(response.departamentos); 
-        } else {
-          console.log("No se obtienen los departamentos:", response.message); 
-        }
-      })
-      .catch(error => {
-        console.error("Error obteniendo departamentos:", error);
-      }
-    );
-  }, []);
 
-  
+        const departamentoResponse = await departamentoService.getAll();
+        if (departamentoResponse.success) {
+          setDepartamentos(departamentoResponse.departamentos); 
+        } else {
+          showToast('error', 'No se obtienen los departamentos.', '#9c1010');
+        }
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+        showToast('error', 'Error al obtener datos.', '#9c1010');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,27 +66,61 @@ export function Usuarios() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const empleadoExists = data.some(user => user.idEmpleado === nuevoUsuario.idEmpleado);
+    if (empleadoExists && !isEditing) {
+      showToast('error', 'El ID de empleado ya está en uso.', '#9c1010');
+      return; 
+    }
+
     const usuario = {
-        Usuario: nuevoUsuario.usuario,
-        RolDeUsuario: nuevoUsuario.rolDeUsuario,
-        Contrasena: nuevoUsuario.contrasena,
-        IdEmpleado: nuevoUsuario.idEmpleado,
-        //Departamentos: nuevoUsuario.departamentos.map(departamento => ({ Departamento: departamento })), 
-        FechaCreacion: new Date().toISOString().split('T')[0] 
+      Usuario: nuevoUsuario.usuario,
+      RolDeUsuario: nuevoUsuario.rolDeUsuario,
+      Contrasena: nuevoUsuario.contrasena,
+      IdEmpleado: nuevoUsuario.idEmpleado,
+      FechaCreacion: new Date().toISOString().split('T')[0]
     };
-    console.log('Datos del usuario:', usuario);
+
     try {
+      if (isEditing) {
+        // Lógica para actualizar el usuario
+        const result = await usuarioService.update(nuevoUsuario.usuario, usuario); 
+        if (result.success) {
+            showToast('success', 'Usuario actualizado', '#2d800e');
+            setData(prevData => 
+                prevData.map(user => (user.usuario === nuevoUsuario.usuario ? usuario : user)) 
+            );
+            setIsEditing(false); 
+            setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] }); 
+        } else {
+            showToast('error', 'Error al actualizar el usuario: ' + result.status, '#9c1010');
+        }
+      } else {
+        // Lógica para crear el usuario
         const result = await usuarioService.create(usuario);
         if (result.success) {
-            console.log("Usuario creado con éxito:", result.usuario);
-            setData(prevData => [...prevData, result.usuario]);
+          showToast('success', 'Usuario creado', '#2d800e');
+          setData(prevData => [...prevData, result.usuario]);
+          setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] }); 
         } else {
-            console.error("Error al crear el usuario:", result.status);
+          showToast('error', 'Error al crear el usuario: ' + result.status, '#9c1010');
         }
+      }
     } catch (error) {
-    console.error("Error al agregar el usuario:", error.response ? error.response.data : error.message);
-}
-};
+      const errorMessage = error.response ? error.response.data : error.message;
+      showToast('error', 'Error al agregar el usuario: ' + errorMessage, '#9c1010');
+    }
+  };
+
+  const onRowUpdate = (newData) => {
+    setNuevoUsuario({
+      usuario: newData.usuario,
+      rolDeUsuario: newData.rolDeUsuario,
+      contrasena: newData.contrasena,
+      idEmpleado: newData.idEmpleado,
+      departamentos: newData.departamentos
+    });
+    setIsEditing(true); // Activa el modo de edición
+  };
 
   const EDITABLE_COLUMNS = [
     { title: "Usuario", field: "usuario" }, 
@@ -116,7 +148,7 @@ export function Usuarios() {
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <h3>Agregar Usuario</h3>
+        <h3>{isEditing ? 'Editar Usuario' : 'Agregar Usuario'}</h3>
         <input 
           type="text" 
           name="usuario" 
@@ -156,7 +188,7 @@ export function Usuarios() {
             </option>
           ))}
         </select>
-        <button type="submit">Agregar Usuario</button>
+        <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
       </Form>
 
       <MaterialTable
@@ -193,111 +225,66 @@ export function Usuarios() {
           },
         }}
         editable={{
-          onRowUpdate: (newData, oldData) => {
-            return new Promise((resolve, reject) => {
-              usuarioService.update(oldData.idUsuario, newData)
-                .then(response => {
-                  if (response.isSuccess) {
-                    setData(prevData => 
-                      prevData.map(user => (user.idUsuario === oldData.idUsuario ? newData : user))
-                    );
-                    resolve();
-                  } else {
-                    reject("Error al actualizar el usuario");
-                  }
-                })
-                .catch(error => {
-                  reject(`Error: ${error.message}`);
-                });
-            });
-          },
           onRowDelete: (oldData) => {
             console.log('Datos del usuario a eliminar:', oldData);
             return new Promise((resolve, reject) => {
               usuarioService.delete(oldData.usuario)  
                 .then(response => {
                   if (response.success) {
+                    showToast('success', 'Usuario eliminado con éxito', '#2d800e');
                     setData(prevData => 
                       prevData.filter(user => user.usuario !== oldData.usuario)  
                     );
                     resolve();
                   } else {
+                    showToast('error', 'Error al eliminar el usuario', '#9c1010');
                     reject("Error al eliminar el usuario");
                   }
                 })
                 .catch(error => {
+                  showToast('error', `Error: ${error.message}`, '#9c1010');
                   reject(`Error: ${error.message}`);
                 });
             });
           },
-          
         }}
+        actions={[
+          {
+            icon: () => <Edit style={{ fontSize: "18px" }} />,
+            tooltip: "Editar Usuario",
+            onClick: (event, rowData) => onRowUpdate(rowData),
+          },
+        ]}
       />
     </Container>
   );
 }
 
 const Container = styled.div`
-  display: block;
-  width: 90%;
-  max-width: 1800px;
-
-  .MuiToolbar-root {
-    background-color: #060270;
-    color: white;
-  }
-
-  .MuiTableCell-root {
-    border-radius: 20px;
-    padding: 4px 8px;
-    font-size: 12px !important;
-  }
-
-  .MuiTableRow-root {
-    height: 30px;
-  }
-
-  .MuiTypography-h6 {
-    font-size: 16px;
-  }
-
-  @media (min-width: 1600px) {
-    .MuiTypography-h6 {
-      font-size: 20px;
-    }
-    .MuiTableCell-root {
-      padding: 0 8px;
-      font-size: 16px !important;
-    }
-  }
+  padding: 20px;
 `;
 
 const Form = styled.form`
-  display: block;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background: #f2f2f2;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
 
   input, select {
-    display: block;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 16px;
   }
 
   button {
-    padding: 0.5rem;
-    background: #007bff;
+    padding: 10px;
+    background-color: #2d800e;
     color: white;
     border: none;
-    border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
 
     &:hover {
-      background: #0056b3;
+      background-color: #3c910e;
     }
   }
 `;
