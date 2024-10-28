@@ -37,19 +37,20 @@ export function Usuarios() {
         setLoading(false);
       });
       
-        departamentoService.getAll() 
-          .then(response => {
-            if (response.isSuccess) {
-              setDepartamentos(response.departamentos); 
-            } else {
-              console.log("No se pudieron obtener los departamentos:", response.message); // Incluye el mensaje de error
-            }
-          })
-          .catch(error => {
-            console.error("Error al obtener los departamentos:", error);
-          });
-      }, []);
-      
+      departamentoService.getAll() 
+      .then(response => {
+        if (response.success) {
+          setDepartamentos(response.departamentos); 
+        } else {
+          console.log("No se obtienen los departamentos:", response.message); 
+        }
+      })
+      .catch(error => {
+        console.error("Error obteniendo departamentos:", error);
+      }
+    );
+  }, []);
+
   
 
   const handleInputChange = (e) => {
@@ -67,14 +68,13 @@ export function Usuarios() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const usuario = {
         Usuario: nuevoUsuario.usuario,
         RolDeUsuario: nuevoUsuario.rolDeUsuario,
         Contrasena: nuevoUsuario.contrasena,
         IdEmpleado: nuevoUsuario.idEmpleado,
-        Departamentos: nuevoUsuario.departamentos, 
-        FechaCreacion: new Date().toISOString().split('T')[0] // Asignar la fecha actual
+        //Departamentos: nuevoUsuario.departamentos.map(departamento => ({ Departamento: departamento })), 
+        FechaCreacion: new Date().toISOString().split('T')[0] 
     };
     console.log('Datos del usuario:', usuario);
     try {
@@ -86,8 +86,8 @@ export function Usuarios() {
             console.error("Error al crear el usuario:", result.status);
         }
     } catch (error) {
-        console.error("Error al agregar el usuario:", error.message);
-    }
+    console.error("Error al agregar el usuario:", error.response ? error.response.data : error.message);
+}
 };
 
   const EDITABLE_COLUMNS = [
