@@ -8,7 +8,7 @@ import { showToast } from "../../components/helpers";
 var departamentoService = new DepartamentoService;
 
 const columns = [
-    { title: "Departamento", field: "departamento", editable: 'onAdd' },
+    { title: "Departamento", field: "departamento", editable: 'onAdd',validate: (row) => (row.departamento || "").length !== 0,  },
     { title: "Encargado", field: "encargado", type: "string" },
     { title: "Descripción", field: "descripcion" },
 ];
@@ -25,10 +25,13 @@ export function Departamento(){
                     setData(response.departamentos); 
                     console.log("Departamentos", response.departamentos);
                 } else {
-                    console.log("No se pudieron obtener los departamentos.");
+                  
+                  setData([]); 
+                  console.log(response.message);
                 }
             } catch (error) {
-                console.error("Error al obtener los departamentos:", error);
+              showToast('error', error,'#9c1010'); 
+              console.error("Error al obtener los departamentos:", error);
             }
         };
         fetchData();
@@ -57,6 +60,7 @@ export function Departamento(){
       data={data}
       columns={columns || []}
       options={{
+    
         actionsColumnIndex: -1,
         maxBodyHeight: maxBodyHeight, 
         padding: onabort,
@@ -67,6 +71,7 @@ export function Departamento(){
             zIndex: 1,
             backgroundColor: '#fff',
           },
+          
       }}
       icons={{
         Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
@@ -80,58 +85,86 @@ export function Departamento(){
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
+          editTooltip: 'Editar',
+          deleteTooltip: 'Eliminar',
+          addTooltip: 'Agregar',
         },
         header: {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-        }
+        },
+        toolbar: {
+          searchTooltip: 'Buscar',
+          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+        },
+       
       }}
       editable={{
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
+            return new Promise((resolve, reject) => {
+            try{
             const newDataWithId = {
-                ...newData,
+                departamento: newData.departamento.toUpperCase(),
+                encargado: newData.encargado ? newData.encargado.toUpperCase() : '',
+                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : ''
             }
+
             const isDuplicate = data.some(departamentos => departamentos.departamento === newDataWithId.departamento)
-            console.log(newDataWithId.departamento)
+            //console.log(newDataWithId.departamento)
             if(isDuplicate){
-              
               showToast('error', 'Ya existe ese departamento','#9c1010'); 
               reject(`Error al crear el producto: ${response.message}`);
-            }else{
-            return new Promise((resolve, reject) => { 
-                    departamentoService.create(newData)
+              return
+            }
+         
+                    departamentoService.create(newDataWithId)
                         .then(response => {
                             if (response.success) {
                                 console.log("Departamento creado exitosamente");
-                                setData(prevData => [...prevData, newData]);
+                                setData(prevData => [...prevData, newDataWithId]);
                                 showToast('success', 'Departamento creado', '#2d800e');
                                 resolve(); // Resolvemos la promesa si todo fue bien
                             } else {
+                                
                                 reject(`Error al crear el departamento: ${response.message}`);
                             }
                         })
                         .catch(error => {
-                            reject(`Error de red: ${error.message}`);
+                          //console.log(error)
+                          showToast('error', error,'#9c1010'); 
+                          reject(`Error de red: ${error.message}`);
                         });
+                    }catch(error){
+                        console.log(error)
+                        reject('Ocurrió un error inesperado');
+                    }
+
               });
-            }
+           
         },
         onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
+            try{
             const index = data.findIndex(item => item.departamento === oldData.departamento);
             const updatedData = [...data];
+            const newDataWithId = {
+                ...newData,
+                departamento: newData.departamento.toUpperCase(),
+                encargado: newData.encargado ? newData.encargado.toUpperCase() : '',
+                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : ''
+            };
 
-            const isDuplicate = updatedData.some((season, idx) => season.departamento === newData.departamento && idx !== index);
+            const isDuplicate = updatedData.some((item, idx) => item.departamento === newDataWithId.departamento && idx !== index);
             if (isDuplicate) {
                 showToast('error', 'Ya existe ese departamento', '#9c1010');
                 reject('Error al actualizar el producto: El departamento ya existe');
                 return;
             }
 
-            updatedData[index] = newData;
+            updatedData[index] = newDataWithId;
 
-            departamentoService.update(oldData.departamento, newData) // Asumiendo que `oldData` tiene un campo `id`
+            departamentoService.update(oldData.departamento, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);
@@ -143,13 +176,19 @@ export function Departamento(){
                       }
                   })
                   .catch(error => {
-                      reject(`Error de red: ${error.message}`);
+                    showToast('error', error,'#9c1010'); 
+                    reject(`Error de red: ${error.message}`);
                   });
+               }catch(error){
+                  console.log(error)
+                  reject('Ocurrió un error inesperado');
+              }
             })
 
         },
         onRowDelete: (oldData) => { 
             return new Promise((resolve, reject) => {
+              try{
                 departamentoService.delete(oldData.departamento) // Llama a la función de eliminación
                 .then(response => {
                     if (response.success) {
@@ -161,8 +200,12 @@ export function Departamento(){
                     }
                 })
                 .catch(error => {
-                    reject(`Error al eliminar: ${error.message}`);
+                  showToast('error', error,'#9c1010'); 
+                  reject(`Error al eliminar: ${error.message}`);
                 });
+              }catch(error){
+                console.log(error)
+                reject('Ocurrió un error inesperado');}
             });
         },
       }}

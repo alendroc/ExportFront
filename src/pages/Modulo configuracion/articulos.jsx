@@ -13,11 +13,11 @@ const columns = [
         return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: " xxxx-xx-xx-xx-xx" };
     }
 },
-    { title: "Nombre de articulo", field: "nombreArticulo",validate: (row) => (row.nombreArticulo || "").length !== 0 },
-    { title: "Marca", field: "marca",validate: (row) => (row.marca || "").length !== 0 },
-    { title: "Modelo", field: "modelo",validate: (row) => (row.modelo || "").length !== 0  },
-    { title: "Número de Chacis", field: "numeroChasis" },
-    { title: "Número de motor", field: "numeroMotor" },
+    { title: "Nombre de articulo", width: "200px", field: "nombreArticulo",validate: (row) => (row.nombreArticulo || "").length !== 0 },
+    { title: "Marca", width: "50px", field: "marca",validate: (row) => (row.marca || "").length !== 0 },
+    { title: "Modelo", width: "50px", field: "modelo",validate: (row) => (row.modelo || "").length !== 0  },
+    { title: "Número de Chacis", width: "200px", field: "numeroChasis" },
+    { title: "Número de motor", width: "200px", field: "numeroMotor" },
     { title: "Número de placa", field: "placa" },
     { title: "Tipo", field: "tipo",validate: (row) => (row.tipo || "").length !== 0  },
     { title: "Observaciones", field: "observaciones" },
@@ -105,15 +105,23 @@ export function Articulos() {
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
         onRowAdd: (newData) => {
             return new Promise((resolve, reject) => { 
+              console.log(newData)
             const newDataWithId = {
                 ...newData,
                 color: newData.color = "nada",
                 idArticulo: newData.idArticulo.toUpperCase(),
                 nombreArticulo: newData.nombreArticulo.toUpperCase(),
-
-            }
-            const isDuplicate = data.some(articu => articu.idArticulo === newDataWithId.idArticulo)
+                tipo: newData.tipo.toUpperCase(),
+                marca: newData.marca.toUpperCase(),
+                modelo: newData.modelo.toUpperCase(),
+                numeroChasis: newData.numeroChasis ? newData.numeroChasis.toUpperCase() : "",
+                numeroMotor: newData.numeroMotor ? newData.numeroMotor.toUpperCase() : "",
+                placa: newData.placa ? newData.placa.toUpperCase() : "",
+                observaciones: newData.observaciones ? newData.observaciones.toUpperCase() : ""
+            } 
             console.log(newDataWithId)
+            const isDuplicate = data.some(articu => articu.idArticulo === newDataWithId.idArticulo)
+           
             if(isDuplicate){
               showToast('error', 'Ya existe ese Articulo','#9c1010'); 
               reject(`Error al crear el producto: ${response.message}`);
@@ -137,9 +145,68 @@ export function Articulos() {
           
         },
         onRowUpdate: (newData, oldData) => {
-         
+          return new Promise((resolve, reject) => {
+            const index = data.findIndex(item => item.idArticulo === oldData.idArticulo);
+            const updatedData = [...data];
+
+            const newDataWithId = {
+              ...newData,
+              color: newData.color = "nada",
+              idArticulo: newData.idArticulo.toUpperCase(),
+              nombreArticulo: newData.nombreArticulo.toUpperCase(),
+              tipo: newData.tipo.toUpperCase(),
+              marca: newData.marca.toUpperCase(),
+              modelo: newData.modelo.toUpperCase(),
+              numeroChasis: newData.numeroChasis ? newData.numeroChasis.toUpperCase() : "",
+              numeroMotor: newData.numeroMotor ? newData.numeroMotor.toUpperCase() : "",
+              placa: newData.placa ? newData.placa.toUpperCase() : "",
+              observaciones: newData.observaciones ? newData.observaciones.toUpperCase() : ""
+          } 
+
+            const isDuplicate = updatedData.some((season, idx) => season.idArticulo === newDataWithId.idArticulo && idx !== index);
+            if (isDuplicate) {
+                showToast('error', 'Ya existe esa temporada', '#9c1010');
+                reject('Error al actualizar el producto: La temporada ya existe');
+                return;
+            }
+
+            updatedData[index] = newDataWithId;
+
+            articulosService.update(oldData.idArticulo, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+                  .then(response => {
+                      if (response.success) {
+                          setData(updatedData);
+                          showToast('success', 'Articulo actualizado', '#2d800e');
+                          resolve();
+                      } else {
+                          reject(`Error al actualizar el articulo: ${response.message}`);
+                          showToast('error', '`Error al actualizar el articulo', '#9c1010');
+                      }
+                  })
+                  .catch(error => {
+                      reject(`Error de red: ${error.message}`);
+                  });
+            })
+
         },
         onRowDelete: (oldData) => { 
+          return new Promise((resolve, reject) => {
+            articulosService.delete(oldData.idArticulo) // Llama a la función de eliminación
+            .then(response => {
+                if (response.success) {
+                    const dataDelete = data.filter((el) => el.idArticulo !== oldData.idArticulo);
+                    setData(dataDelete); 
+                    resolve();
+                } else {
+                 
+                  showToast('error', '`Error al elimanr el articulo', '#9c1010');
+                    reject('No se pudo eliminar el articulo.');
+                }
+            })
+            .catch(error => {
+                reject(`Error al eliminar: ${error.message}`);
+            });
+        });
             
         },
       }}
@@ -149,8 +216,8 @@ export function Articulos() {
   }
   const Container =styled.div`
  display: block;
-width: 95%;
-max-width: 1200px;
+width: 100%; //width: 95%;
+//max-width: 1200px;
 z-index: 1;
      .MuiToolbar-root {
       background-color: #50ad53; /* Cambia el color del fondo del toolbar */
@@ -169,11 +236,14 @@ z-index: 1;
    .MuiTypography-h6 {
  font-size: 16px; /* Cambia este valor al tamaño deseado */
   }
-  @media (max-width: 1200px){
-    
+  @media (min-width: 1200px){
+    .MuiTableCell-root {
+     padding: 0 8px; 
+     font-size: 12px !important;
+   }
   }
   @media (min-width: 1600px) {
-    max-width: 1300px;
+    max-width: 1400px;
  .MuiTypography-h6 {
    font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
  }

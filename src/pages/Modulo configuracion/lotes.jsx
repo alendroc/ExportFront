@@ -109,7 +109,7 @@ export function Lote(){
             return new Promise((resolve, reject) => { 
             const newDataWithId = {
                 ...newData,
-
+                descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
             }
             const isDuplicate = data.some(lotes => lotes.nombreLote === newDataWithId.nombreLote)
             console.log(newDataWithId.nombreLote)
@@ -141,16 +141,22 @@ export function Lote(){
             const index = data.findIndex(item => item.nombreLote === oldData.nombreLote);
             const updatedData = [...data];
 
-            const isDuplicate = updatedData.some((season, idx) => season.nombreLote === newData.nombreLote && idx !== index);
+            const newDataWithId = {
+              ...newData,
+              
+              descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
+          }
+
+            const isDuplicate = updatedData.some((season, idx) => season.nombreLote === newDataWithId.nombreLote && idx !== index);
             if (isDuplicate) {
                 showToast('error', 'Ya existe esa temporada', '#9c1010');
                 reject('Error al actualizar el producto: La temporada ya existe');
                 return;
             }
 
-            updatedData[index] = newData;
+            updatedData[index] = newDataWithId;
 
-            loteService.update(oldData.nombreLote, newData) // Asumiendo que `oldData` tiene un campo `id`
+            loteService.update(oldData.nombreLote, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);
@@ -192,8 +198,8 @@ export function Lote(){
 }
 const Container =styled.div`
 display: block;
-width: 90%;
-max-width: 1100px;
+width: 100%;
+
 z-index: 1;
      .MuiToolbar-root {
       background-color: #50ad53; /* Cambia el color del fondo del toolbar */
@@ -216,6 +222,7 @@ z-index: 1;
     
   }
   @media (min-width: 1600px) {
+    max-width: 1100px;
  .MuiTypography-h6 {
    font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
  }

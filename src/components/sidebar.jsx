@@ -25,7 +25,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
       <img src={logo} className={`flex items-center max-w-[100%] h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[1.5]'}`}/>
       </div>
       {sidebarOpen && 
-      <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExportPack</h2>}
+      <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExporPack</h2>}
     </div>
     
     <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-sm scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
