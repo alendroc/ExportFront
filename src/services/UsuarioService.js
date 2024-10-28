@@ -151,6 +151,7 @@ export class UsuarioService {
     // Actualizar un usuario por ID
     async update(id, usuario) {
         try {
+            console.log("ID: ", id,"usuario nuevo: ", usuario)
             const response = await fetch(`${this.apiUrl}usuarios/${id}`, {
                 method: 'PUT',
                 headers: {

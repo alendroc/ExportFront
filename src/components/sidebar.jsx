@@ -1,14 +1,75 @@
 import logo from "../assets/react.svg"
 import styled from "styled-components";
-
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";;
+import Box from '@mui/material/Box';
+import { UsuarioService } from "../services/UsuarioService";
+import Modal from '@mui/material/Modal';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { Tooltip } from "@mui/material";
+import { Tooltip, responsiveFontSizes } from "@mui/material";
+import { showToast } from "./helpers";
+import React , { useEffect, useState } from "react";
 
+var usuarioService = new UsuarioService;
 export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2, arreglo3}) {
   const location = useLocation();
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [nombreUsuario, setNombreUsuario] = useState('')
 
+  useEffect(() => {
+    // Recuperar el usuario desde sessionStorage y actualizar el estado
+    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    if (usuario && usuario.usuario) {
+        setNombreUsuario(usuario.usuario);
+        console.log(nombreUsuario)
+    }
+}, []);
 
+/*mensajes*/
+const [passwordActual, setPasswordActual] = useState('');
+const [nuevaPassword, setNuevaPassword] = useState('');
+const [confirmPassword, setConfirmPassword] = useState('');
+const [mensajeError, setMensajeError] = useState('');
+
+const cambiarContraseña = (e) => {
+  e.preventDefault();
+  const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
+  if (!usuarioActual) {
+    setMensajeError('No hay un usuario autenticado.');
+    return;
+  }
+  // Verificar la contraseña actual
+  if (usuarioActual.contrasena !== passwordActual) {
+    setMensajeError('La contraseña actual es incorrecta.');
+    return;
+  }
+  if (usuarioActual.contrasena === passwordActual) {
+    setMensajeError('La nueva contraseña debe ser diferente a la actual.');
+    return;
+  }
+  // Verificar que las nuevas contraseñas coincidan
+  if (nuevaPassword !== confirmPassword) {
+    setMensajeError('Las contraseñas nuevas no coinciden.');
+    return;
+  }
+  usuarioActual.contrasena = nuevaPassword;
+  usuarioService.update(usuarioActual.usuario, usuarioActual).
+  then(response =>{
+    if (response.success) {
+      sessionStorage.setItem('usuarioActual', JSON.stringify(usuarioActual));
+      showToast('success', 'Cambio de contraseña listo', '#2d800e');
+      setPasswordActual('');
+      setNuevaPassword('');
+      setConfirmPassword('');
+      setMensajeError('');
+     handleClose();
+    }else {
+
+    }}).catch(error => {
+      console.log(`Error de red: ${error.message}`);
+  });
+};
   const CambiarSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
@@ -16,6 +77,12 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
     setTheme(prevTheme => prevTheme === "dark" ? "light" : "dark");
   };
 
+  const styleBox = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+  };
   return (
   
   <div className="flex flex-col bg-white z-40 dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
@@ -97,7 +164,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
 ))}
 </div> 
 
-<div className="min-w-full:absolute bottom-0 w-full max-100%:static bg-white dark:bg-blue-950">
+ <div className="min-w-full:absolute bottom-0 w-full max-100%:static bg-white dark:bg-blue-950">
     <DividerImbicible/>
     <div className={`flex items-center px-2 ${sidebarOpen ? 'justify-between':'justify-center'}`}>
       {sidebarOpen && <span className="text-sm py-2 opacity-1 transition-opacity duration-300 whitespace-nowrap overflow-hidden">modo oscuro</span>}
@@ -111,28 +178,26 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
     <div className="flex items-center pr-2 mb-2">
       <Menu as="div" className="relative w-full">
         <div className="flex justify-center w-full">
-          <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ? 'w-[90%]' : 'w-[80%] justify-center'}`}>
-            <img
-              alt=""
-              src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-              className="h-12 w-12 rounded-md"
-            />
-            {sidebarOpen && <span className="pr-3 overflow-hidden text-sm">Jose Alejandro Chaves</span>}
+          <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ? 'w-[90%]' : ' border-b-0 justify-center'}`}>
+          <div className="h-12 w-12 rounded-md bg-green-900 text-white flex items-center justify-center">
+           {nombreUsuario && nombreUsuario.charAt(0).toUpperCase()}
+          </div>
+            {sidebarOpen && <span className="pr-3 overflow-hidden text-sm">{nombreUsuario}</span>}
           </MenuButton>
         </div>
         <MenuItems
           transition
           className={`absolute z-40 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
-          ${sidebarOpen ? 'right-[-90%]  -bottom-1' : 'right-[-185px]  -bottom-1'}`}
+          ${sidebarOpen ? 'right-[-90%]  -bottom-1' : 'right-[-200px]  -bottom-1'}`}
         >
           <MenuItem>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
               Your Profile
             </a>
           </MenuItem>
-          <MenuItem>
+          <MenuItem onClick={handleOpen}>
             <a href="#" className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100">
-              Settings
+             Cambiar contraseña
             </a>
           </MenuItem>
           <MenuItem>
@@ -143,13 +208,54 @@ export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, 
         </MenuItems>
       </Menu>
     </div>
-        </div>
   </div>
+  <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={styleBox} className="rounded-xl">
+        <form onSubmit={cambiarContraseña}>
+      <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0 w-96">
+        <div class="w-full bg-white rounded-lg shadow border md:mt-0 sm:max-w-md xl:p-0">
+          <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+            <p class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl">
+              Cambiar contraseña
+              </p> 
+              {mensajeError && <p className="text-red-500">{mensajeError}</p>}
+              <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  Tu contraseña
+                </label>
+                <input placeholder="•••••••" class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5" id="password" type="password"  value={passwordActual}
+                    onChange={(e) => setPasswordActual(e.target.value)}/>
+              </div>
+              <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  Nueva contraseña
+                </label>
+                <input class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5" placeholder="••••••••" id="nuevaPassword" type="password"  value={nuevaPassword}
+                    onChange={(e) => setNuevaPassword(e.target.value)}/>
+              </div>
+              <div>
+                <label class="block mb-2 text-sm font-medium text-gray-900">
+                  Confirma contraseña
+                </label>
+                <input class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5" placeholder="••••••••" id="confirmPassword" type="password" value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}/>
+              </div>
+              <button class="w-full bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  focus:ring-blue-800 text-white" type="submit">
+                cambiar contraseña
+              </button>
+          </div>
+        </div>
+      </div></form>
+        </Box>
+      </Modal>
+</div>
   );
 }
-
-
-
 
 const Swichito = styled.label`
   display: block;

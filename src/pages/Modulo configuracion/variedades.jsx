@@ -113,7 +113,7 @@ export function Variedades() {
               const isDuplicate = data.some(variante => 
                 variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
                 variante.variedad.toUpperCase() === newDataWithId.variedad
-            ); 
+             ); 
 
               if(isDuplicate){
                 showToast('error', 'Ya existe esa variedad con ese cultivo','#9c1010'); 
