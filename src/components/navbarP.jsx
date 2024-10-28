@@ -8,7 +8,7 @@ function classNames(...classes) {
 }
 
 export function NavbarP({ menu }){
-  console.log("Valor de menu:", menu);
+ // console.log("Valor de menu:", menu);
 
   const location = useLocation();
 

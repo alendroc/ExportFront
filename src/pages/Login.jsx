@@ -27,8 +27,7 @@ export function Login({ sesion }) {
     usuarioService.login(new Usuario(user, "", pass, null, ""))
       .then(response => {
         if (response.success) {
-          //showToast('success', 'Login exitoso');
-          console.log('Login exitoso:', response.user);
+          sessionStorage.setItem('usuario', JSON.stringify(response.user));
           sessionStorage.setItem('sesion','activa')
           sesion(true);
           navigate("/Navegacion");
