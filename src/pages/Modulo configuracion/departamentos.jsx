@@ -80,6 +80,7 @@ export function Departamento(){
       }}
       localization={{
         body: {
+          emptyDataSourceMessage: 'No se encontraron departamentos',
           editRow: {
             deleteText: '¿Estás seguro de que deseas eliminar este departamento?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar

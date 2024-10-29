@@ -86,6 +86,7 @@ export function Lote(){
     }}
       localization={{
         body: {
+          emptyDataSourceMessage: 'No se encontraron lotes',
           editRow: {
             deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar

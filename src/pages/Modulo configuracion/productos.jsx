@@ -99,6 +99,7 @@ export function Productos() {
         }}
         localization={{
           body: {
+            emptyDataSourceMessage: 'No se encontraron productos',
             editRow: {
               deleteText: '¿Estás seguro de que deseas eliminar este producto?', // Cambia el mensaje de confirmación
               cancelTooltip: 'Cancelar', // Texto del botón de cancelar

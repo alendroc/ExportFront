@@ -214,6 +214,7 @@ export function Usuarios() {
         }}
         localization={{
           body: {
+            emptyDataSourceMessage: 'No se encontraron usuarios',
             editRow: {
               deleteText: "¿Estás seguro de que deseas eliminar este usuario?",
               cancelTooltip: "Cancelar",

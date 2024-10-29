@@ -84,6 +84,7 @@ export function Articulos() {
     }}
       localization={{
         body: {
+          emptyDataSourceMessage: 'No se encontraron artículos',
           editRow: {
             deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar

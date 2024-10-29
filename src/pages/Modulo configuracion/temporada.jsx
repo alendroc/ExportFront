@@ -131,6 +131,7 @@ useEffect(() => {
       }}
       localization={{
         body: {
+          emptyDataSourceMessage: 'No se encontraron temporadas',
           editRow: {
             deleteText: '¿Estás seguro de que deseas eliminar esta temporada?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
