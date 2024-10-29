@@ -53,7 +53,6 @@ function App() {
         { name: "Productos", href: "/Configuracion/productos"},
         { name: "Camas y valvulas", href: "/Configuracion/camasValvulas"},
         { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
-        { name: "Cambiar contraseña", href: "/Configuracion/cambiarContra"},
       ]
     },
   ];
