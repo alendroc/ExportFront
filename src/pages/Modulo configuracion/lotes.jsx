@@ -99,7 +99,8 @@ export function Lote(){
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
         },
         toolbar: {
-            searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+          searchTooltip: 'Buscar',
+          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
         },
       }}
       editable={{
@@ -180,6 +181,7 @@ export function Lote(){
                     if (response.success) {
                         const dataDelete = data.filter((el) => el.nombreLote !== oldData.nombreLote);
                         setData(dataDelete);
+                        showToast('success', 'Lote eliminado', '#2d800e');
                         resolve();
                     } else {
                         reject('No se pudo eliminar el lote.');

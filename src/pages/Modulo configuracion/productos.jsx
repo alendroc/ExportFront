@@ -112,7 +112,8 @@ export function Productos() {
             actions: 'Acciones' // Cambia el encabezado de la columna de acciones
           },
           toolbar: {
-              searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+            searchTooltip: 'Buscar',
+            searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
           },
         }}
         editable={{

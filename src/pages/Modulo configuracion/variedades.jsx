@@ -93,7 +93,8 @@ export function Variedades() {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
         },
         toolbar: {
-            searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+          searchTooltip: 'Buscar',
+          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
         },
       }}
       editable={{
@@ -190,6 +191,7 @@ export function Variedades() {
                     (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad)
                 );
                     setData(dataDelete); 
+                    showToast('success', 'variedad eliminada', '#2d800e');
                     resolve();
                 } else {
                  

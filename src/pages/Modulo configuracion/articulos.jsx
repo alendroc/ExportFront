@@ -97,6 +97,7 @@ export function Articulos() {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
         },
         toolbar: {
+          searchTooltip: 'Buscar',
           searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
       },
       }}
@@ -196,6 +197,7 @@ export function Articulos() {
                 if (response.success) {
                     const dataDelete = data.filter((el) => el.idArticulo !== oldData.idArticulo);
                     setData(dataDelete); 
+                    showToast('success', 'Articulo eliminado', '#2d800e');
                     resolve();
                 } else {
                  

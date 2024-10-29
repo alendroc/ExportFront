@@ -144,6 +144,7 @@ useEffect(() => {
           actions: 'Acciones' // Cambia el encabezado de la columna de acciones
         },
         toolbar: {
+          searchTooltip: 'Buscar',
           searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
       },
       }}
@@ -259,6 +260,7 @@ useEffect(() => {
                     if (response.success) {
                         const dataDelete = data.filter((el) => el.temporada !== oldData.temporada);
                         setData(dataDelete);
+                        showToast('success', 'Temporada eliminada', '#2d800e');
                         resolve();
                     } else {
                         reject('No se pudo eliminar la temporada.');
