@@ -194,6 +194,7 @@ export function Departamento(){
                     if (response.success) {
                         const dataDelete = data.filter((el) => el.departamento !== oldData.departamento);
                         setData(dataDelete);
+                         showToast('success', 'Departamento eliminado', '#2d800e');
                         resolve();
                     } else {
                         reject('No se pudo eliminar el departamento.');
