@@ -16,6 +16,7 @@ export function Login({ sesion }) {
 
   useEffect(() => {
     sessionStorage.removeItem('sesion','activa')
+    sessionStorage.removeItem('usuario')
   }, []);
   
   const iniciarSesion = (e) => {

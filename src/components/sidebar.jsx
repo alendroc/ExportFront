@@ -35,6 +35,7 @@ const [mensajeError, setMensajeError] = useState('');
 const cambiarContraseña = (e) => {
   e.preventDefault();
   const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
+  console.log(passwordActual)
   if (!usuarioActual) {
     setMensajeError('No hay un usuario autenticado.');
     return;
@@ -44,10 +45,11 @@ const cambiarContraseña = (e) => {
     setMensajeError('La contraseña actual es incorrecta.');
     return;
   }
-  if (usuarioActual.contrasena === passwordActual) {
+  if (usuarioActual.contrasena === nuevaPassword) {
     setMensajeError('La nueva contraseña debe ser diferente a la actual.');
     return;
   }
+  
   // Verificar que las nuevas contraseñas coincidan
   if (nuevaPassword !== confirmPassword) {
     setMensajeError('Las contraseñas nuevas no coinciden.');
@@ -57,7 +59,7 @@ const cambiarContraseña = (e) => {
   usuarioService.update(usuarioActual.usuario, usuarioActual).
   then(response =>{
     if (response.success) {
-      sessionStorage.setItem('usuarioActual', JSON.stringify(usuarioActual));
+      sessionStorage.setItem('usuario', JSON.stringify(usuarioActual));
       showToast('success', 'Cambio de contraseña listo', '#2d800e');
       setPasswordActual('');
       setNuevaPassword('');
@@ -176,9 +178,9 @@ const cambiarContraseña = (e) => {
 
     <Divider/>
     <div className="flex items-center pr-2 mb-2">
-      <Menu as="div" className="relative w-full">
+      <Menu as="div" className="relative w-full ">
         <div className="flex justify-center w-full">
-          <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ? 'w-[90%]' : ' border-b-0 justify-center'}`}>
+          <MenuButton className={`relative bg-gray-100 border-b-2 border-b-green-900 text-green-900 flex rounded-l-lg space-x-2 items-center text-sm ${sidebarOpen ? 'w-[90%]' : ' border-b-0 rounded-lg justify-center'}`}>
           <div className="h-12 w-12 rounded-md bg-green-900 text-white flex items-center justify-center">
            {nombreUsuario && nombreUsuario.charAt(0).toUpperCase()}
           </div>
@@ -187,7 +189,7 @@ const cambiarContraseña = (e) => {
         </div>
         <MenuItems
           transition
-          className={`absolute z-40 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
+          className={`absolute z-50 w-48 origin-bottom-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none transform transition ease-out duration-100 
           ${sidebarOpen ? 'right-[-90%]  -bottom-1' : 'right-[-200px]  -bottom-1'}`}
         >
           <MenuItem>
