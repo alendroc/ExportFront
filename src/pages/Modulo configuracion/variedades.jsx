@@ -153,9 +153,9 @@ export function Variedades() {
                   }
                   
                   const isDuplicate = data.some((variante , idx) => 
+                    idx !== index&&
                     variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
                     variante.variedad.toUpperCase() === newDataWithId.variedad
-                    && idx !== index
                 );
                  console.log(newDataWithId)
                 if(isDuplicate){

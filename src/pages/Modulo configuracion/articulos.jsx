@@ -16,7 +16,7 @@ const columns = [
     { title: "Nombre de articulo", width: "200px", field: "nombreArticulo",validate: (row) => (row.nombreArticulo || "").length !== 0 },
     { title: "Marca", width: "50px", field: "marca",validate: (row) => (row.marca || "").length !== 0 },
     { title: "Modelo", width: "50px", field: "modelo",validate: (row) => (row.modelo || "").length !== 0  },
-    { title: "Número de Chacis", width: "200px", field: "numeroChasis" },
+    { title: "Número de Chasis", width: "200px", field: "numeroChasis" },
     { title: "Número de motor", width: "200px", field: "numeroMotor" },
     { title: "Número de placa", field: "placa" },
     { title: "Tipo", field: "tipo",validate: (row) => (row.tipo || "").length !== 0  },
@@ -61,7 +61,7 @@ export function Articulos() {
     return (
     <Container>
          <MaterialTable size="small"
-       title="Gestión de Articulos"
+       title="Gestión de Artículos"
       data={data}
       columns={columns || []}
       options={{

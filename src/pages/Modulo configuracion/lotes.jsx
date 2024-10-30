@@ -111,6 +111,7 @@ export function Lote(){
             return new Promise((resolve, reject) => { 
             const newDataWithId = {
                 ...newData,
+                nombreLote: newData.nombreLote.toUpperCase(),
                 descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
             }
             const isDuplicate = data.some(lotes => lotes.nombreLote === newDataWithId.nombreLote)
@@ -125,7 +126,7 @@ export function Lote(){
                         .then(response => {
                             if (response.success) {
                                 console.log("Lote creado exitosamente");
-                                setData(prevData => [...prevData, newData]);
+                                setData(prevData => [...prevData, newDataWithId]);
                                 showToast('success', 'Lote creado', '#2d800e');
                                 resolve(); // Resolvemos la promesa si todo fue bien
                             } else {
@@ -145,7 +146,6 @@ export function Lote(){
 
             const newDataWithId = {
               ...newData,
-              
               descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
           }
 
