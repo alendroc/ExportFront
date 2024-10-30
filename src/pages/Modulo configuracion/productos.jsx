@@ -29,20 +29,70 @@ export function Productos() {
       });
   }, []);
 
-
   
   const EDITABLE_COLUMNS = [
-    { title: "Producto", field: "idProducto", editable: 'never' }, 
-    { title: "Nombre Descriptivo", field: "nombreDescriptivo" },
-    { title: "Tipo de Uso", field: "tipoUso" },
-    { title: "Nombre Comercial", field: "nombreComercial" },
-    { title: "Unidad de Medida", field: "unidadMedida" },
-    { title: "Ingrediente Activo", field: "ingredienteActivo" },
-    { title: "ConcentracionIactivo", field: "concentracionIactivo" },
-    { title: "Restricción Ingreso", field: "restriccionIngreso" },
-    { title: "Descripción", field: "descripcion" },
-    { title: "Activo", field: "activo", type: "boolean" },
+    { 
+      title: "Producto", 
+      field: "idProducto", 
+      editable: 'onAdd', 
+      validate: (rowData) => {
+      const regex =/([A-Za-z0-9]{2})-([A-Za-z0-9]{4})/;
+      return regex.test(rowData.idProducto) ? true : { isValid: false, helperText: " xx-xxxx" 
+      };
+    }
+    },
+    { 
+      title: "Nombre Descriptivo", 
+      field: "nombreDescriptivo", 
+      editable: 'always', 
+      validate: rowData => rowData.nombreDescriptivo ? true : { isValid: false, helperText: "Campo obligatorio" }
+    },
+    { 
+      title: "Tipo de Uso", 
+      field: "tipoUso", 
+      editable: 'always' 
+    },
+    { 
+      title: "Nombre Comercial", 
+      field: "nombreComercial", 
+      editable: 'always', 
+      validate: rowData => rowData.nombreComercial ? true : { isValid: false, helperText: "Campo obligatorio" }
+    },
+    { 
+      title: "Unidad de Medida", 
+      field: "unidadMedida", 
+      editable: 'always', 
+      validate: rowData => rowData.unidadMedida ? true : { isValid: false, helperText: "Campo obligatorio" }
+    },
+    { 
+      title: "Ingrediente Activo", 
+      field: "ingredienteActivo", 
+      editable: 'always' 
+    },
+    { 
+      title: "Concentracion Iactivo", 
+      field: "concentracionIactivo", 
+      editable: 'always' 
+    },
+    { 
+      title: "Restricción Ingreso", 
+      field: "restriccionIngreso", 
+      type: "numeric", 
+      editable: 'always' 
+    },
+    { 
+      title: "Descripción", 
+      field: "descripcion", 
+      editable: 'always' 
+    },
+    { 
+      title: "Activo", 
+      field: "activo", 
+      type: "boolean", 
+      editable: 'always'
+    }
   ];
+  
 
   function getNewDataBulkEdit(changes, copyData) {
     const keys = Object.keys(changes);
@@ -144,12 +194,7 @@ export function Productos() {
                 "nombreDescriptivo",
                 "tipoUso",
                 "nombreComercial",
-                "unidadMedida",
-                "ingredienteActivo",
-                "concentracionIactivo",
-                "restriccionIngreso",
-                "descripcion",
-                "activo"  
+                "unidadMedida"
               ];
           
               const missingFields = requiredFields.filter(field => !newDataWithId[field] && newDataWithId[field] !== false);

@@ -38,11 +38,12 @@ export function Usuarios() {
         if (departamentoResponse.success) {
           setDepartamentos(departamentoResponse.departamentos); 
         } else {
-          showToast('error', 'No se obtienen los departamentos.', '#9c1010');
+          console.log("respuesta", response)
+          //showToast('error', 'No se obtienen los departamentos.', '#9c1010');
         }
       } catch (error) {
         console.error("Error al obtener datos:", error);
-        showToast('error', 'Error al obtener datos.', '#9c1010');
+        //showToast('error', 'Error al obtener datos.', '#9c1010');
       } finally {
         setLoading(false);
       }
@@ -119,7 +120,7 @@ export function Usuarios() {
       idEmpleado: newData.idEmpleado,
       departamentos: newData.departamentos
     });
-    setIsEditing(true); // Activa el modo de edición
+    setIsEditing(true); 
   };
 
   const EDITABLE_COLUMNS = [
