@@ -152,17 +152,17 @@ export function Variedades() {
                     descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
                   }
                   
-                  const isDuplicate = data.some((variante , idx) => 
+                  /*const isDuplicate = data.some((variante , idx) => 
                     idx !== index&&
-                    variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
-                    variante.variedad.toUpperCase() === newDataWithId.variedad
+                    variante.cultivo.toUpperCase() === newData.cultivo &&
+                    variante.variedad.toUpperCase() === newData.variedad
                 );
-                 console.log(newDataWithId)
+                 console.log(updatedData)
                 if(isDuplicate){
                     showToast('error', 'Ya existe esa variedad con ese cultivo','#9c1010'); 
                     reject(`Error al crear la variedad: ${response.message}`);
                     return
-                  }
+                  }*/
                   updatedData[index] = newDataWithId;
 
                   variedadesService.update(oldData.cultivo, oldData.variedad, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
