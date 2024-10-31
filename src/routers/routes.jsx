@@ -11,6 +11,7 @@ import { Temporada } from "../pages/Modulo configuracion/temporada.jsx";
 import { Usuarios } from "../pages/Modulo configuracion/adminUsuarios.jsx";
 import { Lote } from "../pages/Modulo configuracion/lotes.jsx";
 import { Departamento } from "../pages/Modulo configuracion/departamentos.jsx";
+import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 
 
 
@@ -32,6 +33,7 @@ export const MyRoutes = () => {
         <Route path="adminUsuarios" element={<Usuarios/>}/>
         <Route path="lotes" element={<Lote/>}/>
         <Route path="departamentos" element={<Departamento/>}/>
+        <Route path="hibridos" element={<Hibridos/>}/>
 
       </Route>
     </Routes>
