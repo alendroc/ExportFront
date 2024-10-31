@@ -26,7 +26,7 @@ export function Hibridos() {
     const [variedad, setVariedad] = useState('');
     const [cultivosDisponibles, setCultivosDisponibles] = useState([]);
     const [variedadesDisponibles, setVariedadesDisponibles] = useState([]);
-
+    const [desabilitado, setDesabilitado] = useState(true)
     const [variedadesFiltradas, setVariedadesFiltradas] = useState([]);
 
     const [maxBodyHeight, setMaxBodyHeight] = useState(480);
@@ -102,10 +102,11 @@ export function Hibridos() {
 
 const handleChangeVariedad = (event) => {
   setVariedad(event.target.value);
-
   setDataFiltrada(data.filter(d => d.variedad === event.target.value && d.cultivo === cultivo));
- 
+  setDesabilitado(false)
 };
+
+
 
     return (
 <Container >
@@ -169,7 +170,7 @@ const handleChangeVariedad = (event) => {
           },
       }}
       icons={{
-        Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
+        Add: () => <AddBox   style={{ fontSize: "25px", color: desabilitado ? "gray" : "white", cursor: desabilitado ? "not-allowed" : "pointer" }}/>, // Cambia el tamaño del ícono de agregar
         Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
         Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
     }}
@@ -196,9 +197,15 @@ const handleChangeVariedad = (event) => {
       editable={{
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-        onRowAdd: (newData) => {
-            return new Promise((resolve, reject) => { 
-                console.log(newData)
+        isEditable: () => !desabilitado,
+        onRowAdd: desabilitado
+        ? undefined  
+        :  (newData) => {
+            return new Promise((resolve, reject) => {
+              if (!desabilitado) {
+                reject("Agregar deshabilitado temporalmente.");
+                return;
+              }
               const newDataWithId = {
                 ...newData,
                 cultivo: newData.cultivo.toUpperCase(),
