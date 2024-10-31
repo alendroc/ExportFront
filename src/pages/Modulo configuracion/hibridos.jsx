@@ -11,8 +11,8 @@ var hibridosService = new HibridosService;
 var variedadesService=new VariedadesService;
 
 const columns = [
-  { title: "Cultivo", field: "cultivo", editable: 'onAdd',},
-  { title: "Variedad", field: "variedad", editable: 'onAdd',},
+  { title: "Cultivo", field: "cultivo", editable: false,},
+  { title: "Variedad", field: "variedad", editable: false,},
   { title: "Hibrido", field: "hibrido", editable: 'onAdd',},
   { title: "Abreviatura",  field: "abreviatura"},
   { title: "Descripción", field: "descripcion" },
@@ -39,12 +39,16 @@ export function Hibridos() {
                   variedadesService.getAll()
               ]);
   
-              if (hibridosResponse.success && variedadesResponse.success) {
-                  setData(hibridosResponse.hibridos);
+              if (hibridosResponse.success || variedadesResponse.success) {
+                const hibridosResp = hibridosResponse.hibridos || [];
+                const variedadesResp = variedadesResponse.variedades || [];
+
+
+                  setData(hibridosResp);
 
                   const allCultivos = [
-                      ...hibridosResponse.hibridos.map(e => e.cultivo),
-                      ...variedadesResponse.variedades.map(e => e.cultivo)
+                      ...hibridosResp.map(e => e.cultivo),
+                      ...variedadesResp.map(e => e.cultivo)
                   ];
                   const uniqueCultivos = Array.from(new Set(allCultivos));
                   setCultivosDisponibles(uniqueCultivos);
@@ -72,7 +76,7 @@ export function Hibridos() {
   }, []);
   
 
-    // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
+
     useEffect(() => {
         const handleResize = () => {
       if (window.innerWidth < 1300) {
@@ -193,39 +197,49 @@ const handleChangeVariedad = (event) => {
           searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
         },
       }}
+
+
       editable={{
+      
         onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
         onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+        
         onRowAdd: (newData) => {
             return new Promise((resolve, reject) => { 
-                console.log(newData)
+              console.log("newData: ",newData);
+              console.log('Cultivo y variedad seleccionados:', cultivo, variedad);
               const newDataWithId = {
                 ...newData,
-                cultivo: newData.cultivo.toUpperCase(),
-                variedad: newData.variedad.toUpperCase(),
-                nombreAbreviatura: newData.nombreAbreviatura ? newData.nombreAbreviatura.toUpperCase() : "",
+                cultivo: cultivo,
+                variedad: variedad,
+                hibrido: newData.hibrido.toUpperCase(),
+                abreviatura: newData.abreviatura ? newData.nombreAbreviatura.toUpperCase() : "",
                 descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
               }
+
+              console.log('Cultivo y variedad asignados:', newDataWithId.cultivo, newDataWithId.variedad);
+
             
               const isDuplicate = data.some(variante => 
                 variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
-                variante.variedad.toUpperCase() === newDataWithId.variedad
+                variante.variedad.toUpperCase() === newDataWithId.variedad &&
+                variante.hibrido.toUpperCase() === newDataWithId.hibrido
              ); 
 
               if(isDuplicate){
-                showToast('error', 'Ya existe esa variedad con ese cultivo','#9c1010'); 
-                reject(`Error al crear la variedad: ${response.message}`);
+                showToast('error', 'Ya existe ese hibrido','#9c1010'); 
+                reject(`Error al crear el hibrido: ${response.message}`);
                 return
               }
-              variedadesService.create(newDataWithId)
+              hibridosService.create(newDataWithId)
               .then(response => {
                   if (response.success) {
-                      console.log("Variedad creada exitosamente");
+                      console.log("Hibrido creado exitosamente");
                       setData(prevData => [...prevData, newDataWithId]);
-                      showToast('success', 'Variedad creada', '#2d800e');
-                      resolve(); // Resolvemos la promesa si todo fue bien
+                      showToast('success', 'Hibrido creada', '#2d800e');
+                      resolve();
                   } else {
-                      reject(`Error al crear la variedad: ${response.message}`);
+                      reject(`Error al crear el hibrido: ${response.message}`);
                   }
               })
               .catch(error => {
@@ -245,6 +259,7 @@ const handleChangeVariedad = (event) => {
                     variedad: newData.variedad.toUpperCase(),
                     nombreAbreviatura: newData.nombreAbreviatura ? newData.nombreAbreviatura.toUpperCase() : "",
                     descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
+
                   }
                   
                   /*const isDuplicate = data.some((variante , idx) => 
@@ -280,19 +295,21 @@ const handleChangeVariedad = (event) => {
         },
         onRowDelete: (oldData) => { 
           return new Promise((resolve, reject) => {
-            variedadesService.delete(oldData.cultivo, oldData.variedad) // Llama a la función de eliminación
+            hibridosService.delete(oldData.cultivo, oldData.variedad, oldData.hibrido)
             .then(response => {
                 if (response.success) {
                   const dataDelete = data.filter(
-                    (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad)
+                    (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad && el.hibrido === oldData.hibrido)
                 );
-                    setData(dataDelete); 
-                    showToast('success', 'variedad eliminada', '#2d800e');
+                    setData(dataDelete);
+                    setDataFiltrada(dataDelete);
+
+                    showToast('success', 'Hibrido eliminado', '#2d800e');
                     resolve();
                 } else {
                  
-                  showToast('error', '`Error al elimanr el articulo', '#9c1010');
-                    reject('No se pudo eliminar el articulo.');
+                  showToast('error', '`Error al eliminar el hibrido', '#9c1010');
+                    reject('No se pudo eliminar el hibrido.');
                 }
             })
             .catch(error => {

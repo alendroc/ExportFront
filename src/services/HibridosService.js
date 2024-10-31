@@ -135,10 +135,10 @@ export class HibridosService {
         }
     }
 
-    async delete(cultivo, variedad,hibrido) {
+    async delete(cultivo, variedad, hibrido) {
         try {
             console.log(cultivo, variedad,hibrido)
-            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}/${hibrido}`, {
+            const response = await fetch(`${this.apiUrl}hibridos/${cultivo}/${variedad}/${hibrido}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

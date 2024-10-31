@@ -21,7 +21,7 @@ export class DepartamentoService{
             const data = await response.json();
             console.log("Datos recibidos del servidor:", data); // Verificar contenido de 'data'
     
-            if (data.isSuccess && data.status === 200) {
+            if (data.isSuccess && (data.status === 200 || data.status === 204)) {
                 console.log("Departamentos recibidos:", data.departamentos); // Acceder a 'departamentos' con minúscula
                 return { success: true, departamentos: data.departamentos };
             } else {
