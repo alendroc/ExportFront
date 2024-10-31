@@ -118,7 +118,7 @@ export function Lote(){
             console.log(newDataWithId.nombreLote)
             if(isDuplicate){
               showToast('error', 'Ya existe ese lote','#9c1010'); 
-              reject(`Error al crear el producto: ${response.message}`);
+              reject(`Error al crear el lote: ${response.message}`);
               return
             }
             
@@ -151,8 +151,8 @@ export function Lote(){
 
             const isDuplicate = updatedData.some((season, idx) => season.nombreLote === newDataWithId.nombreLote && idx !== index);
             if (isDuplicate) {
-                showToast('error', 'Ya existe esa temporada', '#9c1010');
-                reject('Error al actualizar el producto: La temporada ya existe');
+                showToast('error', 'Ya existe ese lote', '#9c1010');
+                reject('Error al actualizar el lote: La temporada ya existe');
                 return;
             }
 

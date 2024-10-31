@@ -185,7 +185,7 @@ useEffect(() => {
                   if(isDuplicate){
                     
                     showToast('error', 'Ya existe esa temporada','#9c1010'); 
-                    reject(`Error al crear el producto: ${response.message}`);
+                    reject(`Error al crear la temporada: ${response.message}`);
                   }else{
                     temporadasService.create(newDataWithId)
                         .then(response => {
@@ -195,7 +195,7 @@ useEffect(() => {
                                 showToast('success', 'Temporada creada', '#2d800e');
                                 resolve();
                             } else {
-                                reject(`Error al crear el producto: ${response.message}`);
+                                reject(`Error al crear ls temporada: ${response.message}`);
                             }
                         })
                         .catch(error => {
@@ -219,12 +219,12 @@ useEffect(() => {
 
             if (newDataWithId.fechaInicio == "" || newDataWithId.fechaFin == "" || newDataWithId.fechaInicio == null ||  newDataWithId.fechaFin == null) {
                 showToast('error', 'Debe completar los campos fecha', '#9c1010');
-                reject('Error al actualizar el producto: Fecha inválida');
+                reject('Error al actualizar la temporada: Fecha inválida');
                 return;
             }
               if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                   showToast('error', 'La fecha inicio debe ser menor a fecha final', '#9c1010');
-                  reject('Error al actualizar el producto: Fecha inválida');
+                  reject('Error al actualizar la temporada: Fecha inválida');
                   return;
               }
              
@@ -232,7 +232,7 @@ useEffect(() => {
               const isDuplicate = updatedData.some((season, idx) => season.temporada === newDataWithId.temporada && idx !== index);
               if (isDuplicate) {
                   showToast('error', 'Ya existe esa temporada', '#9c1010');
-                  reject('Error al actualizar el producto: La temporada ya existe');
+                  reject('Error al actualizar la temporada: La temporada ya existe');
                   return;
               }
 
