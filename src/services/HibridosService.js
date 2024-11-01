@@ -79,7 +79,7 @@ export class HibridosService {
                 },
                 body: JSON.stringify(hibrido)
             });
-
+            console.log(response)
             if (!response.ok) {
                 throw new Error(`Error al crear el hibrido: ${response.statusText}`);
             }
