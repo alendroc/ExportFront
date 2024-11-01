@@ -39,6 +39,9 @@ export function Hibridos() {
                   hibridosService.getAll(),
                   variedadesService.getAll()
               ]);
+
+              console.log("Respuesta completa de híbridos:", hibridosResponse);
+              console.log("Respuesta completa de variedades:", variedadesResponse);
   
               if (hibridosResponse.success || variedadesResponse.success) {
                 const hibridosResp = hibridosResponse.hibridos || [];
@@ -234,11 +237,12 @@ const handleChangeVariedad = (event) => {
 
               console.log('Cultivo y variedad asignados:', newDataWithId.cultivo, newDataWithId.variedad);
 
-              const isDuplicate = data.some(variante => 
+              const isDuplicate = Array.isArray(data) && data.some(variante => 
                 variante.cultivo.toUpperCase() === newDataWithId.cultivo.toUpperCase() &&
                 variante.variedad.toUpperCase() === newDataWithId.variedad.toUpperCase() &&
                 variante.hibrido.toUpperCase() === newDataWithId.hibrido.toUpperCase()
-             ); 
+            );
+             
              console.log("¿Es duplicado?", isDuplicate);
 
              console.log("aaaaa")
