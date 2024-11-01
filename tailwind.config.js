@@ -37,7 +37,7 @@ export default {
     },
   },
   plugins: [
-    require('tailwind-scrollbar')
+    require("tailwind-scrollbar")
   ],
 }
 
