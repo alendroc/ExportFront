@@ -47,7 +47,7 @@ function App() {
         { name: "Temporada", href: "/Configuracion/temporadas"},
         { name: "Lotes", href: "/Configuracion/lotes"},
         { name: "Variedades", href: "/Configuracion/variedades"},
-        { name: "Hibridos", href: "/Configuracion/Hibirdos"},
+        { name: "Hibridos", href: "/Configuracion/Hibridos"},
         { name: "Departamentos", href: "/Configuracion/Departamentos"},
         { name: "Labores", href: "/Configuracion/labores"},
         { name: "Productos", href: "/Configuracion/productos"},

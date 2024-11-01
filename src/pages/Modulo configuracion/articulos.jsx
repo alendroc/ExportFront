@@ -7,10 +7,10 @@ import { ArticulosService } from "../../services/ArticulosService";
 var articulosService = new ArticulosService;
 
 const columns = [
-    { title: "ID de articulo", field: "idArticulo", editable: 'onAdd',  validate: (rowData) => {
+    { title: "ID de articulo", field: "idArticulo",   editable: 'onAdd',  validate: (rowData) => {
         // Expresión regular para el formato NNNN-NN-NN-NN-NN
         const regex =/([A-Za-z0-9]{4})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})/;
-        return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: " xxxx-xx-xx-xx-xx" };
+        return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: "Formato: xxxx-xx-xx-xx-xx" };
     }
 },
     { title: "Nombre de articulo", width: "200px", field: "nombreArticulo",validate: (row) => (row.nombreArticulo || "").length !== 0 },
@@ -86,7 +86,7 @@ export function Articulos() {
         body: {
           emptyDataSourceMessage: 'No se encontraron artículos',
           editRow: {
-            deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
+            deleteText: '¿Estás seguro de que deseas eliminar este articulo?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
@@ -167,8 +167,8 @@ export function Articulos() {
 
             const isDuplicate = updatedData.some((season, idx) => season.idArticulo === newDataWithId.idArticulo && idx !== index);
             if (isDuplicate) {
-                showToast('error', 'Ya existe esa temporada', '#9c1010');
-                reject('Error al actualizar el producto: La temporada ya existe');
+                showToast('error', 'Ya existe este articulo', '#9c1010');
+                reject('Error al actualizar el articulo: el articulo ya existe');
                 return;
             }
 
@@ -202,7 +202,7 @@ export function Articulos() {
                     resolve();
                 } else {
                  
-                  showToast('error', '`Error al elimanr el articulo', '#9c1010');
+                  showToast('error', '`Error al eliminar el articulo', '#9c1010');
                     reject('No se pudo eliminar el articulo.');
                 }
             })

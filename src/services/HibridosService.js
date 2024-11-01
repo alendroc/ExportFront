@@ -1,35 +1,32 @@
-import { server } from './global.js';
+import {server} from './global.js'
 
-export class DepartamentoService{
+export class HibridosService {
     constructor() {
         this.apiUrl = server.url;
     }
 
     async getAll() {
         try {
-            const response = await fetch(`${this.apiUrl}Departamentos`, {
+            const response = await fetch(`${this.apiUrl}hibridos`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
-    
             if (!response.ok) {
-                throw new Error(`Error al obtener los departamentos: ${response.statusText}`);
+                throw new Error(`Error al obtener los hibridos: ${response.statusText}`);
             }
-    
             const data = await response.json();
-            console.log("Datos recibidos del servidor:", data); // Verificar contenido de 'data'
-    
-            if (data.isSuccess && (data.status === 200 || data.status === 204)) {
-                console.log("Departamentos recibidos:", data.departamentos); // Acceder a 'departamentos' con minúscula
-                return { success: true, departamentos: data.departamentos };
+
+            if (data.isSuccess && data.status === 200) {
+                console.log('exitooooo.');
+                return { success: true, hibridos: data.hibridos };
             } else {
-                console.log("Error en la respuesta:", data.status, data.isSuccess);
+                console.log('No se encontraron variedades.');
                 return { success: false, status: data.status };
             }
-    
-        } catch (error) {
+
+        }catch (error){
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
@@ -38,14 +35,9 @@ export class DepartamentoService{
         }
     }
 
-
-    
-
-
-
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}Departamentos/${id}`, {
+            const response = await fetch(`${this.apiUrl}hibridos/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -53,19 +45,19 @@ export class DepartamentoService{
             });
 
             if (response.status === 404) {
-                throw new Error('Departamento no encontrado.');
+                throw new Error('hibrido no encontrado.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al obtener el departamento: ${response.statusText}`);
+                throw new Error(`Error al obtener la variedad: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, departamentos: data.departamentos };
+                return { success: true, hibridos: data.hibridos };
             } else {
-                console.log('Departamento no encontrado.');
+                console.log('variedad no encontrada.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -77,32 +69,30 @@ export class DepartamentoService{
             }
         }
     }
-
-    async create(departamento) {
+    async create(hibrido) {
         try {
-            console.log("Departamento por agregar:", departamento)
-            const response = await fetch(`${this.apiUrl}Departamentos`, {
+            console.log("hibrido por agregar:", hibrido)
+            const response = await fetch(`${this.apiUrl}hibridos`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(departamento)
+                body: JSON.stringify(hibrido)
             });
 
             if (!response.ok) {
-                throw new Error(`Error al crear el departamento: ${response.statusText}`);
+                throw new Error(`Error al crear el hibrido: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, departamentos: data.departamentos };
+                return { success: true, hibrido: data.hibrido };
             } else {
-                console.log('Error al crear el departamento.');
+                console.log('Error al crear el hibrido.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
-            //console.log(error.message)
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
@@ -111,27 +101,29 @@ export class DepartamentoService{
         }
     }
 
-    async update(id, departamentos) {
+    async update(cultivo, variedad,hibrido, hibridoObj) {
         try {
-            console.log("el ide: ",id,"el departamento: ",departamentos)
-            const response = await fetch(`${this.apiUrl}Departamentos/${id}`, {
+            console.log("Cultivo:", cultivo, "Variedad:", variedad,"Hibrido:",hibrido , "Datos a actualizar:", hibridoObj)
+            const response = await fetch(`${this.apiUrl}hibridos/${cultivo}/${variedad}/${hibrido}`, {
+                
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(departamentos)
+                body: JSON.stringify(hibridoObj)
             });
+            console.log(response)
 
             if (!response.ok) {
-                throw new Error(`Error al actualizar el departamento: ${response.statusText}`);
+                throw new Error(`Error al actualizar el hibrido: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, departamentos: data.departamentos };
+                return { success: true, hibridos: data.hibridos };
             } else {
-                console.log('Error al actualizar el departamento.');
+                console.log('Error al actualizar el hibrido.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -143,10 +135,10 @@ export class DepartamentoService{
         }
     }
 
-    async delete(id) {
+    async delete(cultivo, variedad, hibrido) {
         try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}Departamentos/${id}`, {
+            console.log(cultivo, variedad,hibrido)
+            const response = await fetch(`${this.apiUrl}hibridos/${cultivo}/${variedad}/${hibrido}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'
@@ -154,11 +146,11 @@ export class DepartamentoService{
             });
 
             if (response.status === 404) {
-                throw new Error('Departamento no encontrado.');
+                throw new Error('hibrido no encontrado.');
             }
 
             if (!response.ok) {
-                throw new Error(`Error al eliminar el departamento: ${response.statusText}`);
+                throw new Error(`Error al eliminar el hibrido: ${response.statusText}`);
             }
 
             const data = await response.json();
@@ -166,7 +158,7 @@ export class DepartamentoService{
             if (data.isSuccess && data.status === 200) {
                 return { success: true, message: data.message };
             } else {
-                console.log('Error al eliminar el departamento.');
+                console.log('Error al eliminar la variedad.');
                 return { success: false, status: data.status };
             }
         } catch (error) {

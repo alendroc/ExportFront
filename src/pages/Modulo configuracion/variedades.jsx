@@ -7,12 +7,7 @@ import { VariedadesService } from "../../services/variedadesService";
 var variedadesService = new VariedadesService;
 
 const columns = [
-    { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => (row.cultivo || "").length !== 0, 
-    lookup: {
-        MELON: 'MELÓN',
-        CANA: 'CANA',
-        // Agrega más opciones aquí, cada clave es el valor guardado y el valor de la clave es el texto mostrado
-    }, },
+    { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => (row.cultivo || "").length !== 0,  },
     { title: "Variedad", field: "variedad",  editable: 'onAdd', validate: (row) => (row.variedad || "").length !== 0 },
     { title: "Abreviatura",  field: "nombreAbreviatura"},
     { title: "Descripción", field: "descripcion" },
@@ -82,7 +77,7 @@ export function Variedades() {
         body: {
           emptyDataSourceMessage: 'No se encontraron variedades',
           editRow: {
-            deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
+            deleteText: '¿Estás seguro de que deseas eliminar esta variedad?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
@@ -196,7 +191,7 @@ export function Variedades() {
                     resolve();
                 } else {
                  
-                  showToast('error', '`Error al elimanr el articulo', '#9c1010');
+                  showToast('error', '`Error al eliminar la variedad', '#9c1010');
                     reject('No se pudo eliminar el articulo.');
                 }
             })
