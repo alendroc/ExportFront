@@ -12,12 +12,12 @@ var hibridosService = new HibridosService;
 var variedadesService=new VariedadesService;
 var hibridoObj = new Hibrido();
 const columns = [
-  { title: "Cultivo", field: "Cultivo", editable: false,},
-  { title: "Variedad", field: "Variedad", editable: false,},
-  { title: "Hibrido", field: "Hibrido", editable: 'onAdd',},
-  { title: "Abreviatura",  field: "Abreviatura"},
-  { title: "Descripción", field: "Descripcion" },
-  { title: "Activo", field: "Activo", type: "boolean" },
+  { title: "Cultivo", field: "cultivo", editable: false,},
+  { title: "Variedad", field: "variedad", editable: false,},
+  { title: "Hibrido", field: "hibrido", editable: 'onAdd',},
+  { title: "Abreviatura",  field: "abreviatura"},
+  { title: "Descripción", field: "descripcion" },
+  { title: "Activo", field: "activo", type: "boolean" },
 ];
 
 export function Hibridos() {
@@ -211,18 +211,19 @@ const handleChangeVariedad = (event) => {
         ? undefined  
         :  (newData) => {
             return new Promise((resolve, reject) => {
-              console.log("newData: ",newData);
+              
 
               const newDataWithId = {
                 ...newData,
-                Cultivo: cultivo,
-                Variedad: variedad,
-                Hibrido: newData.Hibrido.toUpperCase(),
-                Activo: newData.Activo !== undefined ? newData.Activo : false,
-                Abreviatura: newData.Abreviatura ? newData.Abreviatura.toUpperCase() : "",
-                Descripcion: newData.Descripcion ? newData.Descripcion.toUpperCase() : "",
-                Identificador: newData.Identificador = "nada"
+                cultivo: cultivo,
+                variedad: variedad,
+                hibrido: newData.hibrido.toUpperCase(),
+                activo: newData.activo !== undefined ? newData.activo : false,
+                abreviatura: newData.abreviatura ? newData.abreviatura.toUpperCase() : "",
+                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
+                identificador: newData.identificador = "nada"
               }
+              console.log("newDataWithId: ",newDataWithId);
              /* hibridoObj.cultivo = "CANA"
               hibridoObj.variedad = "VAR"
               hibridoObj.hibrido = "brif"
@@ -231,14 +232,16 @@ const handleChangeVariedad = (event) => {
               hibridoObj.descripcion = "mm"
               hibridoObj.identificador = "br"*/
 
-              console.log('Cultivo y variedad asignados:', newDataWithId.Cultivo, newDataWithId.Variedad);
-              console.log('aaa ');
+              console.log('Cultivo y variedad asignados:', newDataWithId.cultivo, newDataWithId.variedad);
 
               const isDuplicate = data.some(variante => 
-                variante.cultivo.toUpperCase() === newDataWithId.cultivo.UpperCase() &&
+                variante.cultivo.toUpperCase() === newDataWithId.cultivo.toUpperCase() &&
                 variante.variedad.toUpperCase() === newDataWithId.variedad.toUpperCase() &&
                 variante.hibrido.toUpperCase() === newDataWithId.hibrido.toUpperCase()
              ); 
+             console.log("¿Es duplicado?", isDuplicate);
+
+             console.log("aaaaa")
               if(isDuplicate){
                 showToast('error', 'Ya existe ese hibrido','#9c1010'); 
                 reject(`Error al crear el hibrido: ${response.message}`);
@@ -250,7 +253,8 @@ const handleChangeVariedad = (event) => {
                   if (response.success) {
                       console.log("Hibrido creado exitosamente");
                       setData(prevData => [...prevData, newDataWithId]);
-                      showToast('success', 'Hibrido creada', '#2d800e');
+                      setDataFiltrada(prevData => [...prevData, newDataWithId]);
+                      showToast('success', 'Hibrido creado', '#2d800e');
                       resolve();
                   } else {
                       reject(`Error al crear el hibrido: ${response.message}`);
