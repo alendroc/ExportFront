@@ -32,7 +32,8 @@ export const MyRoutes = () => {
         <Route path="adminUsuarios" element={<Usuarios/>}/>
         <Route path="lotes" element={<Lote/>}/>
         <Route path="departamentos" element={<Departamento/>}/>
-
+        <Route path="labores" element={<Labores/>}/>
+        
       </Route>
     </Routes>
   );
