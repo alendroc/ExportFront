@@ -7,7 +7,7 @@ import { ArticulosService } from "../../services/ArticulosService";
 var articulosService = new ArticulosService;
 
 const columns = [
-    { title: "ID de articulo", field: "idArticulo", editable: 'onAdd',  validate: (rowData) => {
+    { title: "ID de articulo", field: "idArticulo",   editable: 'onAdd',  validate: (rowData) => {
         // Expresión regular para el formato NNNN-NN-NN-NN-NN
         const regex =/([A-Za-z0-9]{4})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})/;
         return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: "Formato: xxxx-xx-xx-xx-xx" };
