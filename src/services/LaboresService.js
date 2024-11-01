@@ -97,7 +97,8 @@ export class LaboresService{
             if (error.message.includes('Failed to fetch')) {
                 throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
             } else {
-                throw new Error(error.message, error);
+                console.log(error);
+                throw new Error(error.message, error);  
             }
         }
     }

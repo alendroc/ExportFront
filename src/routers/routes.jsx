@@ -11,6 +11,7 @@ import { Temporada } from "../pages/Modulo configuracion/temporada.jsx";
 import { Usuarios } from "../pages/Modulo configuracion/adminUsuarios.jsx";
 import { Lote } from "../pages/Modulo configuracion/lotes.jsx";
 import { Departamento } from "../pages/Modulo configuracion/departamentos.jsx";
+import { Labores } from "../pages/Modulo configuracion/labores.jsx"
 import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 
 

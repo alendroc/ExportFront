@@ -8,6 +8,7 @@ import { Departamento } from "./departamentos";
 var laboresService = new LaboresService;
 
 const columns = [
+  /*
   {
     title: "Cultivo", field: "cultivo", editable: 'onAdd', validate: (row) => (row.cultivo || "").length !== 0,
     lookup: {
@@ -15,23 +16,25 @@ const columns = [
       CANA: 'CANA',
       // Agrega más opciones aquí, cada clave es el valor guardado y el valor de la clave es el texto mostrado
     },
-  },
-  { title: "Variedad", field: "variedad", editable: 'onAdd', validate: (row) => (row.variedad || "").length !== 0 },
-  { title: "Abreviatura", field: "nombreAbreviatura" },
+  },*/
+  { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
+  { title: "Departamento", field: "departamento" },
   { title: "Descripción", field: "descripcion" },
 ];
 
-export function Variedades() {
+export function Labores() {
   const [data, setData] = useState([]);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
-  //Agregar
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await laboresService.getAll();
         if (response.success) {
-          setData(response.labores);
-          console.log("labores", response.labores);
+          // Accede a los valores de labores correctamente
+          const labores = response.labores.$values || []; // Acceder a $values
+          setData(labores); // Establecer el estado con el arreglo de labores
+          console.log("Labores obtenidos:", labores); // Verifica los datos que recibes
         } else {
           console.log("No se pudieron obtener los labores.");
         }
@@ -39,6 +42,7 @@ export function Variedades() {
         console.error("Error al obtener las variedades:", error);
       }
     };
+
     fetchData();
   }, []);
 
@@ -108,10 +112,11 @@ export function Variedades() {
             return new Promise((resolve, reject) => {
               console.log(newData)
               const newDataWithId = {
-                ...newData,
-                labor: newData.labor,
-                departamento: newData.departamento,
-                descripción: newData.descripción,              }
+                //...newData,
+                Labor: newData.labor,
+                Departamento: newData.departamento,
+                Descripcion: newData.descripcion
+              }
 
               /*const isDuplicate = data.some(variante =>
                 variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
@@ -142,15 +147,14 @@ export function Variedades() {
           },
           onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
-              const index = data.findIndex(item => item.variedad === oldData.variedad);
+              const index = data.findIndex(item => item.labor === oldData.labor);
               const updatedData = [...data];
 
               const newDataWithId = {
                 ...newData,
-                cultivo: newData.cultivo.toUpperCase(),
-                variedad: newData.variedad.toUpperCase(),
-                nombreAbreviatura: newData.nombreAbreviatura ? newData.nombreAbreviatura.toUpperCase() : "",
-                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
+                labor: newData.labor,
+                departamento: newData.departamento,
+                descripción: newData.descripción
               }
 
               /*const isDuplicate = data.some((variante , idx) => 
@@ -166,15 +170,15 @@ export function Variedades() {
               }*/
               updatedData[index] = newDataWithId;
 
-              laboresService.update(oldData.cultivo, oldData.variedad, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+              laboresService.update(oldData.labor, oldData.departamento, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                 .then(response => {
                   if (response.success) {
                     setData(updatedData);
-                    showToast('success', 'variedad actualizada', '#2d800e');
+                    showToast('success', 'Labor actualizada', '#2d800e');
                     resolve();
                   } else {
-                    reject(`Error al actualizar el articulo: ${response.message}`);
-                    showToast('error', '`Error al actualizar la variedad', '#9c1010');
+                    reject(`Error al actualizar el labor: ${response.message}`);
+                    showToast('error', '`Error al actualizar el labor', '#9c1010');
                   }
                 })
                 .catch(error => {
@@ -186,19 +190,19 @@ export function Variedades() {
           },
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
-              laboresService.delete(oldData.cultivo, oldData.variedad) // Llama a la función de eliminación
+              laboresService.delete(oldData.labor, oldData.departamento) // Llama a la función de eliminación
                 .then(response => {
                   if (response.success) {
                     const dataDelete = data.filter(
-                      (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad)
+                      (el) => !(el.labor === oldData.labor)
                     );
                     setData(dataDelete);
-                    showToast('success', 'variedad eliminada', '#2d800e');
+                    showToast('success', 'Labor eliminada', '#2d800e');
                     resolve();
                   } else {
 
-                    showToast('error', '`Error al elimanr el articulo', '#9c1010');
-                    reject('No se pudo eliminar el articulo.');
+                    showToast('error', '`Error al elimanr el labor', '#9c1010');
+                    reject('No se pudo eliminar el labor.');
                   }
                 })
                 .catch(error => {
