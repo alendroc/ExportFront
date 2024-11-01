@@ -272,40 +272,34 @@ const handleChangeVariedad = (event) => {
         },
         onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
-                const index = data.findIndex(item => item.variedad === oldData.variedad);
+                const index = data.findIndex(item => item.hibrido === oldData.hibrido);
                 const updatedData = [...data];
 
                 const newDataWithId = {
-                    ...newData,
-                    cultivo: newData.cultivo.toUpperCase(),
-                    variedad: newData.variedad.toUpperCase(),
-                    nombreAbreviatura: newData.nombreAbreviatura ? newData.nombreAbreviatura.toUpperCase() : "",
-                    descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
+                  ...newData,
+                cultivo: cultivo,
+                variedad: variedad,
+                hibrido: newData.hibrido.toUpperCase(),
+                activo: newData.activo !== undefined ? newData.activo : false,
+                abreviatura: newData.abreviatura ? newData.abreviatura.toUpperCase() : "",
+                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : "",
+                identificador: newData.identificador = "nada"
 
                   }
-                  
-                  /*const isDuplicate = data.some((variante , idx) => 
-                    idx !== index&&
-                    variante.cultivo.toUpperCase() === newData.cultivo &&
-                    variante.variedad.toUpperCase() === newData.variedad
-                );
-                 console.log(updatedData)
-                if(isDuplicate){
-                    showToast('error', 'Ya existe esa variedad con ese cultivo','#9c1010'); 
-                    reject(`Error al crear la variedad: ${response.message}`);
-                    return
-                  }*/
                   updatedData[index] = newDataWithId;
 
-                  variedadesService.update(oldData.cultivo, oldData.variedad, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+                  hibridosService.update(oldData.cultivo, oldData.variedad, oldData.hibrido, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);
-                          showToast('success', 'variedad actualizada', '#2d800e');
+                          setDataFiltrada(prevFiltrada => prevFiltrada.map(item => 
+                            item.cultivo === oldData.cultivo && item.hibrido === oldData.hibrido && item.variedad === oldData.variedad? newDataWithId : item
+                        ));
+                          showToast('success', 'hibrido actualizado', '#2d800e');
                           resolve();
                       } else {
-                          reject(`Error al actualizar el articulo: ${response.message}`);
-                          showToast('error', '`Error al actualizar la variedad', '#9c1010');
+                          reject(`Error al actualizar el hibrido: ${response.message}`);
+                          showToast('error', '`Error al actualizar el hibrido', '#9c1010');
                       }
                   })
                   .catch(error => {
@@ -324,7 +318,9 @@ const handleChangeVariedad = (event) => {
                     (el) => !(el.cultivo === oldData.cultivo && el.variedad === oldData.variedad && el.hibrido === oldData.hibrido)
                 );
                     setData(dataDelete);
-                    setDataFiltrada(dataDelete);
+                    setDataFiltrada(prevFiltrada => prevFiltrada.filter(item => 
+                      !(item.cultivo === oldData.cultivo && item.variedad === oldData.variedad && item.hibrido === oldData.hibrido)
+                  ));
 
                     showToast('success', 'Hibrido eliminado', '#2d800e');
                     resolve();
