@@ -128,7 +128,7 @@ export function Productos() {
         key={data.length}
         size="small"
         title="Lista de Productos"
-        columns={EDITABLE_COLUMNS}
+        columns={EDITABLE_COLUMNS || []}
         data={data}
         options={{
           actionsColumnIndex: -1,
@@ -168,15 +168,6 @@ export function Productos() {
           },
         }}
         editable={{
-          onBulkUpdate: (changes) => {
-            return new Promise((resolve) => {
-              setTimeout(() => {
-                let copyData = [...data];
-                setData(getNewDataBulkEdit(changes, copyData));
-                resolve();
-              }, 1000);
-            });
-          },
           onRowAddCancelled: (rowData) => console.log("Agregar cancelado"),
           onRowUpdateCancelled: (rowData) => console.log("Edición cancelada"),
 
@@ -186,7 +177,13 @@ export function Productos() {
               const newDataWithId = {
                 ...newData,
                 idProducto: newData.idProducto,
-                activo: newData.activo !== undefined ? newData.activo : false  
+                activo: newData.activo !== undefined ? newData.activo : false,
+                nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),
+                tipoUso: newData.tipoUso.toUpperCase(),
+                nombreComercial: newData.nombreComercial.toUpperCase(),
+                ingredienteActivo: newData.ingredienteActivo.toUpperCase(),
+                concentracionIactivo: newData.concentracionIactivo.toUpperCase(),
+                descripcion: newData.descripcion.toUpperCase()
               };
           
               const requiredFields = [
@@ -224,35 +221,46 @@ export function Productos() {
           
           onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
-              productoService.update(oldData.idProducto, newData)
-                .then(response => {
-                  if (response.success) {
-                    productoService.getAll()
-                      .then((getAllResponse) => {
-                        if (getAllResponse.success) {
-                          setData(getAllResponse.productos);
-                          showToast('success', 'Producto actualizado correctamente', '#2d800e');
-                          resolve();
+                // Convierte los campos a mayúsculas antes de la actualización
+                const updatedData = {
+                    ...newData,
+                    nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),
+                    tipoUso: newData.tipoUso.toUpperCase(),
+                    nombreComercial: newData.nombreComercial.toUpperCase(),
+                    ingredienteActivo: newData.ingredienteActivo.toUpperCase(),
+                    concentracionIactivo: newData.concentracionIactivo.toUpperCase(),
+                    descripcion: newData.descripcion.toUpperCase()
+                };
+        
+                productoService.update(oldData.idProducto, updatedData)
+                    .then(response => {
+                        if (response.success) {
+                            productoService.getAll()
+                                .then((getAllResponse) => {
+                                    if (getAllResponse.success) {
+                                        setData(getAllResponse.productos);
+                                        showToast('success', 'Producto actualizado correctamente', '#2d800e');
+                                        resolve();
+                                    } else {
+                                        showToast('error', "Error al obtener los productos actualizados", '#9c1010');
+                                        reject("Error al obtener los productos actualizados");
+                                    }
+                                })
+                                .catch(error => {
+                                    showToast('error', `Error al obtener los productos actualizados: ${error.message}`, '#9c1010');
+                                    reject(`Error al obtener los productos actualizados: ${error.message}`);
+                                });
                         } else {
-                          showToast('error', "Error al obtener los productos actualizados", '#9c1010');
-                          reject("Error al obtener los productos actualizados");
+                            showToast('error', "Error al actualizar el producto", '#9c1010');
+                            reject("Error al actualizar el producto");
                         }
-                      })
-                      .catch(error => {
-                        showToast('error', `Error al obtener los productos actualizados: ${error.message}`, '#9c1010');
-                        reject(`Error al obtener los productos actualizados: ${error.message}`);
-                      });
-                  } else {
-                    showToast('error', "Error al actualizar el producto", '#9c1010');
-                    reject("Error al actualizar el producto");
-                  }
-                })
-                .catch(error => {
-                  showToast('error', `Error: ${error.message}`, '#9c1010');
-                  reject(`Error: ${error.message}`);
-                });
+                    })
+                    .catch(error => {
+                        showToast('error', `Error: ${error.message}`, '#9c1010');
+                        reject(`Error: ${error.message}`);
+                    });
             });
-          },
+        },        
           
           
           onRowDelete: (oldData) => {
