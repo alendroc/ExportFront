@@ -228,6 +228,7 @@ export function Usuarios() {
         data={data}
         options={{
           actionsColumnIndex: -1,
+          //addRowPosition: "first",
           maxBodyHeight: maxBodyHeight,
           paging: false,
           headerStyle: {

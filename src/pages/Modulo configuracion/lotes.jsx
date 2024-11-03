@@ -69,6 +69,7 @@ export function Lote(){
       columns={columns || []}
       options={{
         actionsColumnIndex: -1,
+        addRowPosition: "first",
         maxBodyHeight: maxBodyHeight, 
         padding: onabort,
         paging: false, 
@@ -126,7 +127,7 @@ export function Lote(){
                         .then(response => {
                             if (response.success) {
                                 console.log("Lote creado exitosamente");
-                                setData(prevData => [...prevData, newDataWithId]);
+                                setData(prevData => [ newDataWithId , ...prevData]);
                                 showToast('success', 'Lote creado', '#2d800e');
                                 resolve(); // Resolvemos la promesa si todo fue bien
                             } else {

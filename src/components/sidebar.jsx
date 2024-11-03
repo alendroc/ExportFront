@@ -247,7 +247,7 @@ const cambiarContraseña = (e) => {
                 <input class="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg block w-full p-2.5" placeholder="••••••••" id="confirmPassword" type="password" value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}/>
               </div>
-              <button class="w-full bg-blue-500 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center  focus:ring-blue-800 text-white" type="submit">
+              <button class="w-full bg-green-600 hover:bg-green-700 focus:ring-4  font-medium rounded-lg text-sm px-5 py-2.5 text-center  text-white" type="submit">
                 cambiar contraseña
               </button>
           </div>

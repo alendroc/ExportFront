@@ -70,6 +70,7 @@ export function Labores() {
         columns={columns || []}
         options={{
           actionsColumnIndex: -1,
+          addRowPosition: "first",
           maxBodyHeight: maxBodyHeight,
           padding: onabort,
           paging: false,
@@ -132,7 +133,7 @@ export function Labores() {
                 .then(response => {
                   if (response.success) {
                     console.log("Labor creado exitosamente");
-                    setData(prevData => [...prevData, newDataWithId]);
+                    setData(prevData => [ newDataWithId , ...prevData]);
                     showToast('success', 'Labor creada', '#2d800e');
                     resolve(); // Resolvemos la promesa si todo fue bien
                   } else {

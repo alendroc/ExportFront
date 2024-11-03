@@ -132,6 +132,7 @@ export function Productos() {
         data={data}
         options={{
           actionsColumnIndex: -1,
+          addRowPosition: "first",
           maxBodyHeight: maxBodyHeight, 
           padding: onabort,
           paging: false, 
@@ -204,7 +205,7 @@ export function Productos() {
               productoService.create(newDataWithId)
                 .then(response => {
                   if (response.success) {
-                    setData(prevData => [...prevData, response.producto]);
+                    setData(prevData => [response.producto, ...prevData ]);
                     showToast('success', 'Producto creado exitosamente', '#2d800e');
                     resolve();
                   } else {

@@ -66,7 +66,8 @@ export function Articulos() {
       columns={columns || []}
       options={{
         actionsColumnIndex: -1,
-        maxBodyHeight: maxBodyHeight, 
+        maxBodyHeight: maxBodyHeight,
+        addRowPosition: "first",
         padding: onabort,
         paging: false, 
         headerStyle: {
@@ -133,7 +134,7 @@ export function Articulos() {
                         .then(response => {
                             if (response.success) {
                                 console.log("Articulo creado exitosamente");
-                                setData(prevData => [...prevData, newDataWithId]);
+                                setData(prevData => [ newDataWithId , ...prevData]);
                                 showToast('success', 'Articulo creado', '#2d800e');
                                 resolve(); // Resolvemos la promesa si todo fue bien
                             } else {
@@ -215,7 +216,8 @@ export function Articulos() {
       }}
  
     />
-    </Container>);
+    </Container>
+    );
   }
   const Container =styled.div`
  display: block;

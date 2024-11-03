@@ -114,6 +114,7 @@ useEffect(() => {
       columns={columns || []}
       options={{
         actionsColumnIndex: -1,
+        addRowPosition: "first",
         maxBodyHeight: maxBodyHeight, 
         padding: onabort,
         paging: false, 
@@ -191,7 +192,7 @@ useEffect(() => {
                         .then(response => {
                             if (response.success) {
                                 console.log("Temporada creada exitosamente");
-                                setData(prevData => [...prevData, newDataWithId]);
+                                setData(prevData => [ newDataWithId , ...prevData]);
                                 showToast('success', 'Temporada creada', '#2d800e');
                                 resolve();
                             } else {

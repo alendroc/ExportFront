@@ -42,7 +42,7 @@ function App() {
       icon: <IoMdSettings  />,
       to: "/Configuracion",
       submenu: [
-        { name: "UMC", href: "/Configuracion/umc" },//unidad de medidas y certificacion
+        //{ name: "UMC", href: "/Configuracion/umc" },//unidad de medidas y certificacion
         { name: "Articulos", href: "/Configuracion/articulos"},
         { name: "Temporada", href: "/Configuracion/temporadas"},
         { name: "Lotes", href: "/Configuracion/lotes"},
@@ -51,7 +51,6 @@ function App() {
         { name: "Departamentos", href: "/Configuracion/Departamentos"},
         { name: "Labores", href: "/Configuracion/labores"},
         { name: "Productos", href: "/Configuracion/productos"},
-        { name: "Camas y valvulas", href: "/Configuracion/camasValvulas"},
         { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
       ]
     },

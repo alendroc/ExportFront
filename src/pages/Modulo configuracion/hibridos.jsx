@@ -168,7 +168,8 @@ const handleChangeVariedad = (event) => {
       columns={columns || []}
       options={{
         actionsColumnIndex: -1,
-        maxBodyHeight: maxBodyHeight, 
+        maxBodyHeight: maxBodyHeight,
+        addRowPosition: "first", 
         padding: onabort,
         paging: false, 
         headerStyle: {
@@ -256,7 +257,7 @@ const handleChangeVariedad = (event) => {
               .then(response => {
                   if (response.success) {
                       console.log("Hibrido creado exitosamente");
-                      setData(prevData => [...prevData, newDataWithId]);
+                      setData(prevData => [ newDataWithId , ...prevData]);
                       setDataFiltrada(prevData => [...prevData, newDataWithId]);
                       showToast('success', 'Hibrido creado', '#2d800e');
                       resolve();

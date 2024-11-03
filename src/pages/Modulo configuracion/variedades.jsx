@@ -58,6 +58,7 @@ export function Variedades() {
       columns={columns || []}
       options={{
         actionsColumnIndex: -1,
+        addRowPosition: "first",
         maxBodyHeight: maxBodyHeight, 
         padding: onabort,
         paging: false, 
@@ -121,7 +122,7 @@ export function Variedades() {
               .then(response => {
                   if (response.success) {
                       console.log("Variedad creada exitosamente");
-                      setData(prevData => [...prevData, newDataWithId]);
+                      setData(prevData => [ newDataWithId , ...prevData]);
                       showToast('success', 'Variedad creada', '#2d800e');
                       resolve(); // Resolvemos la promesa si todo fue bien
                   } else {

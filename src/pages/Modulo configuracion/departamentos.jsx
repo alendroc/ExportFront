@@ -63,6 +63,7 @@ export function Departamento(){
     
         actionsColumnIndex: -1,
         maxBodyHeight: maxBodyHeight, 
+        addRowPosition: "first",
         padding: onabort,
         paging: false, 
         headerStyle: {
@@ -123,7 +124,7 @@ export function Departamento(){
                         .then(response => {
                             if (response.success) {
                                 console.log("Departamento creado exitosamente");
-                                setData(prevData => [...prevData, newDataWithId]);
+                                setData(prevData => [ newDataWithId , ...prevData]);
                                 showToast('success', 'Departamento creado', '#2d800e');
                                 resolve(); // Resolvemos la promesa si todo fue bien
                             } else {
