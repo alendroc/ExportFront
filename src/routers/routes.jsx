@@ -25,8 +25,7 @@ export const MyRoutes = () => {
         <Route path="ingreso" element={<IngresarDatos/>}/>
       </Route>
       <Route path="/Configuracion"element={<Configuracion/>}>
-        <Route index element={<Navigate to="umc" replace />} />
-        <Route path="umc" element={<Umc/>}/>
+        <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>
         <Route path="productos" element={<Productos/>}/>

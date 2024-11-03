@@ -1,4 +1,4 @@
-import logo from "../assets/react.svg"
+import logo from "../img/logoExpor.jpeg"
 import styled from "styled-components";
 import { NavLink, useLocation } from "react-router-dom";;
 import Box from '@mui/material/Box';
@@ -88,10 +88,10 @@ const cambiarContraseña = (e) => {
   return (
   
   <div className="flex flex-col bg-white z-40 dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
-    <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[20px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
+    <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[10px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
-      <img src={logo} className={`flex items-center max-w-[100%] h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[1.5]'}`}/>
+      <img src={logo} className={`flex items-center w-14 h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[0.8] rounded-xl'}`}/>
       </div>
       {sidebarOpen && 
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExporPack</h2>}
