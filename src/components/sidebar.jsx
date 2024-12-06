@@ -109,7 +109,7 @@ const cambiarContraseña = (e) => {
         to={to}
 
         className={`flex items-center over mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
-        ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+        ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
 
@@ -132,7 +132,7 @@ const cambiarContraseña = (e) => {
      <NavLink 
         to={to}
         className={`flex items-center mb-4 max-2xl:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
-        ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+        ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center'}`}
        >
         <div className="Linkicon p-2 text-2xl">{icon}</div>
@@ -155,7 +155,7 @@ const cambiarContraseña = (e) => {
  <NavLink 
     to={to}
     className={`flex items-center mb-4 max-2xl:mb-2 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg
-    ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 border-r-lime-600' : ''} 
+    ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
     ${sidebarOpen ? '':'justify-center'}`}
    >
     <div className="Linkicon p-2 text-2xl">{icon}</div>

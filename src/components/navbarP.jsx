@@ -48,8 +48,8 @@ export function NavbarP({ menu }){
                     to={item.href }
                     className={classNames(
                       location.pathname === item.href ? 'text-lime-600 scale-110 ' : 'text-slate-500 dark:hover:text-lime-400 hover:text-lime-600',
-                      'rounded-md mb-2 flex mr-1 transform w-auto font-medium py-2 px-2 2xl:text-base text-xs  items-center hover:-translate-y-1 hover:scale-110 transition ease-in-out delay-75',
-                      item.name === "Registro de boletas más productos" ? 'w-[180px]' : item.name.length <= 5 ? 'w-auto' : 'min-w-[20px] max-w-[120px]')}
+                      'rounded-md mb-2 flex mr-1 transform w-auto font-medium py-2 px-2 2xl:text-base text-xs  items-center hover:-translate-y-1 hover:scale-110 transition delay-75',
+                      item.name === "Registro de boletas más productos" ? 'w-[180px]' : item.name.length <= 5 ? 'w-auto' : 'min-w-[20px] max-w-[140px]')}
                     
                   >
                     {item.name}

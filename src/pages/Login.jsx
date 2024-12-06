@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Spline from '@splinetool/react-spline';
+import img from "../img/login2.jpg"
 import { useNavigate } from "react-router-dom";
 import { UsuarioService } from "../services/UsuarioService";
 import { Usuario } from "../models/Usuario";
@@ -59,10 +60,21 @@ export function Login({ sesion }) {
 
   return (
     <div className="bg-[#CFE3F8] w-full h-screen font-poppi flex justify-center items-center relative">
-      <div className="absolute inset-0">
-        <div className="w-full h-full scale-100 overflow-hidden">
-          <Spline scene="https://prod.spline.design/fGXpAFcvPDB6bUrd/scene.splinecode" />
-        </div>
+     <div className="absolute inset-0">
+        <div className="w-full h-full overflow-hidden">
+         <div className="bg-[#CFE3F8] absolute top-1/3 ">
+            <img
+            src={img}
+            className="2xl:w-[500px] object-cover xl:w-[340px]"
+             style={{
+             position: 'fixed',
+               transform: 'scale(1)',
+               
+             height: 'auto',
+             }}
+            />
+       </div>
+      </div>
       </div>
 
       <div className="absolute inset-0 z-10 flex justify-center items-center">
