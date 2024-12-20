@@ -1,8 +1,8 @@
 import { Routes, Route, Navigate } from "react-router-dom";
+import ProtectedRoute from "../routers/ProtectedRoute";
 import { Configuracion } from "../pages/Configuracion";
 import { Navegacion } from "../pages/Navegacion";
 import {NavegacionP} from "../pages/Modulo Navegacion/navegacion1.jsx";
-import { Umc } from "../pages/Modulo configuracion/umc.jsx";
 import { Variedades } from "../pages/Modulo configuracion/variedades.jsx";
 import { Articulos } from "../pages/Modulo configuracion/articulos.jsx";
 import { IngresarDatos } from "../pages/Modulo Navegacion/ingresarDatos.jsx";
@@ -16,7 +16,7 @@ import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 
 
 
-export const MyRoutes = () => {
+export const MyRoutes = ({isAuthenticated, usuario}) => {
   return (
     <Routes>
       <Route path="/Navegacion" element={<Navegacion/>}>
@@ -24,7 +24,12 @@ export const MyRoutes = () => {
         <Route path="ver" element={<NavegacionP/>} />
         <Route path="ingreso" element={<IngresarDatos/>}/>
       </Route>
-      <Route path="/Configuracion"element={<Configuracion/>}>
+      <Route path="/Configuracion" element={
+        <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        userRole={usuario.rolDeUsuario}
+        allowedRoles={["admin"]} // Solo los administradores tienen acceso
+      ><Configuracion/></ProtectedRoute>}>
         <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>

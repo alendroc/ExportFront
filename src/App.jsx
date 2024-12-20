@@ -7,7 +7,6 @@ import { AiOutlineHome, AiOutlineGlobal } from "react-icons/ai";
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";
 import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
-import styled from "styled-components"; // Si usas styled-components
 import {Login } from "../src/pages/Login.jsx";
 
 function App() {
@@ -26,7 +25,7 @@ function App() {
   }, [theme]);
 
   const autenticacion = () =>{sessionStorage.getItem('sesion') === 'activa' ? setIsAuthenticated(true) : setIsAuthenticated(false);}
-
+  const usuario = JSON.parse(sessionStorage.getItem('usuario'));
   const linksArray = [
     {
       label: "Navegacion",
@@ -201,7 +200,8 @@ function navbar(location,arreglos){
         <Sidebar 
         theme={theme} 
         setTheme={setTheme}
-        sidebarOpen={isActive} 
+        sidebarOpen={isActive}
+        usuario={usuario}
         setSidebarOpen={setIsActive}
         arreglo = {linksArray}
         arreglo2 = {arrayModules}
@@ -214,7 +214,9 @@ function navbar(location,arreglos){
           </div>
         )}
          <div>
-            <MyRoutes  isAuthenticated={isAuthenticated} />
+            <MyRoutes  
+            isAuthenticated={isAuthenticated} 
+            usuario={usuario}/>
         </div>
       </div>
     </div>

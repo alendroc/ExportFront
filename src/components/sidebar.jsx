@@ -10,19 +10,19 @@ import { showToast } from "./helpers";
 import React , { useEffect, useState } from "react";
 
 var usuarioService = new UsuarioService;
-export function Sidebar({theme, setTheme, sidebarOpen, setSidebarOpen, arreglo, arreglo2, arreglo3}) {
+export function Sidebar({theme, setTheme, sidebarOpen, usuario, setSidebarOpen, arreglo, arreglo2, arreglo3}) {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const [nombreUsuario, setNombreUsuario] = useState('')
 
+
+  console.log(usuario.rolDeUsuario);
   useEffect(() => {
-    // Recuperar el usuario desde sessionStorage y actualizar el estado
-    const usuario = JSON.parse(sessionStorage.getItem('usuario'));
+    // Recuperar el usuario desde sessionStorage y actualizar el estad
     if (usuario && usuario.usuario) {
         setNombreUsuario(usuario.usuario);
-        console.log(nombreUsuario)
     }
 }, []);
 
@@ -35,7 +35,6 @@ const [mensajeError, setMensajeError] = useState('');
 const cambiarContraseña = (e) => {
   e.preventDefault();
   const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
-  console.log(passwordActual)
   if (!usuarioActual) {
     setMensajeError('No hay un usuario autenticado.');
     return;
@@ -79,6 +78,13 @@ const cambiarContraseña = (e) => {
     setTheme(prevTheme => prevTheme === "dark" ? "light" : "dark");
   };
 
+  // Modificacion de arreglos de sidebar
+  const restriccionRoles = {
+    general: ["Configuracion",]
+  };
+  const rolUsuario = restriccionRoles[usuario.rolDeUsuario] || [];
+  const arreglo_Filtrado_Por_Rol = arreglo.filter((link) => !rolUsuario.includes(link.label))
+
   const styleBox = {
     position: 'absolute',
     top: '50%',
@@ -98,7 +104,8 @@ const cambiarContraseña = (e) => {
     </div>
     
     <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-sm scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
-    {arreglo.map(({ icon, label, to, submenu}) =>(
+     
+    {arreglo_Filtrado_Por_Rol.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
       <Tooltip
       title={label}
@@ -107,12 +114,10 @@ const cambiarContraseña = (e) => {
       placement="right-end">  
       <NavLink 
         to={to}
-
         className={`flex items-center over mb-4 max-100%:mb-3 ml-[5%] mr-0 transition-colors duration-200 hover:bg-indigo-50 rounded-l-lg 
         ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
-
         <div className="Linkicon p-2 text-2xl">{icon}</div>
         {sidebarOpen && <span className="ml-3  overflow-hidden transition-opacity duration-300">{label}</span>}
       </NavLink>

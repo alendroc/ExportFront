@@ -65,11 +65,10 @@ export function Login({ sesion }) {
          <div className="bg-[#CFE3F8] absolute top-1/3 ">
             <img
             src={img}
-            className="2xl:w-[500px] object-cover xl:w-[340px]"
+            className=""
              style={{
+              width: '30%',
              position: 'fixed',
-               transform: 'scale(1)',
-               
              height: 'auto',
              }}
             />
