@@ -14,6 +14,13 @@ var temporadasService = new TemporadasService
                 isValid: false,
                 helperText: "El campo temporada no puede estar vacío"
             };}
+
+            if(row.temporada?.length > 10){
+              return {
+                isValid: false,
+                helperText: "El límite de la columna es de 10 carácteres"
+            };}
+
         if (row.temporada.trim() === "") {
             return {
                 isValid: false,
@@ -35,7 +42,13 @@ var temporadasService = new TemporadasService
         return { isValid: true };}
 },
     { title: "Actual", field: "actual", type: "boolean",  },
-    { title: "Descripción", field: "descripcion", },
+    { title: "Descripción", field: "descripcion",validate: (row) =>{
+      if(row.descripcion?.length > 500){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 500 carácteres"
+     };}
+   } },
     { title: "Fecha Inicio", field: "fechaInicio", type: "date",  editComponent: props => (
       <input
         type="date"

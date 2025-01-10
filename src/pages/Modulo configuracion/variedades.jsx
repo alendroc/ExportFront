@@ -7,10 +7,40 @@ import { VariedadesService } from "../../services/variedadesService";
 var variedadesService = new VariedadesService;
 
 const columns = [
-    { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => (row.cultivo || "").length !== 0,  },
-    { title: "Variedad", field: "variedad",  editable: 'onAdd', validate: (row) => (row.variedad || "").length !== 0 },
-    { title: "Abreviatura",  field: "nombreAbreviatura"},
-    { title: "Descripción", field: "descripcion" },
+    { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => {
+      if((row.cultivo || "").length === 0){return false}
+      if(row.cultivo?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    }
+    },
+
+    { title: "Variedad", field: "variedad",  editable: 'onAdd', validate: (row) => {
+      if((row.variedad || "").length === 0){return false}
+      if(row.variedad?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    } },
+
+    { title: "Abreviatura",  field: "nombreAbreviatura",validate: (row) =>{
+      if(row.nombreAbreviatura?.length > 10){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 10 carácteres"
+     };}
+   } },
+
+    { title: "Descripción", field: "descripcion" ,validate: (row) =>{
+      if(row.descripcion?.length > 500){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 500 carácteres"
+     };}
+   } },
 ];
 
 export function Variedades() {

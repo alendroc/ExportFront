@@ -13,10 +13,34 @@ var variedadesService=new VariedadesService;
 var hibridoObj = new Hibrido();
 const columns = [
   { title: "Cultivo", field: "cultivo", editable: false,},
+
   { title: "Variedad", field: "variedad", editable: false,},
-  { title: "Hibrido", field: "hibrido", editable: 'onAdd',},
-  { title: "Abreviatura",  field: "abreviatura"},
-  { title: "Descripción", field: "descripcion" },
+
+  { title: "Hibrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
+    if((row.hibrido || "").length === 0){return false}
+    if(row.hibrido?.length > 50){
+      return {
+        isValid: false,
+        helperText: "El límite de la columna es de 50 carácteres"
+    };}
+  }},
+  
+  { title: "Abreviatura",  field: "abreviatura",validate: (row) =>{
+    if(row.abreviatura?.length > 10){
+     return {
+       isValid: false,
+       helperText: "El límite de la columna es de 10 carácteres"
+   };}
+ } },
+
+  { title: "Descripción", field: "descripcion" ,validate: (row) =>{
+    if(row.descripcion?.length > 500){
+     return {
+       isValid: false,
+       helperText: "El límite de la columna es de 500 carácteres"
+   };}
+ } },
+
   { title: "Activo", field: "activo", type: "boolean" },
 ];
 
