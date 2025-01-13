@@ -50,7 +50,8 @@ export function Productos() {
     { 
       title: "Tipo de Uso", 
       field: "tipoUso", 
-      editable: 'always' 
+      editable: 'always',
+      headerStyle: { minWidth: 100 }
     },
     { 
       title: "Nombre Comercial", 
@@ -62,7 +63,9 @@ export function Productos() {
       title: "Unidad de Medida", 
       field: "unidadMedida", 
       editable: 'always', 
+      headerStyle: { minWidth: 100 },
       validate: rowData => rowData.unidadMedida ? true : { isValid: false, helperText: "Campo obligatorio" }
+      
     },
     { 
       title: "Ingrediente Activo", 
@@ -77,7 +80,7 @@ export function Productos() {
     { 
       title: "Restricción Ingreso", 
       field: "restriccionIngreso", 
-      type: "numeric", 
+      //type: "numeric", 
       editable: 'always' 
     },
     { 
@@ -140,7 +143,8 @@ export function Productos() {
               position: 'sticky', 
               top: 0,
               zIndex: 1,
-              backgroundColor: '#fff',
+              backgroundColor: '#cacaca5f',
+              borderRadius: 0
             },
         }}
         icons={{

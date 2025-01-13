@@ -135,7 +135,8 @@ useEffect(() => {
             position: 'sticky', 
             top: 0,
             zIndex: 1,
-            backgroundColor: '#fff',
+            backgroundColor: '#cacaca5f',
+            borderRadius: 0
           },
       }}
       icons={{

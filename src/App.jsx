@@ -53,10 +53,8 @@ function App() {
         { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
       ]
     },
-  ];
-  const arrayModules = [
     {
-      label: "Melones",
+      label: "Programa Operativo",
       icon: <GiWatermelon />,
       to: "/Melones",
       submenu: [
@@ -71,6 +69,9 @@ function App() {
         { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa" },
       ]
     },
+  ];
+  const arrayModules = [
+    
     {
       label: "Caña",
       icon: <GiSugarCane />,

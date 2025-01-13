@@ -45,7 +45,7 @@ const columns = [
         }
      } },
 
-    { title: "Número de Chasis", width: "200px", field: "numeroChasis", validate: (row) =>{
+    { title: "N° de Chasis", field: "numeroChasis", validate: (row) =>{
       if(row.numeroChasis?.length > 50){
         return {
           isValid: false,
@@ -53,7 +53,7 @@ const columns = [
         }
     } },
 
-    { title: "Número de motor", width: "200px", field: "numeroMotor" ,validate: (row) =>{
+    { title: "N° de motor", field: "numeroMotor" ,validate: (row) =>{
       if(row.numeroMotor?.length > 50){
         return {
           isValid: false,
@@ -61,7 +61,7 @@ const columns = [
         }
     }},
 
-    { title: "Número de placa", field: "placa" ,validate: (row) =>{
+    { title: "N° de placa", field: "placa" ,validate: (row) =>{
       if(row.placa?.length > 10){
         return {
           isValid: false,
@@ -138,7 +138,8 @@ export function Articulos() {
             position: 'sticky', 
             top: 0,
             zIndex: 1,
-            backgroundColor: '#fff',
+            backgroundColor: '#cacaca5f',
+            borderRadius: 0
           },
       }}
       icons={{
