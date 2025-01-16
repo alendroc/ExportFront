@@ -6,7 +6,7 @@ import { NavbarP } from "./components/navbarP";
 import { AiOutlineHome, AiOutlineGlobal } from "react-icons/ai";
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";
-import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
+import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet,FaGears } from "react-icons/fa6";
 import {Login } from "../src/pages/Login.jsx";
 
 function App() {
@@ -55,18 +55,18 @@ function App() {
     },
     {
       label: "Programa Operativo",
-      icon: <GiWatermelon />,
-      to: "/Melones",
+      icon: <FaGears  />,
+      to: "/ProgramaO",
       submenu: [
-        { name: "Asignar Lotes", href: "/melones/asignar-lotes" },
-        { name: "Asignar Híbridos", href: "/melones/asignar-hibridos" },
-        { name: "Asignar Labores", href: "/melones/asignar-labores" },
-        { name: "Asignar DDT por Labor", href: "/melones/asignar-ddt" },
-        { name: "Diseñar Prog. Operativo", href: "/melones/disenar-programa" },
-        { name: "Actualizar versión P.O", href: "/melones/actualizar-po" },
-        { name: "Camas", href: "/melones/camas" },
-        { name: "Actualizar Lotes P.O", href: "/melones/actualizar-lotes" },
-        { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa" },
+        { name: "Asignar Lotes", href: "/programaOp/asignar-lotes" },
+        { name: "Asignar Híbridos", href: "/programaOp/asignar-hibridos" },
+        { name: "Asignar Labores", href: "/programaOp/asignar-labores" },
+        { name: "Asignar DDT por Labor", href: "/programaOp/asignar-ddt" },
+        { name: "Diseñar Prog. Operativo", href: "/programaOp/disenar-programa" },
+        { name: "Actualizar versión P.O", href: "/programaOp/actualizar-po" },
+        { name: "Camas", href: "/programaOp/camas" },
+        { name: "Actualizar Lotes P.O", href: "/programaOp/actualizar-lotes" },
+        { name: "Actualizar Programa Operativo", href: "/programaOp/actualizar-programa" },
       ]
     },
   ];
