@@ -1,38 +1,28 @@
 import styled from "styled-components";
 import MaterialTable from "@material-table/core";
 import React, { useState, useEffect } from "react";
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { showToast } from "../../components/helpers";
 import { LaboresService } from "../../services/LaboresService";
-import { Departamento } from "./departamentos";
-var laboresService = new LaboresService;
+import { DepartamentoService } from "../../services/DepartamentoService"
 
-const columns = [
-  /*
-  {
-    title: "Cultivo", field: "cultivo", editable: 'onAdd', validate: (row) => (row.cultivo || "").length !== 0,
-    lookup: {
-      MELON: 'MELÓN',
-      CANA: 'CANA',
-      // Agrega más opciones aquí, cada clave es el valor guardado y el valor de la clave es el texto mostrado
-    },
-  },*/
-  { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
-  { title: "Departamento", field: "departamento" },
-  { title: "Descripción", field: "descripcion" },
-];
+var laboresService = new LaboresService;
+var departamentoService = new DepartamentoService;
 
 export function Labores() {
   const [data, setData] = useState([]);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
+  const [departamentosDisponibles, setDepartamentosDisponibles] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await laboresService.getAll();
         if (response.success) {
+          console.log(response);
           // Accede a los valores de labores correctamente
-          const labores = response.labores.$values || []; // Acceder a $values
+          const labores = response.labores || []; 
           setData(labores); // Establecer el estado con el arreglo de labores
           console.log("Labores obtenidos:", labores); // Verifica los datos que recibes
         } else {
@@ -43,8 +33,60 @@ export function Labores() {
       }
     };
 
+    const fetchDepartamentos = async () => {
+      try {
+        const response = await departamentoService.getAll();
+        if (response.success) {
+          const departamentos = response.departamentos || [];
+          setDepartamentosDisponibles(departamentos);
+          console.log("Departamentos obtenidos:", departamentos);
+        } else {
+          console.error("No se pudieron obtener los departamentos.");
+        }
+      } catch (error) {
+        console.error("Error al obtener los departamentos:", error);
+      }
+    };
+
     fetchData();
+    fetchDepartamentos();
   }, []);
+
+  console.log(departamentosDisponibles);
+  const columns = [
+    /*
+    {
+      title: "Cultivo", field: "cultivo", editable: 'onAdd', validate: (row) => (row.cultivo || "").length !== 0,
+      lookup: {
+        MELON: 'MELÓN',
+        CANA: 'CANA',
+        // Agrega más opciones aquí, cada clave es el valor guardado y el valor de la clave es el texto mostrado
+      },
+    },*/
+    { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
+    {
+      title: "Departamento",
+      field: "departamento",
+      editComponent: ({ value, onChange }) => (
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <InputLabel id="departamento-label">Departamento</InputLabel>
+          <Select
+            labelId="departamento-label"
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            label="Departamento"
+          >
+            {departamentosDisponibles.map((departamento) => (
+              <MenuItem key={departamento.departamento} value={departamento.departamento}>
+                {departamento.departamento}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ),
+    },
+    { title: "Descripción", field: "descripcion" },
+  ];
 
   // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
   useEffect(() => {
@@ -133,7 +175,7 @@ export function Labores() {
                 .then(response => {
                   if (response.success) {
                     console.log("Labor creado exitosamente");
-                    setData(prevData => [ newDataWithId , ...prevData]);
+                    setData(prevData => [newDataWithId, ...prevData]);
                     showToast('success', 'Labor creada', '#2d800e');
                     resolve(); // Resolvemos la promesa si todo fue bien
                   } else {
@@ -191,8 +233,10 @@ export function Labores() {
           },
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
+              console.log("acá")
               laboresService.delete(oldData.labor, oldData.departamento) // Llama a la función de eliminación
                 .then(response => {
+                  console.log(response);
                   if (response.success) {
                     const dataDelete = data.filter(
                       (el) => !(el.labor === oldData.labor)
