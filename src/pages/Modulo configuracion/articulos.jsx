@@ -18,7 +18,7 @@ const columns = [
         return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: "Formato: xxxx-xx-xx-xx-xx" };
     }},
 
-    { title: "Nombre de articulo", width: "200px", field: "nombreArticulo",validate: (row) =>{
+    { title: "Nombre de articulo", headerStyle: { minWidth: 120 },  field: "nombreArticulo",validate: (row) =>{
       if((row.nombreArticulo || "").length === 0){return false}  
       if(row.nombreArticulo?.length > 50){
         return {
@@ -27,7 +27,7 @@ const columns = [
         }
     }},
   
-    { title: "Marca", width: "50px", field: "marca",validate: (row) => {
+    { title: "Marca",  headerStyle: { minWidth: 50 }, field: "marca",validate: (row) => {
       if((row.marca || "").length === 0){return false}
       if(row.marca?.length > 50){
         return {
@@ -69,7 +69,7 @@ const columns = [
         }
     }},
 
-    { title: "Tipo", field: "tipo",validate: (row) => {
+    { title: "Tipo", headerStyle: { minWidth: 20, }, field: "tipo",validate: (row) => {
       if((row.tipo || "").length === 0){return false}
       if(row.tipo?.length > 50){
         return {
@@ -138,7 +138,7 @@ export function Articulos() {
             position: 'sticky', 
             top: 0,
             zIndex: 1,
-            backgroundColor: '#cacaca5f',
+            backgroundColor: '#e8e8e8',
             borderRadius: 0
           },
       }}
@@ -286,7 +286,7 @@ export function Articulos() {
   }
   const Container =styled.div`
  display: block;
-width: 100%; //width: 95%;
+ width: 95%;
 //max-width: 1200px;
 z-index: 1;
      .MuiToolbar-root {
@@ -313,7 +313,7 @@ z-index: 1;
    }
   }
   @media (min-width: 1600px) {
-    max-width: 1400px;
+ max-width: 1400px;
  .MuiTypography-h6 {
    font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
  }

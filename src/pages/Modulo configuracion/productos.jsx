@@ -143,7 +143,7 @@ export function Productos() {
               position: 'sticky', 
               top: 0,
               zIndex: 1,
-              backgroundColor: '#cacaca5f',
+              backgroundColor: '#e8e8e8',
               borderRadius: 0
             },
         }}

@@ -50,7 +50,7 @@ function App() {
         { name: "Departamentos", href: "/Configuracion/Departamentos"},
         { name: "Labores", href: "/Configuracion/labores"},
         { name: "Productos", href: "/Configuracion/productos"},
-        { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
+        { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios" ,width: "60px"},
       ]
     },
     {
@@ -58,15 +58,15 @@ function App() {
       icon: <GiWatermelon />,
       to: "/Melones",
       submenu: [
-        { name: "Asignar Lotes", href: "/melones/asignar-lotes" },
-        { name: "Asignar Híbridos", href: "/melones/asignar-hibridos" },
-        { name: "Asignar Labores", href: "/melones/asignar-labores" },
-        { name: "Asignar DDT por Labor", href: "/melones/asignar-ddt" },
-        { name: "Diseñar Prog. Operativo", href: "/melones/disenar-programa" },
-        { name: "Actualizar versión P.O", href: "/melones/actualizar-po" },
+        { name: "Asignar Lotes", href: "/melones/asignar-lotes", width: "60px" },
+        { name: "Asignar Híbridos", href: "/melones/asignar-hibridos",width: "70px" },
+        { name: "Asignar Labores", href: "/melones/asignar-labores",width: "60px"},
+        { name: "Asignar DDT por Labor", href: "/melones/asignar-ddt",width: "100px" },
+        { name: "Diseñar Prog. Operativo", href: "/melones/disenar-programa", width: "110px"},
+        { name: "Actualizar versión P.O", href: "/melones/actualizar-po",width: "80px" },
         { name: "Camas", href: "/melones/camas" },
-        { name: "Actualizar Lotes P.O", href: "/melones/actualizar-lotes" },
-        { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa" },
+        { name: "Actualizar Lotes P.O", href: "/melones/actualizar-lotes", width: "60px"},
+        { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa", width: "140px"},
       ]
     },
   ];
