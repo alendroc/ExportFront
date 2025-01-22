@@ -181,7 +181,10 @@ useEffect(() => {
                   showToast('error', 'Debe completar los campos fecha', '#9c1010');
                   reject('Error al actualizar el producto: Fecha inválida');
                   return;
-              }     
+              } 
+              
+             
+              
            if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
                reject(`Error al crear el producto: ${response.message}`);
@@ -194,6 +197,20 @@ useEffect(() => {
                 console.log("No se pudieron obtener las temporadas.");
             }
                   const isDuplicate = data.some(season => season.temporada === newDataWithId.temporada)
+
+                  //Cuando se activa una temporada las demás se desactivan pero solo sirve en la tabla, no se ve reflejado en la BD
+                  // const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+                  // if(someActive){
+                  //   data.forEach(temp=>temp.actual=false)
+                  // }
+
+                  const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+              
+                  if(someActive){
+                    showToast('error', 'Ya existe una temporada activa','#9c1010'); 
+                    reject(`Error al crear la temporada: ${response.message}`)
+                    return;
+                  }
 
 
                   console.log(data)
@@ -245,6 +262,15 @@ useEffect(() => {
              
 
               const isDuplicate = updatedData.some((season, idx) => season.temporada === newDataWithId.temporada && idx !== index);
+
+              const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+              
+                  if(someActive){
+                    showToast('error', 'Ya existe una temporada activa','#9c1010'); 
+                    reject(`Error al crear la temporada: ${response.message}`)
+                    return;
+                  }
+                  
               if (isDuplicate) {
                   showToast('error', 'Ya existe esa temporada', '#9c1010');
                   reject('Error al actualizar la temporada: La temporada ya existe');

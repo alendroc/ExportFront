@@ -6,7 +6,7 @@ import { NavbarP } from "./components/navbarP";
 import { AiOutlineHome, AiOutlineGlobal } from "react-icons/ai";
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";
-import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
+import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet,FaGears } from "react-icons/fa6";
 import {Login } from "../src/pages/Login.jsx";
 
 function App() {
@@ -55,8 +55,8 @@ function App() {
     },
     {
       label: "Programa Operativo",
-      icon: <GiWatermelon />,
-      to: "/Melones",
+      icon: <FaGears  />,
+      to: "/ProgramaO",
       submenu: [
         { name: "Asignar Lotes", href: "/melones/asignar-lotes", width: "60px" },
         { name: "Asignar Híbridos", href: "/melones/asignar-hibridos",width: "70px" },
