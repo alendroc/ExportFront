@@ -7,21 +7,84 @@ import { ArticulosService } from "../../services/ArticulosService";
 var articulosService = new ArticulosService;
 
 const columns = [
-  {
-    title: "ID de articulo", field: "idArticulo", editable: 'onAdd', validate: (rowData) => {
-      // Expresión regular para el formato NNNN-NN-NN-NN-NN
-      const regex = /([A-Za-z0-9]{4})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})/;
-      return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: "Formato: xxxx-xx-xx-xx-xx" };
-    }
-  },
-  { title: "Nombre de articulo", width: "200px", field: "nombreArticulo", validate: (row) => (row.nombreArticulo || "").length !== 0 },
-  { title: "Marca", width: "50px", field: "marca", validate: (row) => (row.marca || "").length !== 0 },
-  { title: "Modelo", width: "50px", field: "modelo", validate: (row) => (row.modelo || "").length !== 0 },
-  { title: "Número de Chasis", width: "200px", field: "numeroChasis" },
-  { title: "Número de motor", width: "200px", field: "numeroMotor" },
-  { title: "Número de placa", field: "placa" },
-  { title: "Tipo", field: "tipo", validate: (row) => (row.tipo || "").length !== 0 },
-  { title: "Observaciones", field: "observaciones" },
+    { title: "ID de articulo", field: "idArticulo",   editable: 'onAdd',  validate: (rowData) => {
+        // Expresión regular para el formato NNNN-NN-NN-NN-NN
+        const regex =/([A-Za-z0-9]{4})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})-([A-Za-z0-9]{2})/;
+        
+        if (rowData.idArticulo?.length > 20) {
+          return { isValid: false, helperText: "El límite de la columna es de 20 carácteres" };
+        }
+
+        return regex.test(rowData.idArticulo) ? true : { isValid: false, helperText: "Formato: xxxx-xx-xx-xx-xx" };
+    }},
+
+    { title: "Nombre de articulo", headerStyle: { minWidth: 120 },  field: "nombreArticulo",validate: (row) =>{
+      if((row.nombreArticulo || "").length === 0){return false}  
+      if(row.nombreArticulo?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+    }},
+  
+    { title: "Marca",  headerStyle: { minWidth: 50 }, field: "marca",validate: (row) => {
+      if((row.marca || "").length === 0){return false}
+      if(row.marca?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+    } },
+
+    { title: "Modelo", width: "50px", field: "modelo",validate: (row) => {
+      if((row.modelo || "").length === 0){return false}
+      if(row.modelo?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+     } },
+
+    { title: "N° de Chasis", field: "numeroChasis", validate: (row) =>{
+      if(row.numeroChasis?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+    } },
+
+    { title: "N° de motor", field: "numeroMotor" ,validate: (row) =>{
+      if(row.numeroMotor?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+    }},
+
+    { title: "N° de placa", field: "placa" ,validate: (row) =>{
+      if(row.placa?.length > 10){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 10 carácteres"};
+        }
+    }},
+
+    { title: "Tipo", headerStyle: { minWidth: 20, }, field: "tipo",validate: (row) => {
+      if((row.tipo || "").length === 0){return false}
+      if(row.tipo?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+    } },
+
+    { title: "Observaciones", field: "observaciones",validate: (row) =>{
+      if(row.observaciones?.length > 500){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 500 carácteres"};
+        }
+    } },
 ];
 export function Articulos() {
   const [data, setData] = useState([]);
@@ -75,7 +138,8 @@ export function Articulos() {
             position: 'sticky',
             top: 0,
             zIndex: 1,
-            backgroundColor: '#fff',
+            backgroundColor: '#e8e8e8',
+            borderRadius: 0
           },
         }}
         icons={{
@@ -222,7 +286,7 @@ export function Articulos() {
 }
 const Container = styled.div`
  display: block;
-width: 100%; //width: 95%;
+ width: 95%;
 //max-width: 1200px;
 z-index: 1;
      .MuiToolbar-root {
@@ -249,7 +313,7 @@ z-index: 1;
    }
   }
   @media (min-width: 1600px) {
-    max-width: 1400px;
+ max-width: 1400px;
  .MuiTypography-h6 {
    font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
  }

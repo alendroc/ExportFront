@@ -9,7 +9,14 @@ var loteService = new LoteService;
 
 
 const columns = [
-    { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => (row.nombreLote || "").length !== 0, },
+    { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => {
+      if((row.nombreLote || "").length === 0){return false}
+      if(row.nombreLote?.length > 20){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 20 carácteres"
+      };}
+    }},
     { title: "Activo", field: "activo", type: "boolean" },
     { title: "Área", field: "area", type: "numeric", 
         validate: rowData => {
@@ -17,7 +24,13 @@ const columns = [
             return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
         }
     },
-    { title: "Descripción", field: "descripcion" },
+    { title: "Descripción", field: "descripcion",validate: (row) =>{
+      if(row.descripcion?.length > 500){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 500 carácteres"
+     };}
+   } },
 ];
 
 
