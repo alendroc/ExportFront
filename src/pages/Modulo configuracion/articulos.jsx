@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import MaterialTable from "@material-table/core";
-import React, {useState, useEffect  } from "react";
+import React, { useState, useEffect } from "react";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { showToast } from "../../components/helpers";
 import { ArticulosService } from "../../services/ArticulosService";
@@ -87,30 +87,30 @@ const columns = [
     } },
 ];
 export function Articulos() {
-    const [data, setData] = useState([]);
-    const [maxBodyHeight, setMaxBodyHeight] = useState(480);
-    //Agregar
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await articulosService.getAll();
-                if (response.success) {
-                    setData(response.articulos); 
-                    console.log("Articulos", response.articulos);
-                } else {
-                    console.log("No se pudieron obtener los articulos.");
-                }
-            } catch (error) {
-                console.error("Error al obtener los aticulos:", error);
-            }
-        };
-        fetchData();
-    }, []);
+  const [data, setData] = useState([]);
+  const [maxBodyHeight, setMaxBodyHeight] = useState(480);
+  //Agregar
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await articulosService.getAll();
+        if (response.success) {
+          setData(response.articulos);
+          console.log("Articulos", response.articulos);
+        } else {
+          console.log("No se pudieron obtener los articulos.");
+        }
+      } catch (error) {
+        console.error("Error al obtener los aticulos:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-    useEffect(() => {
-        const handleResize = () => {
+  useEffect(() => {
+    const handleResize = () => {
       if (window.innerWidth < 1300) {
-        setMaxBodyHeight(470); 
+        setMaxBodyHeight(470);
       } else if (window.innerWidth < 2000) {
         setMaxBodyHeight(580);
       } else {
@@ -122,59 +122,59 @@ export function Articulos() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-    return (
+  return (
     <Container>
-         <MaterialTable size="small"
-       title="Gestión de Artículos"
-      data={data}
-      columns={columns || []}
-      options={{
-        actionsColumnIndex: -1,
-        maxBodyHeight: maxBodyHeight,
-        addRowPosition: "first",
-        padding: onabort,
-        paging: false, 
-        headerStyle: {
-            position: 'sticky', 
+      <MaterialTable size="small"
+        title="Gestión de Artículos"
+        data={data}
+        columns={columns || []}
+        options={{
+          actionsColumnIndex: -1,
+          maxBodyHeight: maxBodyHeight,
+          addRowPosition: "first",
+          padding: onabort,
+          paging: false,
+          headerStyle: {
+            position: 'sticky',
             top: 0,
             zIndex: 1,
             backgroundColor: '#e8e8e8',
             borderRadius: 0
           },
-      }}
-      icons={{
-        Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
-        Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
-        Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
+        }}
+        icons={{
+          Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
+          Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
+          Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
 
-    }}
-      localization={{
-        body: {
-          emptyDataSourceMessage: 'No se encontraron artículos',
-          editRow: {
-            deleteText: '¿Estás seguro de que deseas eliminar este articulo?', // Cambia el mensaje de confirmación
-            cancelTooltip: 'Cancelar', // Texto del botón de cancelar
-            saveTooltip: 'Confirmar',  // Texto del botón de confirmar
+        }}
+        localization={{
+          body: {
+            emptyDataSourceMessage: 'No se encontraron artículos',
+            editRow: {
+              deleteText: '¿Estás seguro de que deseas eliminar este articulo?', // Cambia el mensaje de confirmación
+              cancelTooltip: 'Cancelar', // Texto del botón de cancelar
+              saveTooltip: 'Confirmar',  // Texto del botón de confirmar
+            },
+            editTooltip: 'Editar',
+            deleteTooltip: 'Eliminar',
+            addTooltip: 'Agregar'
           },
-          editTooltip: 'Editar',  
-          deleteTooltip: 'Eliminar',
-          addTooltip: 'Agregar'
-        },
-        header: {
-          actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-        },
-        toolbar: {
-          searchTooltip: 'Buscar',
-          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
-      },
-      }}
-      editable={{
-        onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
-        onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-        onRowAdd: (newData) => {
-            return new Promise((resolve, reject) => { 
+          header: {
+            actions: 'Acciones' // Cambia el encabezado de la columna de acciones
+          },
+          toolbar: {
+            searchTooltip: 'Buscar',
+            searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
+          },
+        }}
+        editable={{
+          onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+          onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+          onRowAdd: (newData) => {
+            return new Promise((resolve, reject) => {
               console.log(newData)
-            const newDataWithId = {
+              const newDataWithId = {
                 ...newData,
                 color: newData.color = "nada",
                 idArticulo: newData.idArticulo.toUpperCase(),
@@ -186,105 +186,105 @@ export function Articulos() {
                 numeroMotor: newData.numeroMotor ? newData.numeroMotor.toUpperCase() : "",
                 placa: newData.placa ? newData.placa.toUpperCase() : "",
                 observaciones: newData.observaciones ? newData.observaciones.toUpperCase() : ""
-            } 
-            console.log(newDataWithId)
-            const isDuplicate = data.some(articu => articu.idArticulo === newDataWithId.idArticulo)
-           
-            if(isDuplicate){
-              showToast('error', 'Ya existe ese Articulo','#9c1010'); 
-              reject(`Error al crear el producto: ${response.message}`);
-              return
-            }
-                    articulosService.create(newDataWithId)
-                        .then(response => {
-                            if (response.success) {
-                                console.log("Articulo creado exitosamente");
-                                setData(prevData => [ newDataWithId , ...prevData]);
-                                showToast('success', 'Articulo creado', '#2d800e');
-                                resolve(); // Resolvemos la promesa si todo fue bien
-                            } else {
-                                reject(`Error al crear el Articulo: ${response.message}`);
-                            }
-                        })
-                        .catch(error => {
-                            reject(`Error de red: ${error.message}`);
-                        });
-              });
-          
-        },
-        onRowUpdate: (newData, oldData) => {
-          return new Promise((resolve, reject) => {
-            const index = data.findIndex(item => item.idArticulo === oldData.idArticulo);
-            const updatedData = [...data];
+              }
+              console.log(newDataWithId)
+              const isDuplicate = data.some(articu => articu.idArticulo === newDataWithId.idArticulo)
 
-            const newDataWithId = {
-              ...newData,
-              color: newData.color = "nada",
-              idArticulo: newData.idArticulo.toUpperCase(),
-              nombreArticulo: newData.nombreArticulo.toUpperCase(),
-              tipo: newData.tipo.toUpperCase(),
-              marca: newData.marca.toUpperCase(),
-              modelo: newData.modelo.toUpperCase(),
-              numeroChasis: newData.numeroChasis ? newData.numeroChasis.toUpperCase() : "",
-              numeroMotor: newData.numeroMotor ? newData.numeroMotor.toUpperCase() : "",
-              placa: newData.placa ? newData.placa.toUpperCase() : "",
-              observaciones: newData.observaciones ? newData.observaciones.toUpperCase() : ""
-          } 
+              if (isDuplicate) {
+                showToast('error', 'Ya existe ese Articulo', '#9c1010');
+                reject(`Error al crear el producto: ${response.message}`);
+                return
+              }
+              articulosService.create(newDataWithId)
+                .then(response => {
+                  if (response.success) {
+                    console.log("Articulo creado exitosamente");
+                    setData(prevData => [newDataWithId, ...prevData]);
+                    showToast('success', 'Articulo creado', '#2d800e');
+                    resolve(); // Resolvemos la promesa si todo fue bien
+                  } else {
+                    reject(`Error al crear el Articulo: ${response.message}`);
+                  }
+                })
+                .catch(error => {
+                  reject(`Error de red: ${error.message}`);
+                });
+            });
 
-            const isDuplicate = updatedData.some((season, idx) => season.idArticulo === newDataWithId.idArticulo && idx !== index);
-            if (isDuplicate) {
+          },
+          onRowUpdate: (newData, oldData) => {
+            return new Promise((resolve, reject) => {
+              const index = data.findIndex(item => item.idArticulo === oldData.idArticulo);
+              const updatedData = [...data];
+
+              const newDataWithId = {
+                ...newData,
+                color: newData.color = "nada",
+                idArticulo: newData.idArticulo.toUpperCase(),
+                nombreArticulo: newData.nombreArticulo.toUpperCase(),
+                tipo: newData.tipo.toUpperCase(),
+                marca: newData.marca.toUpperCase(),
+                modelo: newData.modelo.toUpperCase(),
+                numeroChasis: newData.numeroChasis ? newData.numeroChasis.toUpperCase() : "",
+                numeroMotor: newData.numeroMotor ? newData.numeroMotor.toUpperCase() : "",
+                placa: newData.placa ? newData.placa.toUpperCase() : "",
+                observaciones: newData.observaciones ? newData.observaciones.toUpperCase() : ""
+              }
+
+              const isDuplicate = updatedData.some((season, idx) => season.idArticulo === newDataWithId.idArticulo && idx !== index);
+              if (isDuplicate) {
                 showToast('error', 'Ya existe este articulo', '#9c1010');
                 reject('Error al actualizar el articulo: el articulo ya existe');
                 return;
-            }
+              }
 
-            updatedData[index] = newDataWithId;
+              updatedData[index] = newDataWithId;
 
-            articulosService.update(oldData.idArticulo, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
-                  .then(response => {
-                      if (response.success) {
-                          setData(updatedData);
-                          showToast('success', 'Articulo actualizado', '#2d800e');
-                          resolve();
-                      } else {
-                          reject(`Error al actualizar el articulo: ${response.message}`);
-                          showToast('error', '`Error al actualizar el articulo', '#9c1010');
-                      }
-                  })
-                  .catch(error => {
-                      reject(`Error de red: ${error.message}`);
-                  });
+              articulosService.update(oldData.idArticulo, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+                .then(response => {
+                  if (response.success) {
+                    setData(updatedData);
+                    showToast('success', 'Articulo actualizado', '#2d800e');
+                    resolve();
+                  } else {
+                    reject(`Error al actualizar el articulo: ${response.message}`);
+                    showToast('error', '`Error al actualizar el articulo', '#9c1010');
+                  }
+                })
+                .catch(error => {
+                  reject(`Error de red: ${error.message}`);
+                });
             })
 
-        },
-        onRowDelete: (oldData) => { 
-          return new Promise((resolve, reject) => {
-            articulosService.delete(oldData.idArticulo) // Llama a la función de eliminación
-            .then(response => {
-                if (response.success) {
+          },
+          onRowDelete: (oldData) => {
+            return new Promise((resolve, reject) => {
+              articulosService.delete(oldData.idArticulo) // Llama a la función de eliminación
+                .then(response => {
+                  if (response.success) {
                     const dataDelete = data.filter((el) => el.idArticulo !== oldData.idArticulo);
-                    setData(dataDelete); 
+                    setData(dataDelete);
                     showToast('success', 'Articulo eliminado', '#2d800e');
                     resolve();
-                } else {
-                 
-                  showToast('error', '`Error al eliminar el articulo', '#9c1010');
+                  } else {
+
+                    showToast('error', '`Error al eliminar el articulo', '#9c1010');
                     reject('No se pudo eliminar el articulo.');
-                }
-            })
-            .catch(error => {
-                reject(`Error al eliminar: ${error.message}`);
+                  }
+                })
+                .catch(error => {
+                  reject(`Error al eliminar: ${error.message}`);
+                });
             });
-        });
-            
-        },
-      }}
- 
-    />
+
+          },
+        }}
+
+      />
     </Container>
-    );
-  }
-  const Container =styled.div`
+  );
+}
+const Container = styled.div`
  display: block;
  width: 95%;
 //max-width: 1200px;
