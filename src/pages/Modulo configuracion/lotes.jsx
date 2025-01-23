@@ -76,6 +76,8 @@ export function Lote(){
 
   return(
 <Container >
+  <button
+  >hola</button>
   <MaterialTable size="small"
        title="Gestión de lotes"
       data={data}

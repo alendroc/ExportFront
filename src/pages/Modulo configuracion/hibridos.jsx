@@ -12,9 +12,9 @@ var hibridosService = new HibridosService;
 var variedadesService=new VariedadesService;
 var hibridoObj = new Hibrido();
 const columns = [
-  { title: "Cultivo", field: "cultivo", editable: false,},
+  { title: "Cultivo", field: "cultivo", editable: () => false,},
 
-  { title: "Variedad", field: "variedad", editable: false,},
+  { title: "Variedad", field: "variedad",editable: () => false,},
 
   { title: "Hibrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
     if((row.hibrido || "").length === 0){return false}
