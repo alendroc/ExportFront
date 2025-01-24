@@ -7,8 +7,8 @@ import { Search } from "@mui/icons-material";
 
 var loteService = new LoteService;
 
-const columnLote = [{title: 'Lote', field: 'nombreLote',  cellStyle: { fontSize: "10px", width: "auto" }},
-  {title: 'Area', field: 'area', type: "numeric",cellStyle: { fontSize: "10px",  width: "auto"}},
+const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
+  {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
 ];
 
 const columnLoteDATOS = [{title: 'Lote', field: 'nombreLote', cellStyle: { fontSize: "10px", width: "auto" }},
@@ -62,7 +62,6 @@ export function AsignarLote() {
          }, []);
     return (
     <Container>
-   
         <MaterialTable 
               size="small"
               data={data}
@@ -71,6 +70,7 @@ export function AsignarLote() {
               options={{ 
                 selection: true,
                 showSelectAllCheckbox: false,
+                showTextRowsSelected: false,
                 search: true,
                 actionsColumnIndex: -1,
                 addRowPosition: "first",
@@ -84,22 +84,23 @@ export function AsignarLote() {
                     fontSize: "11px",
                     backgroundColor: '#fff',
                   },
-                  toolbar: true,
-
                   searchFieldStyle: {
                     fontSize: "12px",
                     width: "120px",
+                    padding: "0",
                   },
                  
               }}
               style={{
                 overflowX: 'auto',
-               
               }}
               components={{
                 Toolbar: (props) => (
-                  <div style={{ backgroundColor: '#f89358', height: '60px',  }}>
-                    <MTableToolbar {...props} />
+                  <div className="custom-toolbar" style={{ backgroundColor: '#f89358', height: '60px', color: 'white', paddingRight: '0' }}>
+                    <MTableToolbar  {...props}  style={{
+            padding: '0',
+            top: '0' // Elimina el padding del MTableToolbar
+          }}/>
                   </div>
                 ),
               }}
@@ -191,19 +192,46 @@ export function AsignarLote() {
                   searchPlaceholder: 'Buscar',
                 },
               }}
+              editable={{
+                onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+                onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+               
+              }}
               ></MaterialTable>
         
     </Container>);
   }
   const Container =styled.div`
   display: flex;
-
+  .custom-toolbar .MuiToolbar-root {
+    padding: 0 10px 0 0!important; 
+  }
 
   .MuiToolbar-root .MuiInputBase-root input::placeholder {
   color: #000000; /* Reemplaza con el color deseado */
   }
   .MuiSvgIcon-root .MuiSvgIcon-fontSizeSmall .css-120dh41-MuiSvgIcon-root{
     display: none !important;
+  }
+
+  .MuiTableCell-root .MuiTableCell-head .MuiTableCell-alignRight .MuiTableCell-sizeSmall .css-1cj7cuo-MuiTableCell-root{
+    flex-direction: row;
+  }
+  @media (min-width: 1200px){
+    .MuiTableCell-root {
+      padding: 4px 8px;
+     font-size: 12px !important;
+   }
+  }
+  @media (min-width: 1600px) {
+ max-width: 1400px;
+ .MuiTypography-h6 {
+   font-size: 20px; /* Tamaño de fuente para el título en pantallas grandes */
+ }
+ .MuiTableCell-root {
+     padding: 4px 8px; 
+     font-size: 14px !important;
+   }
   }
   
   `
