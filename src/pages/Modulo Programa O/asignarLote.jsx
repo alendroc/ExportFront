@@ -2,37 +2,41 @@ import styled from "styled-components";
 import MaterialTable,  { MTableToolbar }  from "@material-table/core";
 import React, { useState, useEffect  } from "react";
 import { LoteService } from "../../services/LoteService";
+import { LotePOService } from "../../services/LotesPOService";
 import { Select } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
 var loteService = new LoteService;
+var lotePoService = new LotePOService;
 
 const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
   {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
 ];
 
 const columnLoteDATOS = [{title: 'Lote', field: 'nombreLote', cellStyle: { fontSize: "10px", width: "auto" }},
-{title: 'N° de siembra ', field: 'numSiembra', type: "numeric",cellStyle: { fontSize: "10px"}},
-{title: 'Alias Lote', field: 'aliaslote', cellStyle: { fontSize: "10px"}},
-{title: 'Fecha temporada', field: 'alias lote',type:"date", cellStyle: { fontSize: "10px"}},
+{title: 'N° de siembra ', field: 'siembraNum', type: "numeric",cellStyle: { fontSize: "10px"}},
+{title: 'Alias Lote', field: 'aliasLote', cellStyle: { fontSize: "10px"}},
+{title: 'Fecha Transplante', field: 'fechaTrasplante',type:"date", cellStyle: { fontSize: "10px"}},
 {title: 'Area', field: 'area',type:"numeric", cellStyle: { fontSize: "10px" }},
 {title: 'Orientacion', field: 'orientacion',type:"string", cellStyle: { fontSize: "10px"}},
 {title: 'Fumig', field: 'fumig', cellStyle: { fontSize: "10px"}},
-{title: 'Tipo plastico', field: 'TipPlastico', cellStyle: { fontSize: "10px", }},
+{title: 'Tipo plastico', field: 'tipoPlastico', cellStyle: { fontSize: "10px", }},
 {title: 'Densidad', field: 'densidad', cellStyle: { fontSize: "10px"  }},
-{title: 'Colmenas por ha', field: 'colmenas', cellStyle: { fontSize: "10px" }},
-{title: 'Prog fertilizado', field: 'fertilizado', cellStyle: { fontSize: "10px"}},
-{title: 'Prog fitoproteccion', field: 'fitoproteccion', cellStyle: { fontSize: "10px"}},
+{title: 'Colmenas por Ha', field: 'colmenasPorHa', cellStyle: { fontSize: "10px" }},
+{title: 'Prog Fertilizacion', field: 'progFertilizacion', cellStyle: { fontSize: "10px"}},
+{title: 'Prog Fitoproteccion', field: 'progFitoProteccion', cellStyle: { fontSize: "10px"}},
 
 ];
 
 export function AsignarLote() {
    const [data, setData] = useState([]);
+   const [dataPo, setDataPo] = useState([]);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
    useEffect(() => {
            const fetchData = async () => {
                try {
-                   const response = await loteService.getAll();
+                   const response = await loteService.getLotesActivos();
+                   console.log("response",response)
                    if (response.success) {
                        setData(response.lotes); 
                        console.log("Lotes", response.lotes);
@@ -43,6 +47,23 @@ export function AsignarLote() {
                    console.error("Error al obtener los lotes:", error);
                }
            };
+
+           const cargarLotesPo = async () => {
+            try {
+                const response = await lotePoService.getAll();
+                console.log("response",response)
+                if (response.success) {
+                  setDataPo(response.LotesPO); 
+                    console.log("LotesPo", response.LotesPO);
+                } else {
+                    console.log("No se pudieron obtener los lotesPo.");
+                }
+            } catch (error) {
+                console.error("Error al obtener los lotes:", error);
+            }
+        };
+
+        cargarLotesPo();
            fetchData();
        }, []);
     
@@ -134,7 +155,7 @@ export function AsignarLote() {
                <MaterialTable 
               size="small"
               title={<div style={{ fontSize: '18px', fontWeight:"bold"}}>Asignar lotes</div>}
-              data={data}
+              data={dataPo}
               columns={columnLoteDATOS || []}
               options={{ 
                 actionsColumnIndex: -1,
@@ -174,9 +195,9 @@ export function AsignarLote() {
             }}
               localization={{
                 body: {
-                  emptyDataSourceMessage: 'No se encontraron lotes',
+                  emptyDataSourceMessage: 'No se encontraron lotes en este Programa Operativo',
                   editRow: {
-                    deleteText: '¿Estás seguro de que deseas eliminar este lote?', // Cambia el mensaje de confirmación
+                    deleteText: '¿Estás seguro de que deseas eliminar este lote del PO?', // Cambia el mensaje de confirmación
                     cancelTooltip: 'Cancelar', // Texto del botón de cancelar
                     saveTooltip: 'Confirmar',  // Texto del botón de confirmar
                   },

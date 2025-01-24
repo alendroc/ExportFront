@@ -20,7 +20,8 @@ export class LotePOService{
 
             if (data.isSuccess && data.status === 200) {
                 console.log('exitooooo.');
-                return { success: true, LotesPO: data.LotesPO };
+                console.log("data", data)
+                return { success: true, LotesPO: data.lotesPO };
             } else {
                 console.log('No se encontraron lotes.');
                 return { success: false, status: data.status };

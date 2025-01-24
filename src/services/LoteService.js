@@ -50,7 +50,7 @@ export class LoteService{
 
             if (data.isSuccess && data.status === 200) {
                 console.log('exito.');
-                return { success: true, lotes: data.lotes };
+                return { success: true, lotes: data.lotesActivos };
             } else {
                 console.log('No se encontraron lotes activos.');
                 return { success: false, status: data.status };
