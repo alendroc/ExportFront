@@ -1,8 +1,8 @@
 import styled from "styled-components";
-export function Caña() {
+export function Cana() {
     return (
     <Container>
-  <h1>Caña</h1>
+  <h1>Cana</h1>
     </Container>);
   }
   const Container =styled.div`
