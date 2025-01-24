@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import MaterialTable from "@material-table/core";
-import React, {forwardRef ,useState, useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { LoteService } from "../../services/LoteService";
 import { showToast } from "../../components/helpers";
@@ -56,7 +56,7 @@ export function Lote(){
     }, []);
 
     // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
-    useEffect(() => {
+   useEffect(() => {
         const handleResize = () => {
       if (window.innerWidth < 1300) {
         setMaxBodyHeight(470); 
@@ -217,7 +217,7 @@ export function Lote(){
 }
 const Container =styled.div`
 display: block;
-width: 100%;
+width: 95%;
 
 z-index: 1;
      .MuiToolbar-root {
