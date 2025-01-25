@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import MaterialTable,  { MTableToolbar }  from "@material-table/core";
+import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import React, { useState, useEffect  } from "react";
 import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
@@ -31,58 +32,52 @@ const columnLoteDATOS = [{title: 'Lote', field: 'nombreLote', cellStyle: { fontS
 export function AsignarLote() {
    const [data, setData] = useState([]);
    const [dataPo, setDataPo] = useState([]);
+   const [selectedRow, setSelectedRow] = useState(null);
+
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
+
+//cargar datos de los services
+  const fetchData = async (service, setData, logName) => {
+    try {
+      const response = await service();
+      console.log("response", response);
+      if (response.success) {
+        setData(response[logName]);
+        console.log(logName, response[logName]);
+      } else {
+        console.log(`No se pudieron obtener los ${logName}.`);
+      }
+    } catch (error) {
+      setData([])
+      console.error(`Error al obtener los ${logName}:`, error);
+    }
+  };
+
+  //modificar tamaño
+  const handleResize = () => {
+    if (window.innerWidth < 1300) {
+      setMaxBodyHeight(470); 
+    } else if (window.innerWidth < 2000) {
+      setMaxBodyHeight(580);
+    } else {
+      setMaxBodyHeight(480);
+    }
+  };
+
+  
+  //cuando se actualizan los states
    useEffect(() => {
-           const fetchData = async () => {
-               try {
-                   const response = await loteService.getLotesActivos();
-                   console.log("response",response)
-                   if (response.success) {
-                       setData(response.lotes); 
-                       console.log("Lotes", response.lotes);
-                   } else {
-                       console.log("No se pudieron obtener los lotes.");
-                   }
-               } catch (error) {
-                   console.error("Error al obtener los lotes:", error);
-               }
-           };
+     fetchData(() => lotePoService.getAll(), setDataPo, "LotesPO");
+     fetchData(() => loteService.getLotesActivos(), setData, "lotes");
 
-           const cargarLotesPo = async () => {
-            try {
-                const response = await lotePoService.getAll();
-                console.log("response",response)
-                if (response.success) {
-                  setDataPo(response.LotesPO); 
-                    console.log("LotesPo", response.LotesPO);
-                } else {
-                    console.log("No se pudieron obtener los lotesPo.");
-                }
-            } catch (error) {
-                console.error("Error al obtener los lotes:", error);
-            }
-        };
-
-        cargarLotesPo();
-           fetchData();
+     handleResize();
+     window.addEventListener("resize", handleResize);
+     return () => window.removeEventListener("resize", handleResize);
        }, []);
     
-        useEffect(() => {
-               const handleResize = () => {
-             if (window.innerWidth < 1300) {
-               setMaxBodyHeight(470); 
-             } else if (window.innerWidth < 2000) {
-               setMaxBodyHeight(580);
-             } else {
-               setMaxBodyHeight(480);
-             }
-           };
-           handleResize();
-           window.addEventListener("resize", handleResize);
-           return () => window.removeEventListener("resize", handleResize);
-         }, []);
     return (
     <Container>
+
         <MaterialTable 
               size="small"
               data={data}
@@ -90,6 +85,13 @@ export function AsignarLote() {
               columns={columnLote || []}
               options={{ 
                 selection: true,
+                selectionProps: (rowData) => ({
+                  onChange: () => {
+                    setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
+                    
+                  },
+                  checked: selectedRow?.nombreLote === rowData.nombreLote ? true : false
+                }),
                 showSelectAllCheckbox: false,
                 showTextRowsSelected: false,
                 search: true,
@@ -150,7 +152,33 @@ export function AsignarLote() {
                   searchPlaceholder: 'Buscar',
                 },
               }}
+
+              onRowClick={(event, rowData) => {
+                setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
+                
+              }}
+              onSelectionChange={(rows) => {
+                if (rows.length > 0) {
+                  setSelectedRow(rows[0]);
+                  console.log("Fila seleccionada por checkbox:", rows[0]);
+                } else {
+                  setSelectedRow(null);
+                }
+              }}
+
               ></MaterialTable>
+
+<button style={{ 
+      backgroundColor: 'blue', 
+      color: 'white', 
+      padding: '10px 20px', 
+      border: 'none', 
+      borderRadius: '5px', 
+      cursor: 'pointer' 
+    }}
+    onClick={() => console.log("fila seleccionada", selectedRow)}>
+    Prueba
+  </button>
                 
                <MaterialTable 
               size="small"
