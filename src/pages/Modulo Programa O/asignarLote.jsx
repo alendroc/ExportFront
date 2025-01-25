@@ -168,6 +168,7 @@ export function AsignarLote() {
 
               ></MaterialTable>
 
+{/* es de prueba pero solo funciona para ver el checkbox */}
 <button style={{ 
       backgroundColor: 'blue', 
       color: 'white', 
@@ -244,7 +245,7 @@ export function AsignarLote() {
               editable={{
                 onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
                 onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-               
+
               }}
               ></MaterialTable>
         
