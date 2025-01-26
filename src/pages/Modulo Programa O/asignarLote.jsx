@@ -116,6 +116,7 @@ export function AsignarLote() {
               }}
               style={{
                 overflowX: 'auto',
+                margin: "0 30px 0 0",
               }}
               components={{
                 Toolbar: (props) => (
@@ -169,19 +170,9 @@ export function AsignarLote() {
               ></MaterialTable>
 
 {/* es de prueba pero solo funciona para ver el checkbox */}
-<button style={{ 
-      backgroundColor: 'blue', 
-      color: 'white', 
-      padding: '10px 20px', 
-      border: 'none', 
-      borderRadius: '5px', 
-      cursor: 'pointer' 
-    }}
-    onClick={() => console.log("fila seleccionada", selectedRow)}>
-    Prueba
-  </button>
+
                 
-               <MaterialTable 
+    <MaterialTable 
               size="small"
               title={<div style={{ fontSize: '18px', fontWeight:"bold"}}>Asignar lotes</div>}
               data={dataPo}
@@ -205,13 +196,31 @@ export function AsignarLote() {
                   },
               }}
               style={{
-                overflowX: 'auto',
-                margin: "0 0 0 20px",
+
                 width: "700px",
               }}
             
               icons={{
-                Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
+                Add: () => <button
+                title="Add New"
+                class="group cursor-pointer outline-none hover:rotate-90 duration-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="30px"
+                  height="30px"
+                  viewBox="0 0 24 24"
+                  class="stroke-green-700 fill-none group-hover:fill-green-100 group-active:stroke-green-200 group-active:fill-green-600 group-active:duration-0 duration-300"
+                >
+                  <path
+                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                    stroke-width="1.5"
+                  ></path>
+                  <path d="M8 12H16" stroke-width="1.5"></path>
+                  <path d="M12 16V8" stroke-width="1.5"></path>
+                </svg>
+              </button>
+              , // Cambia el tamaño del ícono de agregar
                 Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
                 Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
             }}
@@ -245,14 +254,23 @@ export function AsignarLote() {
               editable={{
                 onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
                 onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-
+                onRowAdd: (newData) =>
+                  new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                      // Simula añadir la nueva fila a los datos existentes
+                      const updatedData = [...dataPo, newData];
+                      setDataPo(updatedData); // setDataPo debe ser tu función de estado para actualizar `dataPo`
+                      resolve();
+                    }, 600);
+                  }),
               }}
               ></MaterialTable>
         
     </Container>);
   }
   const Container =styled.div`
-  display: flex;
+ display: flex;
+ gap: 20px; /* Espaciado entre tablas */
   .custom-toolbar .MuiToolbar-root {
     padding: 0 10px 0 0!important; 
   }
@@ -264,9 +282,16 @@ export function AsignarLote() {
     display: none !important;
   }
 
-  .MuiTableCell-root .MuiTableCell-head .MuiTableCell-alignRight .MuiTableCell-sizeSmall .css-1cj7cuo-MuiTableCell-root{
-    flex-direction: row;
-  }
+  .MuiBox-root.css-p9qzma {
+  /* Tus estilos personalizados aquí */
+  position: absolute;
+   
+    left: -48px;
+    border-radius: 10px;
+    top: 70px;
+}
+
+
   @media (min-width: 1200px){
     .MuiTableCell-root {
       padding: 4px 8px;
