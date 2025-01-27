@@ -35,6 +35,7 @@ export function AsignarLote() {
    const [selectedRow, setSelectedRow] = useState(null);
 
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
+  const [widthNpdy, setwidthNpdy] = useState(700);
 
 //cargar datos de los services
   const fetchData = async (service, setData, logName) => {
@@ -56,11 +57,14 @@ export function AsignarLote() {
   //modificar tamaño
   const handleResize = () => {
     if (window.innerWidth < 1300) {
-      setMaxBodyHeight(470); 
-    } else if (window.innerWidth < 2000) {
+      setMaxBodyHeight(470);
+     setwidthNpdy(630);
+    }else if (window.innerWidth < 2000) {
       setMaxBodyHeight(580);
+      setwidthNpdy(950); 
     } else {
       setMaxBodyHeight(480);
+      setwidthNpdy(1000);
     }
   };
 
@@ -116,6 +120,7 @@ export function AsignarLote() {
               }}
               style={{
                 overflowX: 'auto',
+              
                 margin: "0 30px 0 0",
               }}
               components={{
@@ -197,7 +202,7 @@ export function AsignarLote() {
               }}
               style={{
 
-                width: "700px",
+                width: widthNpdy,
               }}
             
               icons={{
@@ -271,6 +276,7 @@ export function AsignarLote() {
   const Container =styled.div`
  display: flex;
  gap: 20px; /* Espaciado entre tablas */
+
   .custom-toolbar .MuiToolbar-root {
     padding: 0 10px 0 0!important; 
   }
@@ -285,13 +291,10 @@ export function AsignarLote() {
   .MuiBox-root.css-p9qzma {
   /* Tus estilos personalizados aquí */
   position: absolute;
-   
     left: -48px;
     border-radius: 10px;
     top: 70px;
 }
-
-
   @media (min-width: 1200px){
     .MuiTableCell-root {
       padding: 4px 8px;
