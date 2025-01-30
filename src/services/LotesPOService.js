@@ -19,8 +19,8 @@ export class LotePOService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                console.log('exitooooo.');
-                console.log("data", data)
+                //console.log('exitooooo.');
+                //console.log("data", data)
                 return { success: true, LotesPO: data.lotesPO };
             } else {
                 console.log('No se encontraron lotes.');
@@ -137,12 +137,12 @@ export class LotePOService{
         }
     }
 
-    async delete(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
+    async delete(temporada, siembraNum, nombreLote, aliasLote) {
         try {
             console.log("temporada:", temporada, "siembraNum:", siembraNum,"nombreLote:",nombreLote ,
-                "aliasLote:",aliasLote, "Datos a actualizar:", lotePO)
+                "aliasLote:",aliasLote,)
 
-            const response = await fetch(`${this.apiUrl}Lotes/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
+            const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

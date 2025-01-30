@@ -49,7 +49,7 @@ export class LoteService{
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                console.log('exito.');
+                //console.log('exito.');
                 return { success: true, lotes: data.lotesActivos };
             } else {
                 console.log('No se encontraron lotes activos.');

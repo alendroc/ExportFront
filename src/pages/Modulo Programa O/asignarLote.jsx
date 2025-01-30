@@ -6,50 +6,44 @@ import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
 import { Select } from "@mui/material";
 import { Search } from "@mui/icons-material";
+import { TemporadasService } from "../../services/TemporadasService";
+import { showToast } from "../../components/helpers";
 
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
+var temporadaService= new TemporadasService;
+const loteNoSeleccionadoText="Debe seleccionar un lote"
 
 const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
   {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
 ];
 
-const columnLoteDATOS = [{title: 'Lote', field: 'nombreLote', cellStyle: { fontSize: "10px", width: "auto" }},
-{title: 'N° de siembra ', field: 'siembraNum', type: "numeric",cellStyle: { fontSize: "10px"}},
-{title: 'Alias Lote', field: 'aliasLote', cellStyle: { fontSize: "10px"}},
-{title: 'Fecha Transplante', field: 'fechaTrasplante',type:"date", cellStyle: { fontSize: "10px"}},
-{title: 'Area', field: 'area',type:"numeric", cellStyle: { fontSize: "10px" }},
-{title: 'Orientacion', field: 'orientacion',type:"string", cellStyle: { fontSize: "10px"}},
-{title: 'Fumig', field: 'fumig', cellStyle: { fontSize: "10px"}},
-{title: 'Tipo plastico', field: 'tipoPlastico', cellStyle: { fontSize: "10px", }},
-{title: 'Densidad', field: 'densidad', cellStyle: { fontSize: "10px"  }},
-{title: 'Colmenas por Ha', field: 'colmenasPorHa', cellStyle: { fontSize: "10px" }},
-{title: 'Prog Fertilizacion', field: 'progFertilizacion', cellStyle: { fontSize: "10px"}},
-{title: 'Prog Fitoproteccion', field: 'progFitoProteccion', cellStyle: { fontSize: "10px"}},
 
-];
 
 export function AsignarLote() {
    const [data, setData] = useState([]);
    const [dataPo, setDataPo] = useState([]);
+   const [tempActiva, setTempActiva] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
+
+   
 
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
 
 //cargar datos de los services
-  const fetchData = async (service, setData, logName) => {
+  const fetchData = async (service, setDta, logName) => {
     try {
       const response = await service();
-      console.log("response", response);
+      //console.log("response", response);
       if (response.success) {
-        setData(response[logName]);
-        console.log(logName, response[logName]);
+        setDta(response[logName]);
+        //console.log(logName, response[logName]);
       } else {
         console.log(`No se pudieron obtener los ${logName}.`);
       }
     } catch (error) {
-      setData([])
+      setDta([])
       console.error(`Error al obtener los ${logName}:`, error);
     }
   };
@@ -73,6 +67,9 @@ export function AsignarLote() {
    useEffect(() => {
      fetchData(() => lotePoService.getAll(), setDataPo, "LotesPO");
      fetchData(() => loteService.getLotesActivos(), setData, "lotes");
+     fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual");
+
+     
 
      handleResize();
      window.addEventListener("resize", handleResize);
@@ -81,7 +78,7 @@ export function AsignarLote() {
     
     return (
     <Container>
-
+<div>Temporada: {tempActiva[0]?.temporada ??"No hay temporada activa"}</div>
         <MaterialTable 
               size="small"
               data={data}
@@ -174,16 +171,121 @@ export function AsignarLote() {
 
               ></MaterialTable>
 
-{/* es de prueba pero solo funciona para ver el checkbox */}
 
                 
     <MaterialTable 
+    
               size="small"
               title={<div style={{ fontSize: '18px', fontWeight:"bold"}}>Asignar lotes</div>}
               data={dataPo}
-              columns={columnLoteDATOS || []}
+              columns={ [{title: 'Lote', field: 'nombreLote',
+
+                initialEditValue: selectedRow?.nombreLote ||loteNoSeleccionadoText,
+
+                 editable: 'never',
+
+                validate: (rowData) => {
+                  if((rowData.nombreLote === loteNoSeleccionadoText)){return false}
+                  if(rowData.nombreLote?.length > 20){
+                    return {
+                      isValid: false,
+                      helperText: "El límite de la columna es de 20 carácteres"
+                  };}
+                
+                },
+                  cellStyle: { fontSize: "10px", width: "auto"  },
+
+                  },
+                {title: 'N° de siembra ', field: 'siembraNum', type: "numeric",cellStyle: { fontSize: "10px"},
+                render: (rowData) => (rowData.siembraNum === 1 ? 'Primera' : 'Segunda'),
+
+                validate:(row)=>{  if (![1, 2].includes(row.siembraNum)) {
+      return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
+    }
+    return true;},
+
+                editComponent: (props) => (
+                  <select
+                    value={props.value || ""}
+                    onChange={(e) => props.onChange(Number(e.target.value))} 
+                  >
+                    <option value="">Seleccione...</option>
+                    <option value="1">Primera</option>
+                    <option value="2">Segunda</option>
+                  </select>
+                ),},
+
+                {title: 'Alias Lote', field: 'aliasLote', validate: (row) => {
+                  if((row.aliasLote || "").length === 0){return false}
+
+                  if (dataPo.some(e =>
+                    e.siembraNum === row.siembraNum &&
+                    e.nombreLote.toLowerCase() === row.nombreLote.toLowerCase() &&
+                    e.aliasLote.toLowerCase() === row.aliasLote.toLowerCase()
+                )) {return {isValid:false, helperText:"Ya existe un lote con ese Alias"}}
+
+                  if(row.aliasLote?.length > 20){
+                    return {
+                      isValid: false,
+                      helperText: "El límite de la columna es de 20 carácteres"
+                  };}
+                },
+                 cellStyle: { fontSize: "10px"}},
+
+                {title: 'Fecha Transplante', field: 'fechaTrasplante',type:"date",cellStyle: { fontSize: "10px"},
+                  editComponent: props => (
+                    <input
+                      type="date"
+                      value={props.value || ''} // Para manejar el valor actual del input
+                      onChange={e => props.onChange(e.target.value)}
+                      style={{     // Ancho del input
+                      padding: '8px',      // Espaciado interno
+                      border: '1px solid #ccc',  // Borde gris claro
+                      borderRadius: '4px', // Bordes redondeados
+                      fontSize: '14px',    // Tamaño del texto
+                      boxShadow: '0 1px 2px rgba(0,0,0,0.1)',  // Sombra ligera para darle profundidad
+                      outline: 'none',     // Eliminar el borde azul por defecto al hacer clic
+                      margin: '5px 0',  }} // Ajusta el ancho del input aquí
+                    />) },
+
+                {title: 'Area', field: 'area',type:"numeric",
+                  validate: rowData => {
+                    if (!rowData.area) return true;
+                    const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
+                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                },
+                 cellStyle: { fontSize: "10px" }},
+                {title: 'Orientacion', field: 'orientacion',type:"string", cellStyle: { fontSize: "10px"}},
+
+                {title: 'Fumig', field: 'fumig', cellStyle: { fontSize: "10px"}},
+
+                {title: 'Tipo plastico', field: 'tipoPlastico', cellStyle: { fontSize: "10px", }},
+
+                {title: 'Densidad', field: 'densidad', type:"numeric",
+                  validate: rowData => {
+                    if (!rowData.area) return true;
+                    const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
+                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                },
+                 cellStyle: { fontSize: "10px"  }},
+
+                {title: 'Colmenas por Ha', field: 'colmenasPorHa',type:"numeric",
+                  validate: rowData => {
+                    if (!rowData.area) return true;
+                    const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
+                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                },
+                 cellStyle: { fontSize: "10px" }},
+
+                {title: 'Prog Fertilizacion', field: 'progFertilizacion', cellStyle: { fontSize: "10px"}},
+                {title: 'Prog Fitoproteccion', field: 'progFitoProteccion', cellStyle: { fontSize: "10px"}},
+                ] || []}
+
+
+                
               options={{ 
-                actionsColumnIndex: -1,
+               
+                actionsColumnIndex: 0,
                 addRowPosition: "first",
                 maxBodyHeight: maxBodyHeight, 
                 padding: onabort,
@@ -206,8 +308,9 @@ export function AsignarLote() {
               }}
             
               icons={{
-                Add: () => <button
-                title="Add New"
+                 Add: () => 
+                 <button
+                // title="Añadir"
                 class="group cursor-pointer outline-none hover:rotate-90 duration-300"
               >
                 <svg
@@ -240,7 +343,7 @@ export function AsignarLote() {
                 body: {
                   emptyDataSourceMessage: 'No se encontraron lotes en este Programa Operativo',
                   editRow: {
-                    deleteText: '¿Estás seguro de que deseas eliminar este lote del PO?', // Cambia el mensaje de confirmación
+                    deleteText: '¿Estás seguro de que deseas eliminar este lote del Programa Operativo?', // Cambia el mensaje de confirmación
                     cancelTooltip: 'Cancelar', // Texto del botón de cancelar
                     saveTooltip: 'Confirmar',  // Texto del botón de confirmar
                   },
@@ -259,15 +362,75 @@ export function AsignarLote() {
               editable={{
                 onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
                 onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-                onRowAdd: (newData) =>
-                  new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                      // Simula añadir la nueva fila a los datos existentes
-                      const updatedData = [...dataPo, newData];
-                      setDataPo(updatedData); // setDataPo debe ser tu función de estado para actualizar `dataPo`
-                      resolve();
-                    }, 600);
-                  }),
+                onRowAdd: (newData) =>{
+               
+                  return new Promise((resolve, reject) => {
+                   
+                    //resolver errores acá y hacer validaciones y darle formato
+                    const newDataWithId = {
+                      ...newData,
+                      temporada:tempActiva[0]?.temporada,
+                      nombreLote: selectedRow?.nombreLote ?? "",
+
+                      aliasLote: newData.aliasLote?.toUpperCase() || null,
+                      fechaTrasplante: newData.fechaTrasplante?.toUpperCase() || null,
+                      area: newData.area?.toUpperCase() || null,
+                      orientacion: newData.orientacion?.toUpperCase() || "Norte-Sur",
+                      fumig: newData.fumig?.toUpperCase() || null,
+                      tipoPlastico: newData.tipoPlastico?.toUpperCase() || null,
+                      densidad: newData.densidad?.toUpperCase() || null,
+                      colmenasPorHa: newData.colmenasPorHa?.toUpperCase() || null,
+                      progFertilizacion: newData.progFertilizacion?.toUpperCase() || null,
+                      progFitoProteccion: newData.progFitoProteccion?.toUpperCase() || null,
+
+                    }
+                    
+                    console.log("newDataWithId: ",newDataWithId);
+
+                    lotePoService.create(newDataWithId)
+                    .then(response => {
+                        if (response.success) {
+                            console.log("Lote asignado exitosamente");
+                            setDataPo(prevDataPo => [ newDataWithId , ...prevDataPo]);
+                            showToast('success', 'Lote asignado al Programa Operativo', '#2d800e');
+                            resolve();
+                        } else {
+                            reject(`Error al asignar el lote: ${response.message}`);
+                            
+                        }
+                    })
+                    .catch(error => {
+                        reject(`Error de red: ${error.message}`);
+                        return
+                    });
+
+                  })},
+
+                  onRowUpdate: (newData, oldData) => {},
+                  onRowDelete: (oldData) => { 
+                            return new Promise((resolve, reject) => {
+                              lotePoService.delete(oldData.temporada, oldData.siembraNum,oldData.nombreLote, oldData.aliasLote)
+                              .then(response => {
+                                  if (response.success) {
+                                    const dataDelete = dataPo.filter((el) =>
+                                      !(el.siembraNum === oldData.siembraNum &&  el.nombreLote === oldData.nombreLote &&
+                                         el.aliasLote ===oldData.aliasLote));
+                                      setDataPo(dataDelete);
+                                      showToast('success', 'Lote eliminado del Programa Operativo', '#2d800e');
+                                      resolve();
+                                  } else {
+                                   
+                                    showToast('error', '`Error al eliminar el lote del Programa Operativo', '#9c1010');
+                                      reject('No se pudo eliminar el lote.');
+                                  }
+                              })
+                              .catch(error => {
+                                  reject(`Error al eliminar: ${error.message}`);
+                              });
+                          });
+                          },
+
+
               }}
               ></MaterialTable>
         
