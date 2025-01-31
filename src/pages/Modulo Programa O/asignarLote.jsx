@@ -26,10 +26,11 @@ export function AsignarLote() {
    const [tempActiva, setTempActiva] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
 
-   
+   const [activarSelectRow, setActivarSelectRow] = useState(true);
 
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
+
 
 //cargar datos de los services
   const fetchData = async (service, setDta, logName) => {
@@ -88,7 +89,9 @@ export function AsignarLote() {
                 selection: true,
                 selectionProps: (rowData) => ({
                   onChange: () => {
+                    if(activarSelectRow){
                     setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
+                    }
                     
                   },
                   checked: selectedRow?.nombreLote === rowData.nombreLote ? true : false
@@ -135,6 +138,9 @@ export function AsignarLote() {
                 Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
                 Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
             }}
+
+            
+
               localization={{
                 body: {
                   emptyDataSourceMessage: 'No se encontraron lotes',
@@ -157,11 +163,12 @@ export function AsignarLote() {
               }}
 
               onRowClick={(event, rowData) => {
+                if(activarSelectRow)
                 setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
                 
               }}
               onSelectionChange={(rows) => {
-                if (rows.length > 0) {
+                if (activarSelectRow && rows.length > 0) {
                   setSelectedRow(rows[0]);
                   console.log("Fila seleccionada por checkbox:", rows[0]);
                 } else {
@@ -309,29 +316,33 @@ export function AsignarLote() {
             
               icons={{
                  Add: () => 
-                 <button
-                // title="Añadir"
-                class="group cursor-pointer outline-none hover:rotate-90 duration-300"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30px"
-                  height="30px"
-                  viewBox="0 0 24 24"
-                  class="stroke-green-700 fill-none group-hover:fill-green-100 group-active:stroke-green-200 group-active:fill-green-600 group-active:duration-0 duration-300"
-                >
-                  <path
-                    d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
-                    stroke-width="1.5"
-                  ></path>
-                  <path d="M8 12H16" stroke-width="1.5"></path>
-                  <path d="M12 16V8" stroke-width="1.5"></path>
-                </svg>
-              </button>
+                  <button
+                 onClick={() => {
+                  setActivarSelectRow(false);
+                 }}
+                 className="group cursor-pointer outline-none hover:rotate-90 duration-300"
+               >
+                 <svg
+                   xmlns="http://www.w3.org/2000/svg"
+                   width="30px"
+                   height="30px"
+                   viewBox="0 0 24 24"
+                   className="stroke-green-700 fill-none group-hover:fill-green-100 group-active:stroke-green-200 group-active:fill-green-600 group-active:duration-0 duration-300"
+                 >
+                   <path
+                     d="M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z"
+                     strokeWidth="1.5"
+                   ></path>
+                   <path d="M8 12H16" strokeWidth="1.5"></path>
+                   <path d="M12 16V8" strokeWidth="1.5"></path>
+                 </svg>
+               </button>
+               
               , // Cambia el tamaño del ícono de agregar
                 Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
                 Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
             }}
+
             components={{
               Toolbar: (props) => (
                 <div style={{ backgroundColor: '#50ad53', height: '60px', color: 'white' }}>
@@ -360,51 +371,52 @@ export function AsignarLote() {
                 },
               }}
               editable={{
-                onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+                onRowAddCancelled: (rowData) => {console.log("Row adding cancelled"), setActivarSelectRow(true);},
                 onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-                onRowAdd: (newData) =>{
-               
-                  return new Promise((resolve, reject) => {
-                   
-                    //resolver errores acá y hacer validaciones y darle formato
-                    const newDataWithId = {
-                      ...newData,
-                      temporada:tempActiva[0]?.temporada,
-                      nombreLote: selectedRow?.nombreLote ?? "",
+                onRowAdd: (newData)=>{
+                setActivarSelectRow(true);
+                setSelectedRow(null);
+                 return new Promise((resolve, reject) => {
 
-                      aliasLote: newData.aliasLote?.toUpperCase() || null,
-                      fechaTrasplante: newData.fechaTrasplante?.toUpperCase() || null,
-                      area: newData.area?.toUpperCase() || null,
-                      orientacion: newData.orientacion?.toUpperCase() || "Norte-Sur",
-                      fumig: newData.fumig?.toUpperCase() || null,
-                      tipoPlastico: newData.tipoPlastico?.toUpperCase() || null,
-                      densidad: newData.densidad?.toUpperCase() || null,
-                      colmenasPorHa: newData.colmenasPorHa?.toUpperCase() || null,
-                      progFertilizacion: newData.progFertilizacion?.toUpperCase() || null,
-                      progFitoProteccion: newData.progFitoProteccion?.toUpperCase() || null,
+                //resolver errores acá y hacer validaciones y darle formato
+                const newDataWithId = {
+                  ...newData,
+                  temporada:tempActiva[0]?.temporada,
+                  nombreLote: selectedRow?.nombreLote ?? "",
 
+                  aliasLote: newData.aliasLote?.toUpperCase() || null,
+                  fechaTrasplante: newData.fechaTrasplante?.toUpperCase() || null,
+                  area: newData.area?.toUpperCase() || null,
+                  orientacion: newData.orientacion?.toUpperCase() || "Norte-Sur",
+                  fumig: newData.fumig?.toUpperCase() || null,
+                  tipoPlastico: newData.tipoPlastico?.toUpperCase() || null,
+                  densidad: newData.densidad?.toUpperCase() || null,
+                  colmenasPorHa: newData.colmenasPorHa?.toUpperCase() || null,
+                  progFertilizacion: newData.progFertilizacion?.toUpperCase() || null,
+                  progFitoProteccion: newData.progFitoProteccion?.toUpperCase() || null,
+
+                }
+                
+                console.log("newDataWithId: ",newDataWithId);
+
+                lotePoService.create(newDataWithId)
+                .then(response => {
+                    if (response.success) {
+                        console.log("Lote asignado exitosamente");
+                        setDataPo(prevDataPo => [ newDataWithId , ...prevDataPo]);
+                        showToast('success', 'Lote asignado al Programa Operativo', '#2d800e');
+                        resolve();
+                    } else {
+                        reject(`Error al asignar el lote: ${response.message}`);
+                        
                     }
-                    
-                    console.log("newDataWithId: ",newDataWithId);
-
-                    lotePoService.create(newDataWithId)
-                    .then(response => {
-                        if (response.success) {
-                            console.log("Lote asignado exitosamente");
-                            setDataPo(prevDataPo => [ newDataWithId , ...prevDataPo]);
-                            showToast('success', 'Lote asignado al Programa Operativo', '#2d800e');
-                            resolve();
-                        } else {
-                            reject(`Error al asignar el lote: ${response.message}`);
-                            
-                        }
-                    })
-                    .catch(error => {
-                        reject(`Error de red: ${error.message}`);
-                        return
-                    });
-
-                  })},
+                })
+                .catch(error => {
+                    reject(`Error de red: ${error.message}`);
+                    return
+                });
+              })
+                },
 
                   onRowUpdate: (newData, oldData) => {},
                   onRowDelete: (oldData) => { 
