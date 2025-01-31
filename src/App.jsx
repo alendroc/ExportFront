@@ -6,7 +6,7 @@ import { NavbarP } from "./components/navbarP";
 import { AiOutlineHome, AiOutlineGlobal } from "react-icons/ai";
 import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";
-import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet} from "react-icons/fa6";
+import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet,FaGears } from "react-icons/fa6";
 import {Login } from "../src/pages/Login.jsx";
 
 function App() {
@@ -50,27 +50,28 @@ function App() {
         { name: "Departamentos", href: "/Configuracion/Departamentos"},
         { name: "Labores", href: "/Configuracion/labores"},
         { name: "Productos", href: "/Configuracion/productos"},
-        { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios"},
+        { name: "Administracion de usuarios", href: "/Configuracion/AdminUsuarios" ,width: "60px"},
+      ]
+    },
+    {
+      label: "Programa Operativo",
+      icon: <FaGears  />,
+      to: "/ProgramaO",
+      submenu: [
+        { name: "Asignar Lotes", href: "/ProgramaO/asignar-Lotes", width: "60px" },
+        { name: "Asignar Híbridos", href: "/ProgramaO/asignar-hibridos",width: "70px" },
+        { name: "Asignar Labores", href: "/ProgramaO/asignar-labores",width: "60px"},
+        { name: "Asignar DDT por Labor", href: "/ProgramaO/asignar-ddt",width: "100px" },
+        { name: "Diseñar Prog. Operativo", href: "/ProgramaO/disenar-programa", width: "110px"},
+        { name: "Actualizar versión P.O", href: "/ProgramaO/actualizar-po",width: "80px" },
+        { name: "Camas", href: "/ProgramaO/camas" },
+        { name: "Actualizar Lotes P.O", href: "/ProgramaO/actualizar-lotes", width: "60px"},
+        { name: "Actualizar Programa Operativo", href: "/ProgramaO/actualizar-programa", width: "140px"},
       ]
     },
   ];
   const arrayModules = [
-    {
-      label: "Melones",
-      icon: <GiWatermelon />,
-      to: "/Melones",
-      submenu: [
-        { name: "Asignar Lotes", href: "/melones/asignar-lotes" },
-        { name: "Asignar Híbridos", href: "/melones/asignar-hibridos" },
-        { name: "Asignar Labores", href: "/melones/asignar-labores" },
-        { name: "Asignar DDT por Labor", href: "/melones/asignar-ddt" },
-        { name: "Diseñar Prog. Operativo", href: "/melones/disenar-programa" },
-        { name: "Actualizar versión P.O", href: "/melones/actualizar-po" },
-        { name: "Camas", href: "/melones/camas" },
-        { name: "Actualizar Lotes P.O", href: "/melones/actualizar-lotes" },
-        { name: "Actualizar Programa Operativo", href: "/melones/actualizar-programa" },
-      ]
-    },
+    
     {
       label: "Caña",
       icon: <GiSugarCane />,

@@ -14,6 +14,13 @@ var temporadasService = new TemporadasService
                 isValid: false,
                 helperText: "El campo temporada no puede estar vacío"
             };}
+
+            if(row.temporada?.length > 10){
+              return {
+                isValid: false,
+                helperText: "El límite de la columna es de 10 carácteres"
+            };}
+
         if (row.temporada.trim() === "") {
             return {
                 isValid: false,
@@ -35,7 +42,13 @@ var temporadasService = new TemporadasService
         return { isValid: true };}
 },
     { title: "Actual", field: "actual", type: "boolean",  },
-    { title: "Descripción", field: "descripcion", },
+    { title: "Descripción", field: "descripcion",validate: (row) =>{
+      if(row.descripcion?.length > 500){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 500 carácteres"
+     };}
+   } },
     { title: "Fecha Inicio", field: "fechaInicio", type: "date",  editComponent: props => (
       <input
         type="date"
@@ -122,7 +135,8 @@ useEffect(() => {
             position: 'sticky', 
             top: 0,
             zIndex: 1,
-            backgroundColor: '#fff',
+            backgroundColor: '#e8e8e8',
+            borderRadius: 0
           },
       }}
       icons={{
@@ -167,7 +181,10 @@ useEffect(() => {
                   showToast('error', 'Debe completar los campos fecha', '#9c1010');
                   reject('Error al actualizar el producto: Fecha inválida');
                   return;
-              }     
+              } 
+              
+             
+              
            if (newDataWithId.fechaInicio >= newDataWithId.fechaFin) {
                showToast('error', 'La fecha inicio debe ser menor a fecha final','#9c1010'); 
                reject(`Error al crear el producto: ${response.message}`);
@@ -180,6 +197,20 @@ useEffect(() => {
                 console.log("No se pudieron obtener las temporadas.");
             }
                   const isDuplicate = data.some(season => season.temporada === newDataWithId.temporada)
+
+                  //Cuando se activa una temporada las demás se desactivan pero solo sirve en la tabla, no se ve reflejado en la BD
+                  // const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+                  // if(someActive){
+                  //   data.forEach(temp=>temp.actual=false)
+                  // }
+
+                  const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+              
+                  if(someActive){
+                    showToast('error', 'Ya existe una temporada activa','#9c1010'); 
+                    reject(`Error al crear la temporada: ${response.message}`)
+                    return;
+                  }
 
 
                   console.log(data)
@@ -231,6 +262,15 @@ useEffect(() => {
              
 
               const isDuplicate = updatedData.some((season, idx) => season.temporada === newDataWithId.temporada && idx !== index);
+
+              const someActive = data.some(temp=> temp.actual===true)&&newDataWithId.actual===true
+              
+                  if(someActive){
+                    showToast('error', 'Ya existe una temporada activa','#9c1010'); 
+                    reject(`Error al crear la temporada: ${response.message}`)
+                    return;
+                  }
+                  
               if (isDuplicate) {
                   showToast('error', 'Ya existe esa temporada', '#9c1010');
                   reject('Error al actualizar la temporada: La temporada ya existe');

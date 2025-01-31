@@ -8,9 +8,34 @@ import { showToast } from "../../components/helpers";
 var departamentoService = new DepartamentoService;
 
 const columns = [
-    { title: "Departamento", field: "departamento", editable: 'onAdd',validate: (row) => (row.departamento || "").length !== 0,  },
-    { title: "Encargado", field: "encargado", type: "string" },
-    { title: "Descripción", field: "descripcion" },
+    { title: "Departamento", field: "departamento", editable: 'onAdd',
+      validate: (row) =>{
+       if((row.departamento || "").length === 0){return false}
+       if(row.departamento.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"};
+        }
+      }},
+
+    { title: "Encargado", field: "encargado", type: "string",
+      validate: (row) =>{
+        if(row.encargado?.length > 50){
+         return {
+           isValid: false,
+           helperText: "El límite de la columna es de 50 carácteres"
+       };}
+     }},
+
+    { title: "Descripción", field: "descripcion",
+      validate: (row) =>{
+        if(row.descripcion?.length > 500){
+         return {
+           isValid: false,
+           helperText: "El límite de la columna es de 500 carácteres"
+       };}
+     }
+     },
 ];
 
 export function Departamento(){

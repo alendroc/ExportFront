@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import MaterialTable from "@material-table/core";
-import React, {forwardRef ,useState, useEffect  } from "react";
+import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { LoteService } from "../../services/LoteService";
 import { showToast } from "../../components/helpers";
@@ -9,7 +9,14 @@ var loteService = new LoteService;
 
 
 const columns = [
-    { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => (row.nombreLote || "").length !== 0, },
+    { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => {
+      if((row.nombreLote || "").length === 0){return false}
+      if(row.nombreLote?.length > 20){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 20 carácteres"
+      };}
+    }},
     { title: "Activo", field: "activo", type: "boolean" },
     { title: "Área", field: "area", type: "numeric", 
         validate: rowData => {
@@ -17,7 +24,13 @@ const columns = [
             return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
         }
     },
-    { title: "Descripción", field: "descripcion" },
+    { title: "Descripción", field: "descripcion",validate: (row) =>{
+      if(row.descripcion?.length > 500){
+       return {
+         isValid: false,
+         helperText: "El límite de la columna es de 500 carácteres"
+     };}
+   } },
 ];
 
 
@@ -43,7 +56,7 @@ export function Lote(){
     }, []);
 
     // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
-    useEffect(() => {
+   useEffect(() => {
         const handleResize = () => {
       if (window.innerWidth < 1300) {
         setMaxBodyHeight(470); 
@@ -202,7 +215,7 @@ export function Lote(){
 }
 const Container =styled.div`
 display: block;
-width: 100%;
+width: 95%;
 
 z-index: 1;
      .MuiToolbar-root {
