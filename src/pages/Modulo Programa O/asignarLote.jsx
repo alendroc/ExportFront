@@ -185,11 +185,7 @@ export function AsignarLote() {
               size="small"
               title={<div style={{ fontSize: '18px', fontWeight:"bold"}}>Asignar lotes</div>}
               data={dataPo}
-              columns={ [{title: 'Lote', field: 'nombreLote',
-
-                initialEditValue: selectedRow?.nombreLote ||loteNoSeleccionadoText,
-
-                 editable: 'never',
+              columns={ [{title: 'Lote', field: 'nombreLote',initialEditValue: selectedRow?.nombreLote ||loteNoSeleccionadoText,editable: 'never',
 
                 validate: (rowData) => {
                   if((rowData.nombreLote === loteNoSeleccionadoText)){return false}
@@ -203,7 +199,7 @@ export function AsignarLote() {
                   cellStyle: { fontSize: "10px", width: "auto"  },
 
                   },
-                {title: 'N° de siembra ', field: 'siembraNum', type: "numeric",cellStyle: { fontSize: "10px"},
+                {title: 'N° de siembra ', field: 'siembraNum', type: "numeric", editable:"onAdd", cellStyle: { fontSize: "10px"},
                 render: (rowData) => (rowData.siembraNum === 1 ? 'Primera' : 'Segunda'),
 
                 validate:(row)=>{  if (![1, 2].includes(row.siembraNum)) {
@@ -222,14 +218,14 @@ export function AsignarLote() {
                   </select>
                 ),},
 
-                {title: 'Alias Lote', field: 'aliasLote', validate: (row) => {
+                {title: 'Alias Lote', field: 'aliasLote', editable:"onAdd", validate: (row) => {
                   if((row.aliasLote || "").length === 0){return false}
 
-                  if (dataPo.some(e =>
-                    e.siembraNum === row.siembraNum &&
-                    e.nombreLote.toLowerCase() === row.nombreLote.toLowerCase() &&
-                    e.aliasLote.toLowerCase() === row.aliasLote.toLowerCase()
-                )) {return {isValid:false, helperText:"Ya existe un lote con ese Alias"}}
+                //   if (dataPo.some(e =>
+                //     e.siembraNum === row.siembraNum &&
+                //     e.nombreLote.toLowerCase() === row.nombreLote.toLowerCase() &&
+                //     e.aliasLote.toLowerCase() === row.aliasLote.toLowerCase()
+                // )) {return {isValid:false, helperText:"Ya existe un lote con ese Alias"}}
 
                   if(row.aliasLote?.length > 20){
                     return {
@@ -374,8 +370,7 @@ export function AsignarLote() {
                 onRowAddCancelled: (rowData) => {console.log("Row adding cancelled"), setActivarSelectRow(true);},
                 onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
                 onRowAdd: (newData)=>{
-                setActivarSelectRow(true);
-                setSelectedRow(null);
+                  
                  return new Promise((resolve, reject) => {
 
                 //resolver errores acá y hacer validaciones y darle formato
@@ -399,8 +394,22 @@ export function AsignarLote() {
                 
                 console.log("newDataWithId: ",newDataWithId);
 
+                const isDuplicate = dataPo.some(e =>
+                  e.siembraNum === newData.siembraNum &&
+                  e.nombreLote.toLowerCase() === newData.nombreLote.toLowerCase() &&
+                  e.aliasLote.toLowerCase() === newData.aliasLote.toLowerCase()
+                );
+            
+                if (isDuplicate) {
+                  showToast('error', 'Ya existe un lote con ese Alias', '#9c1010')
+                  reject('Error: Ya existe un lote con ese Alias')
+                  return
+                }
+
                 lotePoService.create(newDataWithId)
                 .then(response => {
+                  setActivarSelectRow(true);
+                  setSelectedRow(null);
                     if (response.success) {
                         console.log("Lote asignado exitosamente");
                         setDataPo(prevDataPo => [ newDataWithId , ...prevDataPo]);
