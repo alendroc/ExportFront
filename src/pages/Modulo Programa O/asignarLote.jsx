@@ -67,34 +67,24 @@ export function AsignarLote() {
   };
 
   
-  //cuando se actualizan los states
+  //para los fetch
    useEffect(() => {
-     //fetchData(() => lotePoService.getAll(), setDataPo, "LotesPO");
-
      
     fetchData(() => loteService.getLotesActivos(), setData, "lotes");
-    // fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual");
-    // fetchData(() => lotePoService.getByTemporada(tempActiva[0]?.temporada), setDataPo, "LotesPO");
-
-    
-  fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
-  .then(temp => {
-    if (temp && temp.length > 0) {
-      return fetchData(() => lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
-    }
-  })
-  .catch(error => console.error("Error en las peticiones:", error));
-
-
-     
-
-
-     
-
-     handleResize();
-     window.addEventListener("resize", handleResize);
-     return () => window.removeEventListener("resize", handleResize);
+    fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
+    .then(temp => {
+      if (temp && temp.length > 0) {
+        return fetchData(() => lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
+      }
+  }).catch(error => console.error("Error en las peticiones:", error));
        }, []);
+
+       //para responsive
+    useEffect(()=>{
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+       },[])
     
     return (
     <Container>
@@ -288,7 +278,7 @@ export function AsignarLote() {
                     .filter((item) => item.nombreLote === rowData.nombreLote && item.siembraNum === rowData.siembraNum)
                     .reduce((sum, item) => sum + item.area, 0) + rowData.area;
                   
-                  const esValido = selectedRow?.area >= totalArea;
+                  const esValido = selectedRow?.area || data.find((lote)=>lote.nombreLote===rowData.nombreLote).area >= totalArea;
                   
 
                   console.log(esValido,  selectedRow?.area, totalArea, rowData.area)
@@ -516,7 +506,50 @@ export function AsignarLote() {
               })
                 },
 
-                  onRowUpdate: (newData, oldData) => {},
+                  onRowUpdate: (newData, oldData) => {
+                     return new Promise((resolve, reject) => {
+                                const index = dataPo.findIndex(item => item.nombreLote === oldData.nombreLote && 
+                                  item.siembraNum === oldData.siembraNum && item.aliasLote===oldData.aliasLote);
+
+                                const updatedDataPo = [...dataPo];
+                    
+                                const newDataWithId = {
+                                  ...newData,
+                                 // descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
+                              }
+                              console.log("dataId",newDataWithId)
+                              //resolve();
+                    
+                                const isDuplicate = updatedDataPo.some((loteP, idx) => loteP.nombreLote === newDataWithId.nombreLote && 
+                                loteP.siembraNum === newDataWithId.siembraNum &&
+                                loteP.aliasLote === newDataWithId.aliasLote &&
+                                idx !== index);
+
+                                if (isDuplicate) {
+                                    showToast('error', 'Lote ya asignado', '#9c1010');
+                                    reject('Error al actualizar el lote, valores duplicados');
+                                    return;
+                                }
+                    
+                                updatedDataPo[index] = newDataWithId;
+
+                                lotePoService.update(oldData.temporada,oldData.siembraNum,oldData.nombreLote,oldData.aliasLote, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+                                .then(response => {
+                                        console.log("test")
+                                          if (response.success) {
+                                              setDataPo(updatedDataPo);
+                                              showToast('success', 'Lote actualizado', '#2d800e');
+                                              resolve();
+                                          } else {
+                                              reject(`Error al actualizar el lote: ${response.message}`);
+                                              showToast('error', '`Error al actualizar el lote', '#9c1010');
+                                          }
+                                      })
+                                      .catch(error => {
+                                          reject(`Error de red: ${error.message}`);
+                                      });
+                                 })
+                  },
                   onRowDelete: (oldData) => { 
                             return new Promise((resolve, reject) => {
                               lotePoService.delete(oldData.temporada, oldData.siembraNum,oldData.nombreLote, oldData.aliasLote)

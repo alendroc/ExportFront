@@ -141,8 +141,7 @@ export class LotePOService{
 
     async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
         try {
-            console.log("temporada:", temporada, "siembraNum:", siembraNum,"nombreLote:",nombreLote ,
-                "aliasLote:",aliasLote, "Datos a actualizar:", lotePO)
+            console.log("Datos a actualizar:", lotePO)
 
             const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
                 method: 'PUT',
