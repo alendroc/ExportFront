@@ -39,13 +39,16 @@ export function AsignarLote() {
       //console.log("response", response);
       if (response.success) {
         setDta(response[logName]);
+        return response[logName];
         //console.log(logName, response[logName]);
       } else {
         console.log(`No se pudieron obtener los ${logName}.`);
+        return null
       }
     } catch (error) {
       setDta([])
       console.error(`Error al obtener los ${logName}:`, error);
+      return null;
     }
   };
 
@@ -66,9 +69,25 @@ export function AsignarLote() {
   
   //cuando se actualizan los states
    useEffect(() => {
-     fetchData(() => lotePoService.getAll(), setDataPo, "LotesPO");
-     fetchData(() => loteService.getLotesActivos(), setData, "lotes");
-     fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual");
+     //fetchData(() => lotePoService.getAll(), setDataPo, "LotesPO");
+
+     
+    fetchData(() => loteService.getLotesActivos(), setData, "lotes");
+    // fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual");
+    // fetchData(() => lotePoService.getByTemporada(tempActiva[0]?.temporada), setDataPo, "LotesPO");
+
+    
+  fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
+  .then(temp => {
+    if (temp && temp.length > 0) {
+      return fetchData(() => lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
+    }
+  })
+  .catch(error => console.error("Error en las peticiones:", error));
+
+
+     
+
 
      
 
@@ -79,7 +98,11 @@ export function AsignarLote() {
     
     return (
     <Container>
-<div>Temporada: {tempActiva[0]?.temporada ??"No hay temporada activa"}</div>
+<div className="temporada"><h1>Active los lotes que se van a sembrar en la temporada</h1> Temporada: {tempActiva[0]?.temporada ??"No hay temporada activa"}</div>
+
+<div className="Tablas">
+
+
         <MaterialTable 
               size="small"
               data={data}
@@ -90,7 +113,11 @@ export function AsignarLote() {
                 selectionProps: (rowData) => ({
                   onChange: () => {
                     if(activarSelectRow){
-                    setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
+                    setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : 
+                      {nombreLote: rowData.nombreLote, 
+                        area: rowData.area }));
+
+                        console.log("selectedRow",selectedRow)
                     }
                     
                   },
@@ -121,7 +148,7 @@ export function AsignarLote() {
               style={{
                 overflowX: 'auto',
               
-                margin: "0 30px 0 0",
+                margin: "0 50px 0 0",
               }}
               components={{
                 Toolbar: (props) => (
@@ -164,13 +191,15 @@ export function AsignarLote() {
 
               onRowClick={(event, rowData) => {
                 if(activarSelectRow)
-                setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null : rowData));
+                setSelectedRow((prevRow) => (prevRow?.nombreLote === rowData.nombreLote ? null :  {nombreLote: rowData.nombreLote, 
+                  area: rowData.area }));
                 
               }}
               onSelectionChange={(rows) => {
                 if (activarSelectRow && rows.length > 0) {
-                  setSelectedRow(rows[0]);
+                  setSelectedRow(rows[0] ? { nombreLote: rows[0].nombreLote, area: rows[0].area } : null);
                   console.log("Fila seleccionada por checkbox:", rows[0]);
+                  console.log("selectedRow",selectedRow)
                 } else {
                   setSelectedRow(null);
                 }
@@ -254,34 +283,94 @@ export function AsignarLote() {
                 {title: 'Area', field: 'area',type:"numeric",
                   validate: rowData => {
                     if (!rowData.area) return true;
+
+                    const totalArea = dataPo
+                    .filter((item) => item.nombreLote === rowData.nombreLote && item.siembraNum === rowData.siembraNum)
+                    .reduce((sum, item) => sum + item.area, 0) + rowData.area;
+                  
+                  const esValido = selectedRow?.area >= totalArea;
+                  
+
+                  console.log(esValido,  selectedRow?.area, totalArea, rowData.area)
+                 // if(!esValido){return{ isValid: false, helperText: "excede el limite del area" }}
+
                     const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
-                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                    return  !esValido?{ isValid: false, helperText: "excede el limite del area" }:
+                     rowData.area && isDecimal  ? { isValid: true, helperText: "numeros decimales ejemplo: 12,4" }: false;
                 },
                  cellStyle: { fontSize: "10px" }},
-                {title: 'Orientacion', field: 'orientacion',type:"string", cellStyle: { fontSize: "10px"}},
 
-                {title: 'Fumig', field: 'fumig', cellStyle: { fontSize: "10px"}},
+                {title: 'Orientacion', field: 'orientacion',type:"string",
+                  validate: rowData => {
+                    if (!rowData.orientacion) return true;
+                    if(rowData.orientacion?.length > 20){
+                      return {
+                        isValid: false,
+                        helperText: "El límite de la columna es de 20 carácteres"
+                    };}
+                    
+                },
+                 cellStyle: { fontSize: "10px"}},
 
-                {title: 'Tipo plastico', field: 'tipoPlastico', cellStyle: { fontSize: "10px", }},
+                {title: 'Fumig', field: 'fumig', 
+                  validate: rowData => {
+                  if (!rowData.fumig) return true;
+                  if(rowData.fumig?.length > 50){
+                    return {
+                      isValid: false,
+                      helperText: "El límite de la columna es de 50 carácteres"
+                  };}
+                  
+              },cellStyle: { fontSize: "10px"}},
+
+                {title: 'Tipo plastico', field: 'tipoPlastico', 
+                  validate: rowData => {
+                    if (!rowData.tipoPlastico) return true;
+                    if(rowData.tipoPlastico?.length > 50){
+                      return {
+                        isValid: false,
+                        helperText: "El límite de la columna es de 50 carácteres"
+                    };}
+                    
+                },cellStyle: { fontSize: "10px", }},
 
                 {title: 'Densidad', field: 'densidad', type:"numeric",
                   validate: rowData => {
-                    if (!rowData.area) return true;
-                    const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
-                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                    if (!rowData.densidad) return true;
+                    const isDecimal = /^\d*\.?\d+$/.test(rowData.densidad);
+                    return rowData.densidad && isDecimal  ? { isValid: true, helperText: "numeros decimales ejemplo: 12,4" }: false;
                 },
                  cellStyle: { fontSize: "10px"  }},
 
                 {title: 'Colmenas por Ha', field: 'colmenasPorHa',type:"numeric",
                   validate: rowData => {
-                    if (!rowData.area) return true;
-                    const isDecimal = /^\d*\.?\d+$/.test(rowData.area);
-                    return rowData.area && isDecimal  ? true : { isValid: false, helperText: "numeros decimales ejemplo: 12,4" };
+                    if (!rowData.colmenasPorHa) return true;
+                    const isDecimal = /^\d*\.?\d+$/.test(rowData.colmenasPorHa);
+                    return rowData.colmenasPorHa && isDecimal  ? { isValid: true, helperText: "numeros decimales ejemplo: 12,4" }: false;
                 },
                  cellStyle: { fontSize: "10px" }},
 
-                {title: 'Prog Fertilizacion', field: 'progFertilizacion', cellStyle: { fontSize: "10px"}},
-                {title: 'Prog Fitoproteccion', field: 'progFitoProteccion', cellStyle: { fontSize: "10px"}},
+                {title: 'Prog Fertilizacion', field: 'progFertilizacion',
+                  validate: rowData => {
+                    if (!rowData.progFertilizacion) return true;
+                    if(rowData.progFertilizacion?.length > 50){
+                      return {
+                        isValid: false,
+                        helperText: "El límite de la columna es de 50 carácteres"
+                    };}
+                    
+                }, cellStyle: { fontSize: "10px"}},
+
+                {title: 'Prog Fitoproteccion', field: 'progFitoProteccion',
+                  validate: rowData => {
+                    if (!rowData.progFitoProteccion) return true;
+                    if(rowData.progFitoProteccion?.length > 50){
+                      return {
+                        isValid: false,
+                        helperText: "El límite de la columna es de 50 carácteres"
+                    };}
+                    
+                }, cellStyle: { fontSize: "10px"}},
                 ] || []}
 
 
@@ -380,13 +469,13 @@ export function AsignarLote() {
                   nombreLote: selectedRow?.nombreLote ?? "",
 
                   aliasLote: newData.aliasLote?.toUpperCase() || null,
-                  fechaTrasplante: newData.fechaTrasplante?.toUpperCase() || null,
-                  area: newData.area?.toUpperCase() || null,
+                  fechaTrasplante: newData.fechaTrasplante || null,
+                  area: newData.area || null,
                   orientacion: newData.orientacion?.toUpperCase() || "Norte-Sur",
                   fumig: newData.fumig?.toUpperCase() || null,
                   tipoPlastico: newData.tipoPlastico?.toUpperCase() || null,
-                  densidad: newData.densidad?.toUpperCase() || null,
-                  colmenasPorHa: newData.colmenasPorHa?.toUpperCase() || null,
+                  densidad: newData.densidad || null,
+                  colmenasPorHa: newData.colmenasPorHa || null,
                   progFertilizacion: newData.progFertilizacion?.toUpperCase() || null,
                   progFitoProteccion: newData.progFitoProteccion?.toUpperCase() || null,
 
@@ -454,12 +543,21 @@ export function AsignarLote() {
 
               }}
               ></MaterialTable>
-        
+        </div>
     </Container>);
   }
   const Container =styled.div`
  display: flex;
+ flex-direction: column;
  gap: 20px; /* Espaciado entre tablas */
+
+
+ .Tablas{
+  display: flex;
+ }
+.temporada{
+  display: inline-block;
+}
 
   .custom-toolbar .MuiToolbar-root {
     padding: 0 10px 0 0!important; 
