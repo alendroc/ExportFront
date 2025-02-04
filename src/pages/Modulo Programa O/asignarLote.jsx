@@ -9,6 +9,7 @@ import { Search } from "@mui/icons-material";
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
 
+
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
@@ -198,7 +199,7 @@ export function AsignarLote() {
               ></MaterialTable>
 
 
-                
+      
     <MaterialTable 
     
               size="small"
@@ -245,6 +246,12 @@ export function AsignarLote() {
                 //     e.nombreLote.toLowerCase() === row.nombreLote.toLowerCase() &&
                 //     e.aliasLote.toLowerCase() === row.aliasLote.toLowerCase()
                 // )) {return {isValid:false, helperText:"Ya existe un lote con ese Alias"}}
+
+                if(row.aliasLote?.trim() ===""){
+                  return {
+                    isValid: false,
+                    helperText: "No se permite el campo vacío"
+                };}
 
                   if(row.aliasLote?.length > 20){
                     return {
@@ -576,6 +583,7 @@ export function AsignarLote() {
 
               }}
               ></MaterialTable>
+              
         </div>
     </Container>);
   }
