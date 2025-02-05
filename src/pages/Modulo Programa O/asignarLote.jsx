@@ -2,18 +2,113 @@ import styled from "styled-components";
 import MaterialTable,  { MTableToolbar }  from "@material-table/core";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import React, { useState, useEffect  } from "react";
+import PropTypes from 'prop-types';
 import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
-import { Select } from "@mui/material";
-import { Search } from "@mui/icons-material";
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
-
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, RadioGroup, FormControlLabel, Radio, } from '@mui/material'
 
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
 const loteNoSeleccionadoText="Debe seleccionar un lote"
+
+const options = [
+  'None',
+  'Atria',
+  'Callisto',
+  'Dione',
+  'Ganymede',
+  'Hangouts Call',
+  'Luna',
+  'Oberon',
+  'Phobos',
+  'Pyxis',
+  'Sedna',
+  'Titania',
+  'Triton',
+  'Umbriel',
+];
+
+function ActionDialog(props) {
+  const { onClose, value: valueProp, open, ...other } = props;
+  const [value, setValue] = React.useState(valueProp);
+  const radioGroupRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (!open) {
+      setValue(valueProp);
+    }
+  }, [valueProp, open]);
+
+  const handleEntering = () => {
+    if (radioGroupRef.current != null) {
+      radioGroupRef.current.focus();
+    }
+  };
+
+  const handleCancel = () => {
+    onClose(null);
+  };
+
+  const handleOk = async () => {
+    if (value === 'Copiar') {
+      await navigator.clipboard.writeText("Texto de prueba copiado"); 
+      alert('Texto copiado al portapapeles');
+    } else if (value === 'Pegar') {
+      const textoPegado = await navigator.clipboard.readText();
+      alert(`Texto pegado: ${textoPegado}`);
+    }
+    onClose(value);
+  };
+
+  const handleChange = (event) => {
+    setValue(event.target.value);
+  };
+
+  return (
+    <Dialog
+      sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 300 } }}
+      maxWidth="xs"
+      TransitionProps={{ onEntering: handleEntering }}
+      open={open}
+      {...other}
+    >
+      <DialogTitle>Selecciona una temporada</DialogTitle>
+      <DialogContent dividers>
+        <RadioGroup
+          ref={radioGroupRef}
+          aria-label="acción"
+          name="acción"
+          value={value}
+          onChange={handleChange}
+        >
+          {options.map((option) => (
+            <FormControlLabel
+              value={option}
+              key={option}
+              control={<Radio />}
+              label={option}
+            />
+          ))}
+        </RadioGroup>
+      </DialogContent>
+      <DialogActions>
+        <Button autoFocus onClick={handleCancel}>
+          Cancelar
+        </Button>
+        <Button onClick={handleOk}>Pegar</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+ActionDialog.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  open: PropTypes.bool.isRequired,
+  value: PropTypes.string.isRequired,
+};
 
 const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
   {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
@@ -26,12 +121,25 @@ export function AsignarLote() {
    const [dataPo, setDataPo] = useState([]);
    const [tempActiva, setTempActiva] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
-
    const [activarSelectRow, setActivarSelectRow] = useState(true);
-
+   const [open, setOpen] = React.useState(false);
+   const [value, setValue] = React.useState('');
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
 
+  //Dialog//
+  const handleClickListItem = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (newValue) => {
+    setOpen(false);
+
+    if (newValue) {
+      setValue(newValue);
+    }
+  };
+/////////////
 
 //cargar datos de los services
   const fetchData = async (service, setDta, logName) => {
@@ -86,14 +194,10 @@ export function AsignarLote() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
        },[])
-    
+
+
     return (
     <Container>
-<div className="temporada"><h1>Active los lotes que se van a sembrar en la temporada</h1> Temporada: {tempActiva[0]?.temporada ??"No hay temporada activa"}</div>
-
-<div className="Tablas">
-
-
         <MaterialTable 
               size="small"
               data={data}
@@ -137,8 +241,7 @@ export function AsignarLote() {
                  
               }}
               style={{
-                overflowX: 'auto',
-              
+                height: "100%",
                 margin: "0 50px 0 0",
               }}
               components={{
@@ -203,7 +306,7 @@ export function AsignarLote() {
     <MaterialTable 
     
               size="small"
-              title={<div style={{ fontSize: '18px', fontWeight:"bold"}}>Asignar lotes</div>}
+              title={<div style={{ fontSize: '15px', fontWeight:"bold"}}>Asignar lotes</div>}
               data={dataPo}
               columns={ [{title: 'Lote', field: 'nombreLote',initialEditValue: selectedRow?.nombreLote ||loteNoSeleccionadoText,editable: 'never',
 
@@ -427,8 +530,28 @@ export function AsignarLote() {
 
             components={{
               Toolbar: (props) => (
-                <div style={{ backgroundColor: '#50ad53', height: '60px', color: 'white' }}>
-                  <MTableToolbar {...props} />
+                <div style={{ 
+                  backgroundColor: '#50ad53', 
+                  height: '60px', 
+                  color: 'white', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'space-between',
+                }}> 
+                  <MTableToolbar style={{padding:'0'}} {...props}></MTableToolbar>
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', textAlign: 'center' }}>
+                  <p>Temporada</p>
+                  <p>{tempActiva[0]?.temporada ?? "No hay temporada activa"}</p>
+                  </div>
+
+                  <div style={{ fontSize: '12px', fontWeight: 'bold', display: 'flex', width: '20%', justifyContent: 'space-around' }}>
+                  <button  class="button" onClick={handleClickListItem} style={{ cursor: 'pointer' }}>Copiar</button>
+                 
+                  </div>
+                  <ActionDialog open={open} onClose={handleClose} value={value} />
+                  <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
+                   
+                  </div>
                 </div>
               ),
             }}
@@ -584,14 +707,13 @@ export function AsignarLote() {
               }}
               ></MaterialTable>
               
-        </div>
+
     </Container>);
   }
   const Container =styled.div`
  display: flex;
- flex-direction: column;
  gap: 20px; /* Espaciado entre tablas */
-
+flex-wrap: wrap;
 
  .Tablas{
   display: flex;
@@ -610,14 +732,82 @@ export function AsignarLote() {
   .MuiSvgIcon-root .MuiSvgIcon-fontSizeSmall .css-120dh41-MuiSvgIcon-root{
     display: none !important;
   }
-
+  .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-ig9rso-MuiToolbar-root{
+    padding-right: 0;
+    width: 45%;
+  }
   .MuiBox-root.css-p9qzma {
   /* Tus estilos personalizados aquí */
   position: absolute;
-    left: -48px;
+    left: -55px;
     border-radius: 10px;
     top: 70px;
 }
+
+@media (max-width: 1200px) {
+    .MuiBox-root.css-p9qzma {
+      top: -90px; /* Baja un poco */
+      left: 180px;
+    }
+  }
+.button {
+  display: inline-block;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  color: #ffffff;
+  background-color: #e59c27;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+}
+
+.button:hover {
+  background-color: #23ca06;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(170, 170, 170, 0.729);
+}
+
+.button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.3);
+}
+
+.button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.button::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background-color: rgba(0, 0, 0, 0.1);
+  border-radius: 50px;
+  z-index: -1;
+  transition: all 0.3s ease-in-out;
+}
+
+.button:hover::before {
+  top: -6px;
+  left: -6px;
+  right: -6px;
+  bottom: -6px;
+}
+
   @media (min-width: 1200px){
     .MuiTableCell-root {
       padding: 4px 8px;

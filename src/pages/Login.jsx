@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import Spline from '@splinetool/react-spline';
 import img from "../img/login2.jpg"
 import { useNavigate } from "react-router-dom";
 import { UsuarioService } from "../services/UsuarioService";
