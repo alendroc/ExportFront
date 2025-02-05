@@ -102,6 +102,38 @@ export class DepUsuarioService {
         }  
     }  
 
+
+    async getByUsuario(usuario) {
+        if (!usuario) {
+            throw new Error("Usuario no proporcionado.");
+        }
+    
+        try {
+            const response = await fetch(`${this.apiUrl}${usuario}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
+    
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(`Error al obtener departamentos: ${errorData.message || response.statusText}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.isSuccess && data.status === 200) {
+                return { success: true, departamentos: data.departamentos };
+            } else {
+                return { success: false, status: data.status, departamentos: [] };
+            }
+        } catch (error) {
+            this.handleFetchErrors(error);
+        }
+    }
+    
+
     // Método auxiliar para manejar errores al hacer fetch  
     handleFetchErrors(error) {  
         if (error.message.includes('Failed to fetch')) {  

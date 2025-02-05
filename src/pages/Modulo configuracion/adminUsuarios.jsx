@@ -26,32 +26,46 @@ export function Usuarios() {
   const [selectedDepartments, setSelectedDepartments] = useState([]);
   const [isEditing, setIsEditing] = useState(false); 
   
-  const fetchData = async () => {
-    try {
-      const usuarioResponse = await usuarioService.getAll();
-      if (usuarioResponse.success) {
-        setData(usuarioResponse.usuarios);
-      } else {
-        showToast('error', 'No se pudieron obtener los usuarios.', '#9c1010');
-      }
+  const fetchUsuarios = async () => {  
+    try {  
+        const usuarioResponse = await usuarioService.getAll();  
+        console.log("Respuesta de usuarios:", usuarioResponse);  
+        if (usuarioResponse.success) {  
+            setData(usuarioResponse.usuarios);  
+        } else {  
+            showToast('error', 'No se pudieron obtener los usuarios.', '#9c1010');  
+        }  
+    } catch (error) {  
+        console.error("Error al obtener usuarios:", error);  
+        showToast('error', 'Error al obtener usuarios.', '#9c1010');  
+    }  
+};  
 
-      const departamentoResponse = await departamentoService.getAll();
-      if (departamentoResponse.success) {
-        setDepartamentos(departamentoResponse.departamentos); 
-      } else {
-        showToast('error', 'No se pudieron obtener los departamentos.', '#9c1010');
-      }
-    } catch (error) {
-      console.error("Error al obtener datos:", error);
-      showToast('error', 'Error al obtener datos.', '#9c1010');
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchDepartamentos = async () => {  
+    try {  
+        const departamentoResponse = await departamentoService.getAll();  
+        console.log("Respuesta de departamentos:", departamentoResponse);  
+        if (departamentoResponse.success) {  
+            setDepartamentos(departamentoResponse.departamentos);   
+        } else {  
+            showToast('error', 'No se pudieron obtener los departamentos.', '#9c1010');  
+        }  
+    } catch (error) {  
+        console.error("Error al obtener departamentos:", error);  
+        showToast('error', 'Error al obtener departamentos.', '#9c1010');  
+    }  
+};  
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+const fetchData = async () => {  
+    setLoading(true);  
+    await fetchUsuarios(); 
+    await fetchDepartamentos(); 
+    setLoading(false);  
+};  
+
+useEffect(() => {  
+    fetchData();  
+}, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -64,15 +78,6 @@ export function Usuarios() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleInputChange = (e) => {  
-    const { name, value } = e.target;  
-    setNuevoUsuario({ ...nuevoUsuario, [name]: value });  
-  };  
-
-  const handleDepartmentChange = (event, newValue) => {  
-    setSelectedDepartments(newValue); 
-  }; 
-
   useEffect(() => {
     const selectedDepartments = departamentos
       .filter(depto => depto.selected)
@@ -80,27 +85,66 @@ export function Usuarios() {
     setNuevoUsuario(prevState => ({ ...prevState, departamentos: selectedDepartments }));
   }, [departamentos]);
 
+  const handleInputChange = (e) => {  
+    const { name, value } = e.target;  
+    setNuevoUsuario({ ...nuevoUsuario, [name]: value.trimStart() }); 
+};  
+
+const handleDepartmentChange = (event, newValue) => {  
+  setSelectedDepartments(newValue); 
+}; 
+
   const handleCancel = () => {
     setIsEditing(false);
     setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] });
     setSelectedDepartments([]);
   };
 
-  const onRowUpdate = (newData) => {
-    setData(prevData => prevData.map(user =>   
-        user.usuario === newData.usuario ? newData : user  
-    ));
-    setNuevoUsuario(newData);
-    const departamentosUsuarioNuevos = newData.departamentos || []; 
-    const deptosSeleccionados = departamentos.filter(depto => 
-      departamentosUsuarioNuevos.some(dep => dep === depto.departamento)
-    );
-    setSelectedDepartments(deptosSeleccionados);  
-    setIsEditing(true);   
+  const onRowUpdate = async (newData) => {  
+    try {  
+        const depResponse = await depUsuarioService.getByUsuario(newData.usuario);  
+        if (depResponse.success) {  
+            const deptosSeleccionados = departamentos.filter(depto =>  
+                depResponse.departamentos.some(d => d.departamento.trim().toLowerCase() === depto.departamento.trim().toLowerCase())  
+            );  
+            setSelectedDepartments(deptosSeleccionados.map(depto => depto.departamento));
+            setNuevoUsuario({ ...newData, departamentos: deptosSeleccionados.map(depto => depto.departamento) });  
+        } else {  
+            setSelectedDepartments([]);  
+            setNuevoUsuario(newData);  
+        }  
+        setIsEditing(true);
+    } catch (error) {  
+        showToast("error", "Error al obtener los departamentos del usuario.", "#9c1010");  
+    }  
   };
+
+  useEffect(() => {
+    if (isEditing && nuevoUsuario.usuario) {
+
+      depUsuarioService.getByUsuario(nuevoUsuario.usuario)
+        .then(response => {
+          if (response.success) {
+            setSelectedDepartments(response.departamentos);
+          } else {
+            showToast('error', 'No se pudieron obtener los departamentos del usuario.', '#9c1010');
+          }
+        })
+        .catch(error => {
+          showToast('error', 'Error al obtener departamentos del usuario.', '#9c1010');
+        });
+    }
+  }, [isEditing, nuevoUsuario.usuario]);
+  
 
   const handleSubmit = async (e) => {  
     e.preventDefault();
+
+    if (!nuevoUsuario.usuario.trim() || !nuevoUsuario.rolDeUsuario.trim() || 
+    !nuevoUsuario.contrasena.trim() || !nuevoUsuario.idEmpleado.trim()) {
+    showToast('error', 'Todos los campos son obligatorios y no pueden contener solo espacios.', '#9c1010');  
+    return;
+}
 
     const empleadoExists = data.some(user => user.idEmpleado === nuevoUsuario.idEmpleado);  
     if (empleadoExists && !isEditing) {  
@@ -141,9 +185,10 @@ export function Usuarios() {
       showToast('error', 'Se produjo un error: ' + error.message, '#9c1010');  
       console.error('Error en handleSubmit:', error);  
     }  
-    setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] });  
-    setSelectedDepartments([]);   
+    handleCancel();
   };
+
+
 
   const getColumns = () => {  
     return [  
@@ -193,7 +238,8 @@ export function Usuarios() {
           onChange={handleInputChange} 
           required 
         />
-        <Autocomplete  
+       <Autocomplete  
+          required 
           multiple  
           options={departamentos}  
           getOptionLabel={(option) => option.departamento} 
@@ -203,6 +249,7 @@ export function Usuarios() {
             <TextField {...params} variant="outlined" label="Departamentos" placeholder="Seleccione" />  
           )}  
         />
+
         <ButtonContainer>
           <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
           {isEditing && (
