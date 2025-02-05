@@ -7,7 +7,8 @@ import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, RadioGroup, FormControlLabel, Radio, } from '@mui/material'
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, RadioGroup, FormControlLabel, Radio, } from '@mui/material'
 
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
@@ -544,14 +545,15 @@ export function AsignarLote() {
                   <p>{tempActiva[0]?.temporada ?? "No hay temporada activa"}</p>
                   </div>
 
-                  <div style={{ fontSize: '12px', fontWeight: 'bold', display: 'flex', width: '20%', justifyContent: 'space-around' }}>
-                  <button  class="button" onClick={handleClickListItem} style={{ cursor: 'pointer' }}>Copiar</button>
-                 
+                  <div className="font-bold flex  w-[10%] justify-around">
+                  <Tooltip title="Copiar" placement="top-start" arrow>
+                  <button className="cursor-pointer hover:animate-scale-loop p-2  transition-all duration-300 hover:text-slate-800"
+                  onClick={handleClickListItem}>
+                  <FileCopyIcon style={{fontSize: '20px'}} className=" transition-all drop-shadow-md hover:drop-shadow-xl duration-300"/>
+                  </button>
+                  </Tooltip>
                   </div>
                   <ActionDialog open={open} onClose={handleClose} value={value} />
-                  <div style={{ fontSize: '12px', fontWeight: 'bold' }}>
-                   
-                  </div>
                 </div>
               ),
             }}
@@ -750,63 +752,7 @@ flex-wrap: wrap;
       left: 180px;
     }
   }
-.button {
-  display: inline-block;
-  padding: 6px 10px;
-  font-size: 10px;
-  font-weight: bold;
-  text-align: center;
-  text-decoration: none;
-  color: #ffffff;
-  background-color: #e59c27;
-  border: none;
-  border-radius: 50px;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
-  position: relative;
-  z-index: 1;
-}
 
-.button:hover {
-  background-color: #23ca06;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 10px rgba(170, 170, 170, 0.729);
-}
-
-.button:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.3);
-}
-
-.button:active {
-  transform: translateY(1px);
-  box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-}
-
-.button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.button::before {
-  content: "";
-  position: absolute;
-  top: -5px;
-  left: -5px;
-  right: -5px;
-  bottom: -5px;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-radius: 50px;
-  z-index: -1;
-  transition: all 0.3s ease-in-out;
-}
-
-.button:hover::before {
-  top: -6px;
-  left: -6px;
-  right: -6px;
-  bottom: -6px;
-}
 
   @media (min-width: 1200px){
     .MuiTableCell-root {
