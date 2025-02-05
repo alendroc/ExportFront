@@ -36,6 +36,42 @@ export class LotePOService{
         }
     }
 
+    async getByTemporada(temporada) {
+       
+            try {
+                const response = await fetch(`${this.apiUrl}LotesPO/${temporada}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+   
+                if (response.status === 404) {
+                    throw new Error('LotesPO no encontrados.');
+                }
+    
+                if (!response.ok) {
+                    throw new Error(`Error al obtener el lotePO: ${response.statusText}`);
+                }
+    
+                const data = await response.json();
+                console.log("response",data)
+    
+                if (data.isSuccess && data.status === 200) {
+                    return { success: true, LotesPO: data.lotesPO };
+                } else {
+                    console.log('LotePO no encontrado.');
+                    return { success: false, status: data.status };
+                }
+            } catch (error) {
+                if (error.message.includes('Failed to fetch')) {
+                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+                } else {
+    
+                    throw new Error(error.message, error);
+                }
+            }}
+
     async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}LotesPO/${id}`, {
@@ -105,8 +141,7 @@ export class LotePOService{
 
     async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
         try {
-            console.log("temporada:", temporada, "siembraNum:", siembraNum,"nombreLote:",nombreLote ,
-                "aliasLote:",aliasLote, "Datos a actualizar:", lotePO)
+            console.log("Datos a actualizar:", lotePO)
 
             const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
                 method: 'PUT',
