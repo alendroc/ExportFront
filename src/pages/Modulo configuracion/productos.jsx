@@ -4,32 +4,65 @@ import { useState, useEffect } from "react";
 import { ProductoService } from "../../services/ProductoService";
 import { Delete, Edit, AddBox } from '@mui/icons-material'; 
 import { showToast } from "../../components/helpers";
+import { CertificacionService } from "../../services/CertificacionService";
 
-var productoService = new ProductoService();
+const productoService = new ProductoService();
+const certificacionService = new CertificacionService();
 
 export function Productos() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
+  const [certificationData, setCertificationData] = useState({}); 
 
-  useEffect(() => {
-    productoService.getAll()
-      .then((response) => {
-        if (response.success) {
-          setData(response.productos);
-          console.log("Productos", response.productos);
-        } else {
-          console.log("No se pudieron obtener los productos.");
-        }
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error al obtener los productos:", error);
-        setLoading(false);
-      });
-  }, []);
+  useEffect(() => {  
+    const fetchProductos = async () => {  
+      setLoading(true);  
+      try {  
+        const response = await productoService.getAll();  
+        if (response.success) {  
+          setData(response.productos);  
+        } else {  
+          console.log("No se pudieron obtener los productos.");  
+        }  
+      } catch (error) {  
+        console.error("Error al obtener los productos:", error);  
+      }  
+      setLoading(false);  
+    };  
 
+    fetchProductos();  
+  }, []);  
+
+  const fetchCertificacionesById = async (idProducto) => {  
+  if (!idProducto) return;  
+
+  try {  
+    const response = await certificacionService.getByProductoId(idProducto);  
+
+    if (response.success) {  
+      setCertificationData(prev => ({  
+        ...prev,  
+        [idProducto]: response.certificaciones,  
+      }));  
+      console.log("Certificaciones obtenidas para", idProducto, response.certificaciones); // Agrega este log  
+    
+    } else {  
+      console.log(`No se encontraron certificaciones para el producto ${idProducto}`);  
+    }  
+  } catch (error) {  
+    console.error(`Error al obtener certificaciones para el producto ${idProducto}:`, error);  
+  }  
+};
   
+useEffect(() => {  
+  const uniqueIds = [...new Set(data.map(p => p.idProducto.trim()))].filter(Boolean);  
+  if (uniqueIds.length > 0) {  
+    uniqueIds.forEach(fetchCertificacionesById);  
+  }  
+}, [data]);
+
+
   const EDITABLE_COLUMNS = [
     { 
       title: "Producto", 
@@ -80,7 +113,6 @@ export function Productos() {
     { 
       title: "Restricción Ingreso", 
       field: "restriccionIngreso", 
-      //type: "numeric", 
       editable: 'always' 
     },
     { 
@@ -93,8 +125,23 @@ export function Productos() {
       field: "activo", 
       type: "boolean", 
       editable: 'always'
+    },  
+    {   
+      title: "Certificación Relacionada",   
+      field: "certificacion",   
+      editable: 'never',  
+      render: (rowData) => {  
+        const certs = certificationData[rowData.idProducto] || [];  
+        return (  
+          <p>  
+            {certs.length > 0   
+              ? certs.map(cert => cert.nombreCertificacion).join(", ")   
+              : "No tiene certificación"}  
+          </p>  
+        );  
+      }  
     }
-  ];
+  ];  
   
 
   function getNewDataBulkEdit(changes, copyData) {
@@ -179,17 +226,16 @@ export function Productos() {
           onRowAdd: (newData) => {
             return new Promise((resolve, reject) => {
               console.log("Intentando agregar producto:", newData);
-              const newDataWithId = {
-                ...newData,
-                idProducto: newData.idProducto,
-                activo: newData.activo !== undefined ? newData.activo : false,
-                nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),
-                tipoUso: newData.tipoUso.toUpperCase(),
-                nombreComercial: newData.nombreComercial.toUpperCase(),
-                ingredienteActivo: newData.ingredienteActivo.toUpperCase(),
-                concentracionIactivo: newData.concentracionIactivo.toUpperCase(),
-                descripcion: newData.descripcion.toUpperCase()
-              };
+              const newDataWithId = {  
+                ...newData,  
+                activo: newData.activo !== undefined ? newData.activo : false,  
+                nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),  
+                tipoUso: newData.tipoUso.toUpperCase(),  
+                nombreComercial: newData.nombreComercial.toUpperCase(),  
+                ingredienteActivo: newData.ingredienteActivo?.toUpperCase() ?? "",  
+                concentracionIactivo: newData.concentracionIactivo?.toUpperCase() ?? "",  
+                descripcion: newData.descripcion?.toUpperCase() ?? ""  
+              };  
           
               const requiredFields = [
                 "idProducto", 
@@ -199,6 +245,18 @@ export function Productos() {
                 "unidadMedida"
               ];
           
+              const emptyFields = requiredFields.filter(field => {  
+                const value = newData[field]?.trimStart(); // Elimina espacios en blancos  
+                return !value; // Verifica si es una cadena vacía  
+              });  
+          
+              if (emptyFields.length > 0) {  
+                showToast('error', `Los siguientes campos están vacíos: ${emptyFields.join(", ")}`, '#9c1010');  
+                reject(`Los siguientes campos están vacíos: ${emptyFields.join(", ")}`);  
+                return;  
+              }  
+          
+
               const missingFields = requiredFields.filter(field => !newDataWithId[field] && newDataWithId[field] !== false);
               if (missingFields.length > 0) {
                 showToast('error', `Faltan los siguientes campos: ${missingFields.join(", ")}`, '#9c1010');
@@ -226,17 +284,34 @@ export function Productos() {
           
           onRowUpdate: (newData, oldData) => {
             return new Promise((resolve, reject) => {
-                // Convierte los campos a mayúsculas antes de la actualización
-                const updatedData = {
-                    ...newData,
-                    nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),
-                    tipoUso: newData.tipoUso.toUpperCase(),
-                    nombreComercial: newData.nombreComercial.toUpperCase(),
-                    ingredienteActivo: newData.ingredienteActivo.toUpperCase(),
-                    concentracionIactivo: newData.concentracionIactivo.toUpperCase(),
-                    descripcion: newData.descripcion.toUpperCase()
-                };
+                const updatedData = {  
+                  ...newData,  
+                  nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),  
+                  tipoUso: newData.tipoUso.toUpperCase(),  
+                  nombreComercial: newData.nombreComercial.toUpperCase(),  
+                  ingredienteActivo: newData.ingredienteActivo?.toUpperCase() ?? "",  
+                  concentracionIactivo: newData.concentracionIactivo?.toUpperCase() ?? "",  
+                  descripcion: newData.descripcion?.toUpperCase() ?? ""  
+                };  
         
+                const requiredFields = [  
+                  "nombreDescriptivo",   
+                  "tipoUso",   
+                  "nombreComercial",  
+                  "unidadMedida"  
+                ];  
+
+                const emptyFields = requiredFields.filter(field => {  
+                  const value = newData[field]?.trim(); 
+                  return !value;  
+                });  
+                
+                if (emptyFields.length > 0) {  
+                  showToast('error', `Los siguientes campos están vacíos: ${emptyFields.join(", ")}`, '#9c1010');  
+                  reject(`Los siguientes campos están vacíos: ${emptyFields.join(", ")}`);  
+                  return;  
+                }  
+
                 productoService.update(oldData.idProducto, updatedData)
                     .then(response => {
                         if (response.success) {
