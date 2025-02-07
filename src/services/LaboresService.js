@@ -135,10 +135,10 @@ export class LaboresService{
         }
     }
 
-    async delete(labor, departamento) {
+    async delete(id, departamento) {
         try {
             console.log(id)
-            const response = await fetch(`${this.apiUrl}labores/${labor}/${departamento}`, {
+            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json'

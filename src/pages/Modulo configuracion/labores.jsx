@@ -246,7 +246,7 @@ export function Labores() {
                     resolve();
                   } else {
 
-                    showToast('error', '`Error al elimanr el labor', '#9c1010');
+                    showToast('error', '`Error al eliminar el labor', '#9c1010');
                     reject('No se pudo eliminar el labor.');
                   }
                 })
