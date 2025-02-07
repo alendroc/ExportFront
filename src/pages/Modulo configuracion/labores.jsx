@@ -54,30 +54,60 @@ export function Labores() {
 
   console.log(departamentosDisponibles);
   const columns = [
-    /*
+    
     {
-      title: "Cultivo", field: "cultivo", editable: 'onAdd', validate: (row) => (row.cultivo || "").length !== 0,
+      title: "Cultivo",
+      field: "cultivo", // Asegúrate de que el 'field' coincida con el nombre del campo en los datos
+      editable: 'onAdd',
+      validate: (row) => (row.cultivo || "").length !== 0,
       lookup: {
         MELON: 'MELÓN',
         CANA: 'CANA',
-        // Agrega más opciones aquí, cada clave es el valor guardado y el valor de la clave es el texto mostrado
+        // Agrega más opciones aquí
       },
-    },*/
+      editComponent: ({ value, onChange }) => (
+        <FormControl sx={{ m: 1, minWidth: 140 }}>
+          <InputLabel id="departamento-label" style={{ fontSize: "14px" }}>
+            Cultivo
+          </InputLabel>
+          <Select
+            labelId="departamento-label"
+            value={value || ""}
+            onChange={(e) => onChange(e.target.value)}
+            label="Cultivo"
+            sx={{
+              fontSize: '14px',   // Ajusta el tamaño de la fuente del Select
+              minWidth: 200,      // Ajusta el tamaño mínimo del Select
+            }}
+          >
+            {Object.entries(columns[0].lookup).map(([key, label]) => (
+              <MenuItem key={key} value={key} sx={{ fontSize: '12px' }}>
+                {label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      ),
+    },
     { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
     {
       title: "Departamento",
       field: "departamento",
       editComponent: ({ value, onChange }) => (
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
-          <InputLabel id="departamento-label">Departamento</InputLabel>
+        <FormControl sx={{ m: 1, minWidth: 140 }}>
+          <InputLabel id="departamento-label" style={{fontSize: "14px"}} >Departamento</InputLabel>
           <Select
             labelId="departamento-label"
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             label="Departamento"
+            sx={{
+              fontSize: '14px',   // Ajusta el tamaño de la fuente del Select
+              minWidth: 200,      // Ajusta el tamaño mínimo del Select
+            }}
           >
             {departamentosDisponibles.map((departamento) => (
-              <MenuItem key={departamento.departamento} value={departamento.departamento}>
+              <MenuItem key={departamento.departamento} sx={{ fontSize: '12px' }} value={departamento.departamento}>
                 {departamento.departamento}
               </MenuItem>
             ))}

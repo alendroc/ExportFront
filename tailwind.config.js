@@ -30,9 +30,15 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-5px)' },
         },
+        scaleLoop: {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.3)" },
+          "100%": { transform: "scale(1)" }
+        }
       },
       animation: {
         'bounce-text': 'bounce 0.3s ease-in-out',
+         "scale-loop": "scaleLoop 0.6s ease-in-out"
       },
     },
   },

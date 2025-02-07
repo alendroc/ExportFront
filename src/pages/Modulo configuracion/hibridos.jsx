@@ -159,9 +159,9 @@ const handleChangeVariedad = (event) => {
       title="Gestión de hibridos"
       data={dataFiltrada}
       columns={ [
-        { title: "Cultivo", field: "cultivo", editable: false, initialEditValue: cultivo},
+        { title: "Cultivo", field: "cultivo", editable: () => false, initialEditValue: cultivo},
       
-        { title: "Variedad", field: "variedad", editable: false, initialEditValue: variedad},
+        { title: "Variedad", field: "variedad", editable: () => false, initialEditValue: variedad},
       
         { title: "Hibrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
           if((row.hibrido || "").length === 0){return false}

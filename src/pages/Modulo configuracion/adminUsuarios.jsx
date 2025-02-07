@@ -3,11 +3,14 @@ import MaterialTable from "@material-table/core";
 import { useState, useEffect } from "react";
 import { UsuarioService } from "../../services/UsuarioService";
 import { DepartamentoService } from "../../services/DepartamentoService"; 
+import { DepUsuarioService } from '../../services/DepUsuarioService'; 
 import { Delete, Edit } from '@mui/icons-material';
 import { showToast } from "../../components/helpers";
+import { Autocomplete, TextField } from "@mui/material";
 
 const usuarioService = new UsuarioService();
 const departamentoService = new DepartamentoService();
+const depUsuarioService = new DepUsuarioService();
 
 export function Usuarios() {
   const [data, setData] = useState([]);
@@ -18,156 +21,184 @@ export function Usuarios() {
     usuario: '',
     rolDeUsuario: '',
     contrasena: '',
-    idEmpleado: '',
-    departamentos: []
+    idEmpleado: ''
   });
+  const [selectedDepartments, setSelectedDepartments] = useState([]);
+  const [isEditing, setIsEditing] = useState(false); 
   
-  const [isEditing, setIsEditing] = useState(false); // Estado para verificar si estamos en modo de edición
+  const fetchUsuarios = async () => {  
+    try {  
+        const usuarioResponse = await usuarioService.getAll();  
+        console.log("Respuesta de usuarios:", usuarioResponse);  
+        if (usuarioResponse.success) {  
+            setData(usuarioResponse.usuarios);  
+        } else {  
+            showToast('error', 'No se pudieron obtener los usuarios.', '#9c1010');  
+        }  
+    } catch (error) {  
+        console.error("Error al obtener usuarios:", error);  
+        showToast('error', 'Error al obtener usuarios.', '#9c1010');  
+    }  
+};  
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const usuarioResponse = await usuarioService.getAll();
-        if (usuarioResponse.success) {
-          setData(usuarioResponse.usuarios);
-        } else {
-          showToast('error', 'No se pudieron obtener los usuarios.', '#9c1010');
-        }
-  
-        const departamentoResponse = await departamentoService.getAll();
-        if (departamentoResponse.success) {
-          setDepartamentos(departamentoResponse.departamentos); 
-        } else {
-          showToast('error', 'No se pudieron obtener los departamentos.', '#9c1010');
-        }
-      } catch (error) {
-        console.error("Error al obtener datos:", error);
-        showToast('error', 'Error al obtener datos.', '#9c1010');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    fetchData();
-  }, []);
-  
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setNuevoUsuario({ ...nuevoUsuario, [name]: value });
-  };
+const fetchDepartamentos = async () => {  
+    try {  
+        const departamentoResponse = await departamentoService.getAll();  
+        console.log("Respuesta de departamentos:", departamentoResponse);  
+        if (departamentoResponse.success) {  
+            setDepartamentos(departamentoResponse.departamentos);   
+        } else {  
+            showToast('error', 'No se pudieron obtener los departamentos.', '#9c1010');  
+        }  
+    } catch (error) {  
+        console.error("Error al obtener departamentos:", error);  
+        showToast('error', 'Error al obtener departamentos.', '#9c1010');  
+    }  
+};  
 
-  const handleDepartamentoChange = (e) => {
-    const { options } = e.target;
-    const selectedDepartments = [];
-    for (let i = 0; i < options.length; i++) {
-      if (options[i].selected) {
-        selectedDepartments.push(options[i].value);
-      }
-    }
-    setNuevoUsuario({ ...nuevoUsuario, departamentos: selectedDepartments });
-  };
-  
+const fetchData = async () => {  
+    setLoading(true);  
+    await fetchUsuarios(); 
+    await fetchDepartamentos(); 
+    setLoading(false);  
+};  
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-  
-    const empleadoExists = data.some(user => user.idEmpleado === nuevoUsuario.idEmpleado);
-    if (empleadoExists && !isEditing) {
-      showToast('error', 'El ID de empleado ya está en uso.', '#9c1010');
-      return;
-    }
-    try {
-      if (isEditing) {
-        // Formato para actualizar
-        const usuario = {
-          Usuario: nuevoUsuario.usuario,
-          RolDeUsuario: nuevoUsuario.rolDeUsuario,
-          Contrasena: nuevoUsuario.contrasena,
-          IdEmpleado: nuevoUsuario.idEmpleado,
-          departamentos: nuevoUsuario.departamentos // asegurarse de que sea un array
-        };
-  
-        const result = await usuarioService.update(nuevoUsuario.usuario, usuario);
-        if (result.success) {
-          showToast('success', 'Usuario actualizado', '#2d800e');
-          setData(prevData => 
-            prevData.map(user => 
-              user.Usuario === nuevoUsuario.usuario ? { ...user, ...usuario } : user
-            )
-          );
-          setIsEditing(false);
-        } else {
-          showToast('error', 'Error al actualizar el usuario: ' + result.status, '#9c1010');
-        }
-      } else {
-        // Formato para crear
-        const usuario = {
-          usuario: {
-            Usuario: nuevoUsuario.usuario,
-            RolDeUsuario: nuevoUsuario.rolDeUsuario,
-            Contrasena: nuevoUsuario.contrasena,
-            FechaCreacion: new Date().toISOString().split('T')[0],
-            IdEmpleado: nuevoUsuario.idEmpleado
-          },
-          Departamentos: nuevoUsuario.departamentos // asegurarse de que sea un array
-        };
-        console.log("usuario agregado", usuario)
-        const result = await usuarioService.create(usuario);
-        if (result.success) {
-          showToast('success', 'Usuario creado', '#2d800e');
-          setData(prevData => [...prevData, result.usuario]);
-        } else {
-          showToast('error', 'Error al crear el usuario: ' + result.status, '#9c1010');
-        }
-      }
-    } catch (error) {
-      showToast('error', 'Se produjo un error: ' + error.message, '#9c1010');
-    }
-  
-    // Reiniciar el formulario después de la operación
-    setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] });
-  };
-  
-
-  const handleCancel = () => {
-    // Restablecer el estado al valor inicial
-    setIsEditing(false);
-    setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] });
-  };
-
-  const onRowUpdate = (newData) => {
-    setNuevoUsuario({
-      usuario: newData.usuario,
-      rolDeUsuario: newData.rolDeUsuario,
-      contrasena: newData.contrasena,
-      idEmpleado: newData.idEmpleado,
-      departamentos: newData.departamentos
-    });
-    setIsEditing(true); 
-  };
-
-  const EDITABLE_COLUMNS = [
-    { title: "Usuario", field: "usuario" }, 
-    { title: "Rol de Usuario", field: "rolDeUsuario" },
-    { title: "Contraseña", field: "contrasena" },
-    { title: "Fecha de Creación", field: "fechaCreacion", type: "date" },
-    { title: "Id Empleado", field: "idEmpleado" },
-  ];
+useEffect(() => {  
+    fetchData();  
+}, []);
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 1300) {
-        setMaxBodyHeight(470);
-      } else if (window.innerWidth < 2000) {
-        setMaxBodyHeight(580);
-      } else {
-        setMaxBodyHeight(480);
-      }
+      if (window.innerWidth < 1300) setMaxBodyHeight(470);
+      else if (window.innerWidth < 2000) setMaxBodyHeight(580);
+      else setMaxBodyHeight(480);
     };
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    const selectedDepartments = departamentos
+      .filter(depto => depto.selected)
+      .map(depto => depto.id || depto.someOtherField);
+    setNuevoUsuario(prevState => ({ ...prevState, departamentos: selectedDepartments }));
+  }, [departamentos]);
+
+  const handleInputChange = (e) => {  
+    const { name, value } = e.target;  
+    setNuevoUsuario({ ...nuevoUsuario, [name]: value.trimStart() }); 
+};  
+
+const handleDepartmentChange = (event, newValue) => {  
+  setSelectedDepartments(newValue); 
+}; 
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setNuevoUsuario({ usuario: '', rolDeUsuario: '', contrasena: '', idEmpleado: '', departamentos: [] });
+    setSelectedDepartments([]);
+  };
+
+  const onRowUpdate = async (newData) => {  
+    try {  
+        const depResponse = await depUsuarioService.getByUsuario(newData.usuario);  
+        if (depResponse.success) {  
+            const deptosSeleccionados = departamentos.filter(depto =>  
+                depResponse.departamentos.some(d => d.departamento.trim().toLowerCase() === depto.departamento.trim().toLowerCase())  
+            );  
+            setSelectedDepartments(deptosSeleccionados.map(depto => depto.departamento));
+            setNuevoUsuario({ ...newData, departamentos: deptosSeleccionados.map(depto => depto.departamento) });  
+        } else {  
+            setSelectedDepartments([]);  
+            setNuevoUsuario(newData);  
+        }  
+        setIsEditing(true);
+    } catch (error) {  
+        showToast("error", "Error al obtener los departamentos del usuario.", "#9c1010");  
+    }  
+  };
+
+  useEffect(() => {
+    if (isEditing && nuevoUsuario.usuario) {
+
+      depUsuarioService.getByUsuario(nuevoUsuario.usuario)
+        .then(response => {
+          if (response.success) {
+            setSelectedDepartments(response.departamentos);
+          } else {
+            showToast('error', 'No se pudieron obtener los departamentos del usuario.', '#9c1010');
+          }
+        })
+        .catch(error => {
+          showToast('error', 'Error al obtener departamentos del usuario.', '#9c1010');
+        });
+    }
+  }, [isEditing, nuevoUsuario.usuario]);
+  
+
+  const handleSubmit = async (e) => {  
+    e.preventDefault();
+
+    if (!nuevoUsuario.usuario.trim() || !nuevoUsuario.rolDeUsuario.trim() || 
+    !nuevoUsuario.contrasena.trim() || !nuevoUsuario.idEmpleado.trim()) {
+    showToast('error', 'Todos los campos son obligatorios y no pueden contener solo espacios.', '#9c1010');  
+    return;
+}
+
+    const empleadoExists = data.some(user => user.idEmpleado === nuevoUsuario.idEmpleado);  
+    if (empleadoExists && !isEditing) {  
+        showToast('error', 'El ID de empleado ya está en uso.', '#9c1010');  
+        return;  
+    }
+
+    try {  
+      const usuarioData = {  
+          Usuario: nuevoUsuario.usuario,  
+          RolDeUsuario: nuevoUsuario.rolDeUsuario,  
+          Contrasena: nuevoUsuario.contrasena,  
+          IdEmpleado: nuevoUsuario.idEmpleado,  
+          FechaCreacion: isEditing ? undefined : new Date().toISOString().split('T')[0],  
+      };  
+
+      const departamentosNuevos = selectedDepartments.map(depto => depto.nombre || depto.departamento);
+
+      const result = isEditing ? 
+        await usuarioService.update(nuevoUsuario.usuario, usuarioData) :
+        await usuarioService.create(usuarioData);
+
+      if (result.success) {  
+        const depResult = isEditing ? 
+          await depUsuarioService.update(nuevoUsuario.usuario, departamentosNuevos) : 
+          await depUsuarioService.store(nuevoUsuario.usuario, departamentosNuevos);
+          
+        if (depResult.success) {
+          showToast('success', isEditing ? 'Usuario actualizado' : 'Usuario creado', '#2d800e');
+          await fetchData();
+        } else {
+          throw new Error('Error al actualizar los departamentos.');
+        }
+      } else {
+        throw new Error(isEditing ? 'Error al actualizar el usuario.' : 'Error al crear el usuario.');
+      }
+    } catch (error) {  
+      showToast('error', 'Se produjo un error: ' + error.message, '#9c1010');  
+      console.error('Error en handleSubmit:', error);  
+    }  
+    handleCancel();
+  };
+
+
+
+  const getColumns = () => {  
+    return [  
+      { title: "Usuario", field: "usuario" },  
+      { title: "Rol de Usuario", field: "rolDeUsuario" },  
+      { title: "Contraseña", field: "contrasena" },  
+      { title: "Fecha de Creación", field: "fechaCreacion", type: "date" },  
+      { title: "Id Empleado", field: "idEmpleado" },  
+    ];  
+  };  
 
   return (
     <Container>
@@ -181,14 +212,16 @@ export function Usuarios() {
           onChange={handleInputChange} 
           required 
         />
-        <input 
-          type="text" 
+        <select 
           name="rolDeUsuario" 
-          placeholder="Rol de Usuario" 
           value={nuevoUsuario.rolDeUsuario} 
           onChange={handleInputChange} 
-          required 
-        />
+          required
+        >
+          <option value="" disabled>Seleccione un rol</option>
+          <option value="ADMIN">ADMIN</option>
+          <option value="GENERAL">GENERAL</option>
+        </select>
         <input 
           type="password" 
           name="contrasena" 
@@ -205,31 +238,33 @@ export function Usuarios() {
           onChange={handleInputChange} 
           required 
         />
-        <select multiple={true} value={nuevoUsuario.departamentos} onChange={handleDepartamentoChange}>
-          {departamentos.map(departamento => (
-            <option key={departamento.departamento} value={departamento.departamento}>
-              {departamento.departamento}
-            </option>
-          ))}
-        </select>
-        <ButtonContainer>
-    <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
-    {isEditing && (
-      <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
-    )}
-  </ButtonContainer>
-      </Form>
+       <Autocomplete  
+          required 
+          multiple  
+          options={departamentos}  
+          getOptionLabel={(option) => option.departamento} 
+          value={selectedDepartments}  
+          onChange={handleDepartmentChange}  
+          renderInput={(params) => (  
+            <TextField {...params} variant="outlined" label="Departamentos" placeholder="Seleccione" />  
+          )}  
+        />
 
+        <ButtonContainer>
+          <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
+          {isEditing && (
+            <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
+          )}
+        </ButtonContainer>
+      </Form>
       <MaterialTable
-        key={data.length} 
-        size="small"
-        title="Lista de Usuarios"
-        columns={EDITABLE_COLUMNS}
-        data={data}
+        size="small"  
+        title="Lista de Usuarios"  
+        columns={getColumns()}
+        data={data} 
         options={{
           actionsColumnIndex: -1,
-          //addRowPosition: "first",
-          maxBodyHeight: maxBodyHeight,
+          maxBodyHeight,
           paging: false,
           headerStyle: {
             position: "sticky",
@@ -256,28 +291,20 @@ export function Usuarios() {
           },
         }}
         editable={{
-          onRowDelete: (oldData) => {
-            console.log('Datos del usuario a eliminar:', oldData);
-            return new Promise((resolve, reject) => {
-              usuarioService.delete(oldData.usuario)  
-                .then(response => {
-                  if (response.success) {
-                    showToast('success', 'Usuario eliminado con éxito', '#2d800e');
-                    setData(prevData => 
-                      prevData.filter(user => user.usuario !== oldData.usuario)  
-                    );
-                    resolve();
-                  } else {
-                    showToast('error', 'Error al eliminar el usuario', '#9c1010');
-                    reject("Error al eliminar el usuario");
-                  }
-                })
-                .catch(error => {
-                  showToast('error', `Error: ${error.message}`, '#9c1010');
-                  reject(`Error: ${error.message}`);
-                });
-            });
-          },
+          onRowDelete: async (oldData) => {  
+            try {  
+              const rowIndex = data.findIndex(user => user.usuario === oldData.usuario); // Hallar el índice de la fila  
+              const response = await usuarioService.delete(oldData.usuario);  
+              if (response.success) {  
+                showToast('success', 'Usuario eliminado con éxito', '#2d800e');  
+                setData(prevData => prevData.filter((user, index) => index !== rowIndex)); // Eliminar usando índice  
+              } else {  
+                throw new Error('Error al eliminar el usuario');  
+              }  
+            } catch (error) {  
+              showToast('error', `Error: ${error.message}`, '#9c1010');  
+            }  
+          },  
         }}
         actions={[
           {
@@ -297,15 +324,15 @@ const Container = styled.div`
 
 const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between; /* Espacio entre los botones */
-  margin-top: 10px; /* Espacio arriba de los botones */
+  justify-content: space-between; 
+  margin-top: 10px; 
 `;
 
 const Form = styled.form`
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
-  width: 50%; /* Ajustar el ancho del formulario a la mitad de la tabla */
+  width: 50%;
   
   input, select {
     margin: 10px 0;
@@ -315,8 +342,8 @@ const Form = styled.form`
   }
 
   button {
-    margin: 5px 5px; /* Espaciado entre botones */
-    padding: 5px 10px; /* Hacer los botones más pequeños */
+    margin: 5px 5px; 
+    padding: 5px 10px;
     background-color: #4CAF50; 
     color: white;
     border: none;
@@ -330,10 +357,9 @@ const Form = styled.form`
   }
 
   .cancel-button {
-    background-color: red; /* Color de fondo rojo */
+    background-color: red; 
     &:hover {
-      background-color: darkred; /* Color de fondo más oscuro al pasar el mouse */
+      background-color: darkred; 
     }
   }
 `;
-

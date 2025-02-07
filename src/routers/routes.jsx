@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../routers/ProtectedRoute";
 import { Configuracion } from "../pages/Configuracion";
+import { ProgramaO } from "../pages/ProgramaO.jsx";
 import { Navegacion } from "../pages/Navegacion";
 import {NavegacionP} from "../pages/Modulo Navegacion/navegacion1.jsx";
 import { Variedades } from "../pages/Modulo configuracion/variedades.jsx";
@@ -13,7 +14,7 @@ import { Lote } from "../pages/Modulo configuracion/lotes.jsx";
 import { Departamento } from "../pages/Modulo configuracion/departamentos.jsx";
 import { Labores } from "../pages/Modulo configuracion/labores.jsx"
 import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
-
+import { AsignarLote } from "../pages/Modulo Programa O/asignarLote.jsx";
 
 
 export const MyRoutes = ({isAuthenticated, usuario}) => {
@@ -41,6 +42,16 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <Route path="labores" element={<Labores/>}/>
         <Route path="hibridos" element={<Hibridos/>}/>
       </Route>
+      <Route path="/ProgramaO" element={ 
+        <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        userRole={usuario.rolDeUsuario}
+        allowedRoles={["admin"]}
+      ><ProgramaO/></ProtectedRoute>}>
+        <Route index element={<Navigate to="asignar-Lotes" replace />} />
+        <Route path="asignar-Lotes" element={<AsignarLote/>}/>
+      </Route>
+
     </Routes>
   );
 }
