@@ -22,7 +22,7 @@ export function Labores() {
         if (response.success) {
           console.log(response);
           // Accede a los valores de labores correctamente
-          const labores = response.labores || []; 
+          const labores = response.labores || [];
           setData(labores); // Establecer el estado con el arreglo de labores
           console.log("Labores obtenidos:", labores); // Verifica los datos que recibes
         } else {
@@ -54,48 +54,16 @@ export function Labores() {
 
   console.log(departamentosDisponibles);
   const columns = [
-    
-    {
-      title: "Cultivo",
-      field: "cultivo", // Asegúrate de que el 'field' coincida con el nombre del campo en los datos
-      editable: 'onAdd',
-      validate: (row) => (row.cultivo || "").length !== 0,
-      lookup: {
-        MELON: 'MELÓN',
-        CANA: 'CANA',
-        // Agrega más opciones aquí
-      },
-      editComponent: ({ value, onChange }) => (
-        <FormControl sx={{ m: 1, minWidth: 140 }}>
-          <InputLabel id="departamento-label" style={{ fontSize: "14px" }}>
-            Cultivo
-          </InputLabel>
-          <Select
-            labelId="departamento-label"
-            value={value || ""}
-            onChange={(e) => onChange(e.target.value)}
-            label="Cultivo"
-            sx={{
-              fontSize: '14px',   // Ajusta el tamaño de la fuente del Select
-              minWidth: 200,      // Ajusta el tamaño mínimo del Select
-            }}
-          >
-            {Object.entries(columns[0].lookup).map(([key, label]) => (
-              <MenuItem key={key} value={key} sx={{ fontSize: '12px' }}>
-                {label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-      ),
-    },
+
     { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
     {
       title: "Departamento",
       field: "departamento",
+      editable: 'onAdd', // Solo editable al agregar, no al actualizar
+      validate: (row) => (row.departamento || "").length !== 0, // Hace que sea obligatorio
       editComponent: ({ value, onChange }) => (
         <FormControl sx={{ m: 1, minWidth: 140 }}>
-          <InputLabel id="departamento-label" style={{fontSize: "14px"}} >Departamento</InputLabel>
+          <InputLabel id="departamento-label" style={{ fontSize: "14px" }} >Departamento</InputLabel>
           <Select
             labelId="departamento-label"
             value={value || ""}
@@ -182,25 +150,26 @@ export function Labores() {
           onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
           onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
           onRowAdd: (newData) => {
+            if (newData.descripcion === "") {
+              newData.descripcion = "";
+            }
             return new Promise((resolve, reject) => {
               console.log(newData)
               const newDataWithId = {
                 //...newData,
-                Labor: newData.labor,
-                Departamento: newData.departamento,
-                Descripcion: newData.descripcion
+                labor: newData.labor.toUpperCase(),
+                departamento: newData.departamento.toUpperCase(),
+                descripcion: newData.descripcion ? newData.descripcion.toUpperCase() : ''
               }
 
-              /*const isDuplicate = data.some(variante =>
-                variante.cultivo.toUpperCase() === newDataWithId.cultivo &&
-                variante.variedad.toUpperCase() === newDataWithId.variedad
-              );
-
+              const isDuplicate = data.some(labores => labores.labor === newDataWithId.labor && labores.departamento === newDataWithId.departamento)
+              //console.log(newDataWithId.departamento)
               if (isDuplicate) {
-                showToast('error', 'Ya existe esa variedad con ese cultivo', '#9c1010');
-                reject(`Error al crear la variedad: ${response.message}`);
+                showToast('error', 'Ya existe ese labor', '#9c1010');
+                reject(`Error al crear el labor: ${response.message}`);
                 return
-              }*/
+              }
+
               laboresService.create(newDataWithId)
                 .then(response => {
                   if (response.success) {
@@ -219,15 +188,16 @@ export function Labores() {
             })
           },
           onRowUpdate: (newData, oldData) => {
+            console.log("Ejecutando onRowUpdate", newData, oldData);
             return new Promise((resolve, reject) => {
-              const index = data.findIndex(item => item.labor === oldData.labor);
+              const index = data.findIndex(item => item.labor === oldData.labor && item.departamento === oldData.departamento);
               const updatedData = [...data];
 
               const newDataWithId = {
                 ...newData,
                 labor: newData.labor,
                 departamento: newData.departamento,
-                descripción: newData.descripción
+                descripcion: newData.descripcion.toUpperCase()
               }
 
               /*const isDuplicate = data.some((variante , idx) => 
@@ -243,8 +213,9 @@ export function Labores() {
               }*/
               updatedData[index] = newDataWithId;
 
-              laboresService.update(oldData.labor, oldData.departamento, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
+              laboresService.update(oldData.labor, oldData.departamento, newData.descripcion) // Asumiendo que `oldData` tiene un campo `id`
                 .then(response => {
+                  console.log(response);
                   if (response.success) {
                     setData(updatedData);
                     showToast('success', 'Labor actualizada', '#2d800e');
@@ -257,9 +228,7 @@ export function Labores() {
                 .catch(error => {
                   reject(`Error de red: ${error.message}`);
                 });
-
             })
-
           },
           onRowDelete: (oldData) => {
             return new Promise((resolve, reject) => {
@@ -269,7 +238,7 @@ export function Labores() {
                   console.log(response);
                   if (response.success) {
                     const dataDelete = data.filter(
-                      (el) => !(el.labor === oldData.labor)
+                      (el) => !(el.labor === oldData.labor && el.departamento === oldData.departamento)
                     );
                     setData(dataDelete);
                     showToast('success', 'Labor eliminada', '#2d800e');

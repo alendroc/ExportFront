@@ -103,15 +103,14 @@ export class LaboresService{
         }
     }
 
-    async update(oldLabor, departamento, labor) {
+    async update(id, departamento, descripcion) {
         try {
-            console.log("el ide: ",id,"el labor: ",labor)
-            const response = await fetch(`${this.apiUrl}labores/${oldLabor}/${departamento}`, {
+            console.log("el labor: ",id)
+            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}/${descripcion}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(labor)
             });
 
             if (!response.ok) {
