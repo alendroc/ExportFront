@@ -139,6 +139,42 @@ export class LotePOService{
         }
     }
 
+    async PegarLote(lotesPo) {
+        try {
+            console.log("lotes por agregar:", lotesPo)
+            const response = await fetch(`${this.apiUrl}LotesPO/CopiarLotesPo`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(lotesPo)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if(data.innerError.includes("Cannot insert duplicate key"))
+                    throw new Error("Ya existe un lote con esos datos, no se puede duplicar.");
+                
+                throw new Error(`Error al crear el lotePO: ${data.statusText}`);
+            }
+
+
+            if (data.isSuccess && data.status === 201) {
+                return { success: true, LotePO: data.LotePO };
+            } else {
+                console.log('Error al crear el lote.');
+                return { success: false, status: data.status };
+            }
+        } catch (error) {
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }
+        }
+    }
+
     async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
         try {
             console.log("Datos a actualizar:", lotePO)

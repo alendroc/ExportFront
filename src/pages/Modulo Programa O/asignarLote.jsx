@@ -9,38 +9,25 @@ import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, RadioGroup, FormControlLabel, Radio, } from '@mui/material'
+import {Utils} from '../../models/Utils'
 
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
 const loteNoSeleccionadoText="Debe seleccionar un lote"
 
-const options = [
-  'None',
-  'Atria',
-  'Callisto',
-  'Dione',
-  'Ganymede',
-  'Hangouts Call',
-  'Luna',
-  'Oberon',
-  'Phobos',
-  'Pyxis',
-  'Sedna',
-  'Titania',
-  'Triton',
-  'Umbriel',
-];
 
 function ActionDialog(props) {
-  const { onClose, value: valueProp, open, ...other } = props;
+  const { onClose, value: valueProp, open,dataPo,temporadaActiva, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
   const radioGroupRef = React.useRef(null);
+  const [temporadasOpciones, setTemporadasOpciones] = useState([""]);
 
   React.useEffect(() => {
-    if (!open) {
-      setValue(valueProp);
+    if (open) {
+      setValue("");
     }
+    Utils.fetchData(temporadaService.getTemporadasFechas(), setTemporadasOpciones, "temporadas");
   }, [valueProp, open]);
 
   const handleEntering = () => {
@@ -54,13 +41,25 @@ function ActionDialog(props) {
   };
 
   const handleOk = async () => {
-    if (value === 'Copiar') {
-      await navigator.clipboard.writeText("Texto de prueba copiado"); 
-      alert('Texto copiado al portapapeles');
-    } else if (value === 'Pegar') {
-      const textoPegado = await navigator.clipboard.readText();
-      alert(`Texto pegado: ${textoPegado}`);
-    }
+   if(!value){showToast('error','Ninguna temporada seleccionada', '#9c1010')}
+      else {
+        const copyData=dataPo.map(lote=>{return { ...lote, temporada: value };})
+        lotePoService.PegarLote(copyData)
+        .then(response => {
+          console.log("responseCopy",response)
+          response.success ? showToast('success', `Lotes copiados al Programa Operativo de la temporada ${value}`, '#2d800e'):
+          showToast('error', 'Error al copiar lotes', '#9c1010')})
+        .catch(error => {
+          console.log("error",error)
+          showToast('error', error, '#9c1010')
+          return
+          
+        });
+
+        console.log("dataPo",dataPo)
+        console.log("dataPoActualizado",copyData)
+       }
+
     onClose(value);
   };
 
@@ -69,6 +68,7 @@ function ActionDialog(props) {
   };
 
   return (
+    
     <Dialog
       sx={{ '& .MuiDialog-paper': { width: '80%', maxHeight: 300 } }}
       maxWidth="xs"
@@ -85,12 +85,14 @@ function ActionDialog(props) {
           value={value}
           onChange={handleChange}
         >
-          {options.map((option) => (
+          {temporadasOpciones
+           .filter(option => option.temporada !== temporadaActiva[0]?.temporada ?? "No hay temporada activa")
+           .map((option) => (
             <FormControlLabel
-              value={option}
-              key={option}
+              value={option.temporada}
+              key={option.temporada}
               control={<Radio />}
-              label={option}
+              label={option.temporada}
             />
           ))}
         </RadioGroup>
@@ -140,27 +142,6 @@ export function AsignarLote() {
       setValue(newValue);
     }
   };
-/////////////
-
-//cargar datos de los services
-  const fetchData = async (service, setDta, logName) => {
-    try {
-      const response = await service();
-      //console.log("response", response);
-      if (response.success) {
-        setDta(response[logName]);
-        return response[logName];
-        //console.log(logName, response[logName]);
-      } else {
-        console.log(`No se pudieron obtener los ${logName}.`);
-        return null
-      }
-    } catch (error) {
-      setDta([])
-      console.error(`Error al obtener los ${logName}:`, error);
-      return null;
-    }
-  };
 
   //modificar tamaño
   const handleResize = () => {
@@ -179,12 +160,14 @@ export function AsignarLote() {
   
   //para los fetch
    useEffect(() => {
-     
-    fetchData(() => loteService.getLotesActivos(), setData, "lotes");
-    fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
+    Utils.fetchData(loteService.getLotesActivos(), setData, "lotes")
+    //fetchData(() => loteService.getLotesActivos(), setData, "lotes");
+
+    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
+    //fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
     .then(temp => {
       if (temp && temp.length > 0) {
-        return fetchData(() => lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
+        return Utils.fetchData(lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
       }
   }).catch(error => console.error("Error en las peticiones:", error));
        }, []);
@@ -553,7 +536,7 @@ export function AsignarLote() {
                   </button>
                   </Tooltip>
                   </div>
-                  <ActionDialog open={open} onClose={handleClose} value={value} />
+                  <ActionDialog open={open} onClose={handleClose} value={value} dataPo={dataPo} temporadaActiva={tempActiva}/>
                 </div>
               ),
             }}

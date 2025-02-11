@@ -35,6 +35,36 @@ export class TemporadasService {
         }
     }
 
+
+    async getTemporadasFechas() {
+        try {
+            const response = await fetch(`${this.apiUrl}temporadas/fechas`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!response.ok) {
+                throw new Error(`Error al obtener las temporadas: ${response.statusText}`);
+            }
+            const data = await response.json();
+
+            if (data.isSuccess && data.status === 200) {
+                return { success: true, temporadas: data.temporadas };
+            } else {
+                console.log('No se encontraron temporadas.');
+                return { success: false, status: data.status };
+            }
+
+        }catch (error){
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }
+        }
+    }
+
     async getActual() {
         try {
             const response = await fetch(`${this.apiUrl}temporadas/activa`, {
