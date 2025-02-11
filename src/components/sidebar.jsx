@@ -82,6 +82,7 @@ const cambiarContraseña = (e) => {
   const restriccionRoles = {
     general: ["Configuracion",]
   };
+
   const rolUsuario = restriccionRoles[usuario.rolDeUsuario] || [];
   const arreglo_Filtrado_Por_Rol = arreglo.filter((link) => !rolUsuario.includes(link.label))
 
