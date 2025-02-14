@@ -94,8 +94,8 @@ const cambiarContraseña = (e) => {
   };
   return (
   
-  <div className="flex flex-col bg-white z-40 dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-roboto font-medium">
-    <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[10px] flex  items-center ${sidebarOpen ? 'text-2xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
+  <div className="flex flex-col bg-white z-40 dark:bg-blue-950 dark:text-slate-300  text-slate-500 text-3xl sticky top-0 h-screen  font-medium">
+    <div className={`sticky top-0 z-10 cursor-pointer contenido ml-[10%] bg-white pt-[10px] flex  items-center ${sidebarOpen ? 'text-xl justify-star' : 'justify-center'} pb-[20px] transition duration-150 ease-in`}
     onClick={CambiarSidebar}>
       <div >
       <img src={logo} className={`flex items-center w-14 h-auto ${sidebarOpen ? 'scale-[0.7]' : 'scale-[0.8] rounded-xl'}`}/>
@@ -104,7 +104,7 @@ const cambiarContraseña = (e) => {
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExporPack</h2>}
     </div>
     
-    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-sm scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
+    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-[14px] scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
      
     {arreglo_Filtrado_Por_Rol.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
@@ -119,8 +119,8 @@ const cambiarContraseña = (e) => {
         ${location.pathname === to || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center '}`}
        >
-        <div className="Linkicon p-2 text-2xl">{icon}</div>
-        {sidebarOpen && <span className="ml-3  overflow-hidden transition-opacity duration-300">{label}</span>}
+        <div className="Linkicon p-2 text-xl">{icon}</div>
+        {sidebarOpen && <span className="ml-3 overflow-hidden transition-opacity duration-300" style={{lineHeight: "1.5"}}>{label}</span>}
       </NavLink>
 </Tooltip>
     </div>
@@ -141,7 +141,7 @@ const cambiarContraseña = (e) => {
         ${location.pathname === to  || submenu.some(sub => location.pathname === sub.href) ? 'text-lime-600 bg-slate-200 border-r-4 shadow-md border-r-lime-600' : ''} 
         ${sidebarOpen ? '':'justify-center'}`}
        >
-        <div className="Linkicon p-2 text-2xl">{icon}</div>
+        <div className="Linkicon p-2 text-xl">{icon}</div>
 
         {sidebarOpen && <span className="ml-3  whitespace-nowrap  overflow-hidden transition-opacity duration-300">{label}</span>}
 

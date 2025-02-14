@@ -286,8 +286,8 @@ export function Articulos() {
 }
 const Container = styled.div`
  display: block;
- width: 95%;
-//max-width: 1200px;
+ width: 100%;
+//max-width: 1100px;
 z-index: 1;
      .MuiToolbar-root {
       background-color: #50ad53; /* Cambia el color del fondo del toolbar */

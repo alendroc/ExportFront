@@ -371,7 +371,7 @@ useEffect(() => {
 
 const Container =styled.div`
 display: block;
-width: 95%;
+width: 100%;
 max-width: 1020px;
 z-index: 1;
     .MuiToolbar-root {
@@ -391,6 +391,12 @@ z-index: 1;
   .MuiTypography-h6 {
 font-size: 16px; /* Cambia este valor al tamaño deseado */
  }
+
+ @media (min-width: 720PX){
+  max-width: 960PX;
+  
+ }
+ 
  @media (min-width: 1400px){
   max-width: 1250px;
    .MuiTableCell-root {

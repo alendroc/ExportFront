@@ -21,7 +21,4 @@ export class Utils
           return null;
         }
       }
-      
-
-
 }
