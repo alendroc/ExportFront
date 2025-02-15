@@ -4,10 +4,13 @@
 @tailwind components;
 @tailwind utilities;
 
-a#logo {
+#logo {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     transform: translateX(9999px) !important;
     pointer-events: none !important;
 }
+body {
+    font-family: 'Poppins', sans-serif;
+  }

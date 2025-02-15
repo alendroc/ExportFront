@@ -59,14 +59,14 @@ function App() {
       to: "/ProgramaO",
       submenu: [
         { name: "Asignar Lotes", href: "/ProgramaO/asignar-Lotes", width: "60px" },
-        { name: "Asignar Híbridos", href: "/ProgramaO/asignar-hibridos",width: "70px" },
+        { name: "Asignar Híbridos", href: "/ProgramaO/asignar-Hibridos",width: "70px" },
         { name: "Asignar Labores", href: "/ProgramaO/asignar-labores",width: "60px"},
         { name: "Asignar DDT por Labor", href: "/ProgramaO/asignar-ddt",width: "100px" },
         { name: "Diseñar Prog. Operativo", href: "/ProgramaO/disenar-programa", width: "110px"},
-        { name: "Actualizar versión P.O", href: "/ProgramaO/actualizar-po",width: "80px" },
+        { name: "Actualizar versión P.O", href: "/ProgramaO/actualizar-po",width: "90px" },
         { name: "Camas", href: "/ProgramaO/camas" },
-        { name: "Actualizar Lotes P.O", href: "/ProgramaO/actualizar-lotes", width: "60px"},
-        { name: "Actualizar Programa Operativo", href: "/ProgramaO/actualizar-programa", width: "140px"},
+        { name: "Actualizar Lotes P.O", href: "/ProgramaO/actualizar-lotes", width: "70px"},
+        { name: "Actualizar Programa Operativo", href: "/ProgramaO/actualizar-programa", width: "150px"},
       ]
     },
   ];
@@ -197,7 +197,7 @@ function navbar(location,arreglos){
  else{
   return (
     <>
-      <div className={`grid ${isActive ? 'grid-cols-[14rem_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
+      <div className={`grid ${isActive ? 'grid-cols-[13rem_auto]' : 'grid-cols-[90px_auto]'} bg-slate-100 dark:bg-slate-900 transition-all duration-300`}>
         <Sidebar 
         theme={theme} 
         setTheme={setTheme}
