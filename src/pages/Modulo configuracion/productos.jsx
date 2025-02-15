@@ -63,85 +63,87 @@ useEffect(() => {
 }, [data]);
 
 
-  const EDITABLE_COLUMNS = [
-    { 
-      title: "Producto", 
-      field: "idProducto", 
-      editable: 'onAdd', 
-      validate: (rowData) => {
-      const regex =/([A-Za-z0-9]{2})-([A-Za-z0-9]{4})/;
-      return regex.test(rowData.idProducto) ? true : { isValid: false, helperText: " xx-xxxx" 
-      };
+const EDITABLE_COLUMNS = [
+  { 
+    title: "Producto", 
+    field: "idProducto", 
+    editable: 'onAdd', 
+    validate: (rowData) => {
+      const regex = /([A-Za-z0-9]{2})-([A-Za-z0-9]{4})/;
+      return regex.test(rowData.idProducto) ? true : { isValid: false, helperText: "Formato inválido (xx-xxxx)" };
     }
-    },
-    { 
-      title: "Nombre Descriptivo", 
-      field: "nombreDescriptivo", 
-      editable: 'always', 
-      validate: rowData => rowData.nombreDescriptivo ? true : { isValid: false, helperText: "Campo obligatorio" }
-    },
-    { 
-      title: "Tipo de Uso", 
-      field: "tipoUso", 
-      editable: 'always',
-      headerStyle: { minWidth: 100 }
-    },
-    { 
-      title: "Nombre Comercial", 
-      field: "nombreComercial", 
-      editable: 'always', 
-      validate: rowData => rowData.nombreComercial ? true : { isValid: false, helperText: "Campo obligatorio" }
-    },
-    { 
-      title: "Unidad de Medida", 
-      field: "unidadMedida", 
-      editable: 'always', 
-      headerStyle: { minWidth: 100 },
-      validate: rowData => rowData.unidadMedida ? true : { isValid: false, helperText: "Campo obligatorio" }
-      
-    },
-    { 
-      title: "Ingrediente Activo", 
-      field: "ingredienteActivo", 
-      editable: 'always' 
-    },
-    { 
-      title: "Concentracion Iactivo", 
-      field: "concentracionIactivo", 
-      editable: 'always' 
-    },
-    { 
-      title: "Restricción Ingreso", 
-      field: "restriccionIngreso", 
-      editable: 'always' 
-    },
-    { 
-      title: "Descripción", 
-      field: "descripcion", 
-      editable: 'always' 
-    },
-    { 
-      title: "Activo", 
-      field: "activo", 
-      type: "boolean", 
-      editable: 'always'
-    },  
-    {   
-      title: "Certificación Relacionada",   
-      field: "certificacion",   
-      editable: 'never',  
-      render: (rowData) => {  
-        const certs = certificationData[rowData.idProducto] || [];  
-        return (  
-          <p>  
-            {certs.length > 0   
-              ? certs.map(cert => cert.nombreCertificacion).join(", ")   
-              : "No tiene certificación"}  
-          </p>  
-        );  
-      }  
+  },
+  {
+    title: "Nombre Descriptivo",
+    field: "nombreDescriptivo",
+    editable: 'always',
+    validate: rowData => {
+      const trimmedValue = rowData.nombreDescriptivo?.trim();
+      return trimmedValue ? true : { isValid: false, helperText: "Campo obligatorio" };
     }
-  ];  
+  },    
+  { 
+    title: "Tipo de Uso", 
+    field: "tipoUso", 
+    editable: 'always',
+    headerStyle: { minWidth: 100 }
+  },
+  { 
+    title: "Nombre Comercial", 
+    field: "nombreComercial", 
+    editable: 'always', 
+    validate: rowData => {
+      const trimmedValue = rowData.nombreComercial?.trim();
+      return trimmedValue ? true : { isValid: false, helperText: "Campo obligatorio" };
+    }
+  },
+  { 
+    title: "Unidad de Medida", 
+    field: "unidadMedida", 
+    editable: 'always', 
+    headerStyle: { minWidth: 100 },
+    validate: rowData => {
+      const trimmedValue = rowData.unidadMedida?.trim();
+      return trimmedValue ? true : { isValid: false, helperText: "Campo obligatorio" };
+    }
+  },
+  { 
+    title: "Ingrediente Activo", 
+    field: "ingredienteActivo", 
+    editable: 'always' 
+  },
+  { 
+    title: "Concentracion Iactivo", 
+    field: "concentracionIactivo", 
+    editable: 'always' 
+  },
+  { 
+    title: "Restricción Ingreso", 
+    field: "restriccionIngreso", 
+    editable: 'always' 
+  },
+  { 
+    title: "Descripción", 
+    field: "descripcion", 
+    editable: 'always' 
+  },
+  { 
+    title: "Activo", 
+    field: "activo", 
+    type: "boolean", 
+    editable: 'always'
+  },  
+  {   
+    title: "Certificación Relacionada",   
+    field: "certificacion",   
+    editable: 'never',  
+    render: (rowData) => {  
+      const certs = certificationData[rowData.idProducto] || [];  
+      return certs.length > 0 ? certs.map(cert => cert.nombreCertificacion).join(", ") : null;  
+    }    
+  }
+];  
+
   
 
   function getNewDataBulkEdit(changes, copyData) {
