@@ -191,7 +191,7 @@ export function AsignarLote() {
       }
   }).catch(error => console.error("Error en las peticiones:", error));
        }, []);
-
+ 
        //para responsive
     useEffect(()=>{
         handleResize();
@@ -330,9 +330,9 @@ export function AsignarLote() {
                 render: (rowData) => (rowData.siembraNum === 1 ? 'Primera' : 'Segunda'),
 
                 validate:(row)=>{  if (![1, 2].includes(row.siembraNum)) {
-      return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
-    }
-    return true;},
+                 return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
+                }
+                return true;},
 
                 editComponent: (props) => (
                   <select

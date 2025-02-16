@@ -27,6 +27,19 @@ export function AsignarLabor() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [departamentoLabor, setDepartamentoLabor] = useState([]);
 
+  React.useEffect(() => {
+    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
+    Utils.fetchData(laboresService.getAll(), setLabores, "labores");
+     }, []); // Ejecuta el efecto cuando cambia la selección
+     React.useEffect(() => {
+      if (departamentoLabor.length > 0 && tempActiva.length > 0) {
+        Utils.fetchData(
+          laboresTService.getByDepartamento(tempActiva[0]?.temporada, departamentoLabor[0], departamentoLabor[1]),
+          setData,
+          "laboresTemporada"
+        );
+      }
+    }, [departamentoLabor, tempActiva]);
 
     //modificar tamaño
     const handleResize = () => {
@@ -49,11 +62,7 @@ export function AsignarLabor() {
          },[])
   
 
-  React.useEffect(() => {
-    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
-    Utils.fetchData(laboresService.getAll(), setLabores, "labores");
-    Utils.fetchData(laboresTService.getByDepartamento(tempActiva[0]?.temporada,departamentoLabor[0],departamentoLabor[1]), setData, "labores");
-  }, []);
+
 
   const laboresPorDepartamento = labores.reduce((acc, labor) => {
     if (!acc[labor.departamento]) {
@@ -68,14 +77,21 @@ export function AsignarLabor() {
     setDepartamentoLabor([departamento, labor])
   }
 
-  const columnLabores = [{ title: 'Temporada', field: 'temporada' },
-                         { title: 'N° Siembra', field: 'siembraNumero' },
-                         { title: 'Departamento', field: 'departamento' },
-                         { title: 'Labor', field: 'labor' },
-                         { title: 'Alias Labor', field: 'aliasLabor' },
-                         { title: 'Aplicar a todo', field: 'aplicarATodo' },
-                         { title: 'Aplicar a', field: 'aplicarA' },]
-                         console.log(tempActiva[0]?.temporada,departamentoLabor[0],departamentoLabor[1])
+  const columnLabores = 
+  [{ title: 'Temporada', field: 'temporada', initialEditValue: tempActiva[0]?.temporada, editable: 'never',
+
+  
+   },
+  { title: 'N° Siembra', field: 'siembraNumero' },
+  { title: 'Departamento', field: 'departamento', initialEditValue: departamentoLabor[0], editable: 'never' },
+  { title: 'Labor', field: 'labor', initialEditValue: departamentoLabor[1], editable: 'never' },
+  { title: 'Alias Labor', field: 'aliasLabor' },
+  { title: 'Aplicar a todo', field: 'aplicarATodo' },
+  { title: 'Aplicar a', field: 'aplicarA' },]
+                       
+
+
+
     return (
   <Container>
   <div className="group relative w-32 h-12 mb-3 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">
@@ -118,7 +134,7 @@ export function AsignarLabor() {
 
     <MaterialTable
      size="small"
-     data={data}
+     data={data || []}
      title={<div style={{ fontSize: '16px'}}>Asignar labores de temporada</div>}
      columns={columnLabores || []}
      options={{
@@ -156,8 +172,6 @@ export function AsignarLabor() {
                          
                              }}>
                                <MTableToolbar style={{ padding: '0' }} {...props}></MTableToolbar>
-                               
-                  
                               </div>
                             ),
                           }}
