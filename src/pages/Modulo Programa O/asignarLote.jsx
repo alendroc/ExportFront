@@ -1,14 +1,15 @@
 import styled from "styled-components";
 import MaterialTable,  { MTableToolbar }  from "@material-table/core";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
-import React, { useState, useEffect  } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import PropTypes from 'prop-types';
 import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
 import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip, RadioGroup, FormControlLabel, Radio, } from '@mui/material'
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip,
+   RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material'
 import {Utils} from '../../models/Utils'
 
 var loteService = new LoteService;
@@ -128,6 +129,25 @@ export function AsignarLote() {
    const [value, setValue] = React.useState('');
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
+  const containerRef = useRef(null);
+  const [isWrapped, setIsWrapped] = useState(false);
+
+  useEffect(() => {
+    const checkWrap = () => {
+      if (containerRef.current) {
+        const children = Array.from(containerRef.current.children);
+        const isWrappedNow = children.some(
+          (child) => child.offsetTop > children[0].offsetTop
+        );
+        setIsWrapped(isWrappedNow);
+      }
+    };
+
+    checkWrap();
+    window.addEventListener("resize", checkWrap);
+    return () => window.removeEventListener("resize", checkWrap);
+  }, []);
+
 
   //Dialog//
   const handleClickListItem = () => {
@@ -145,7 +165,7 @@ export function AsignarLote() {
   //modificar tamaño
   const handleResize = () => {
     if (window.innerWidth < 1300) {
-      setMaxBodyHeight(470);
+     setMaxBodyHeight(470);
      setwidthNpdy(630);
     }else if (window.innerWidth < 2000) {
       setMaxBodyHeight(580);
@@ -189,7 +209,7 @@ export function AsignarLote() {
 
 
     return (
-    <Container>
+    <Container ref={containerRef} className={isWrapped ? "isWrapped" : ""}>
         <MaterialTable 
               size="small"
               data={data}
@@ -298,7 +318,7 @@ export function AsignarLote() {
     <MaterialTable 
     
               size="small"
-              title={<div style={{ fontSize: '15px', fontWeight:"bold"}}>Asignar lotes</div>}
+              title={<div style={{ fontSize: '15px'}}>Asignar lotes</div>}
               data={dataPo}
               columns={ [{title: 'Lote', field: 'nombreLote',initialEditValue: selectedRow?.nombreLote ||loteNoSeleccionadoText,editable: 'never',
 
@@ -507,6 +527,7 @@ export function AsignarLote() {
                   setActivarSelectRow(false);
                  }}
                  className="group cursor-pointer outline-none hover:rotate-90 duration-300"
+                 role="button" 
                >
                  <svg
                    xmlns="http://www.w3.org/2000/svg"
@@ -722,7 +743,12 @@ export function AsignarLote() {
  display: flex;
  gap: 20px; /* Espaciado entre tablas */
 flex-wrap: wrap;
-
+&.isWrapped {
+  .MuiBox-root.css-p9qzma{
+      top: -90px; 
+      left: 190px;
+    }
+  }
  .Tablas{
   display: flex;
  }
@@ -745,19 +771,20 @@ flex-wrap: wrap;
     width: 45%;
   }
   .MuiBox-root.css-p9qzma {
-  /* Tus estilos personalizados aquí */
   position: absolute;
     left: -55px;
     border-radius: 10px;
     top: 70px;
+  
 }
 
-@media (max-width: 1200px) {
+
+/*@media (max-width: 1200px) {
     .MuiBox-root.css-p9qzma {
-      top: -90px; /* Baja un poco */
+      top: -90px; 
       left: 180px;
     }
-  }
+  }*/
 
 
   @media (min-width: 1200px){
