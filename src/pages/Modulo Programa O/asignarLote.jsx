@@ -18,7 +18,7 @@ const loteNoSeleccionadoText="Debe seleccionar un lote"
 
 
 function ActionDialog(props) {
-  const { onClose, value: valueProp, open,dataPo,temporadaActiva, ...other } = props;
+  const { onClose, value: valueProp, open,dataPo, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
   const radioGroupRef = React.useRef(null);
   const [temporadasOpciones, setTemporadasOpciones] = useState([""]);
@@ -86,7 +86,7 @@ function ActionDialog(props) {
           onChange={handleChange}
         >
           {temporadasOpciones
-           .filter(option => option.temporada !== temporadaActiva[0]?.temporada ?? "No hay temporada activa")
+           .filter(option => option.temporada !== Utils.getTempActive() ?? "No hay temporada activa")
            .map((option) => (
             <FormControlLabel
               value={option.temporada}
@@ -122,7 +122,6 @@ const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0
 export function AsignarLote() {
    const [data, setData] = useState([]);
    const [dataPo, setDataPo] = useState([]);
-   const [tempActiva, setTempActiva] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
    const [activarSelectRow, setActivarSelectRow] = useState(true);
    const [open, setOpen] = React.useState(false);
@@ -160,16 +159,25 @@ export function AsignarLote() {
   
   //para los fetch
    useEffect(() => {
-    Utils.fetchData(loteService.getLotesActivos(), setData, "lotes")
-    //fetchData(() => loteService.getLotesActivos(), setData, "lotes");
+    const tempGuardada = Utils.getTempActive()
+    
+    if (tempGuardada) {
+      Utils.fetchData(loteService.getLotesActivos(), setData, "lotes")
+      Utils.fetchData(lotePoService.getByTemporada(tempGuardada), setDataPo, "LotesPO");
+    } else {
 
-    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
-    //fetchData(() => temporadaService.getActual(), setTempActiva, "temporadaActual")
-    .then(temp => {
-      if (temp && temp.length > 0) {
-        return Utils.fetchData(lotePoService.getByTemporada(temp[0]?.temporada), setDataPo, "LotesPO");
+        Utils.fetchData(temporadaService.getActual(), null, "temporadaActual")
+        .then(temp => {
+          if (temp && temp.length > 0) {
+          const nuevaTemporada = temp[0]?.temporada??null;
+          Utils.setTempActive(nuevaTemporada)
+
+          nuevaTemporada?Utils.fetchData(loteService.getLotesActivos(), setData, "lotes"):null
+
+          return Utils.fetchData(lotePoService.getByTemporada(nuevaTemporada), setDataPo, "LotesPO");
+          }
+      }).catch(error => console.error("Error en las peticiones:", error));
       }
-  }).catch(error => console.error("Error en las peticiones:", error));
        }, []);
 
        //para responsive
@@ -371,8 +379,14 @@ export function AsignarLote() {
                     const totalArea = dataPo
                     .filter((item) => item.nombreLote === rowData.nombreLote && item.siembraNum === rowData.siembraNum)
                     .reduce((sum, item) => sum + item.area, 0) + rowData.area;
+                    
+                    console.log(selectedRow)
                   
-                  const esValido = selectedRow?.area || data.find((lote)=>lote.nombreLote===rowData.nombreLote).area >= totalArea;
+                  // const esValido = selectedRow?.area || data.find((lote)=>lote.nombreLote===rowData.nombreLote).area >= totalArea;
+                  const loteEncontrado = data.find((lote) => lote.nombreLote === rowData.nombreLote);
+                  console.log(loteEncontrado)
+                  const esValido = loteEncontrado?.area >= totalArea;
+
                   
 
                   console.log(esValido,  selectedRow?.area, totalArea, rowData.area)
@@ -484,7 +498,10 @@ export function AsignarLote() {
               }}
             
               icons={{
-                 Add: () => 
+                 Add: () => {
+                  
+                  if (Utils.getTempActive()) {
+                    return (
                   <button
                  onClick={() => {
                   setActivarSelectRow(false);
@@ -506,6 +523,9 @@ export function AsignarLote() {
                    <path d="M12 16V8" strokeWidth="1.5"></path>
                  </svg>
                </button>
+                  )}else {
+                    return null
+                  }}
                
               , // Cambia el tamaño del ícono de agregar
                 Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
@@ -525,18 +545,21 @@ export function AsignarLote() {
                   <MTableToolbar style={{padding:'0'}} {...props}></MTableToolbar>
                   <div style={{ fontSize: '12px', fontWeight: 'bold', textAlign: 'center' }}>
                   <p>Temporada</p>
-                  <p>{tempActiva[0]?.temporada ?? "No hay temporada activa"}</p>
+                  <p>{sessionStorage.getItem("temporadaActiva") ?? "No hay temporada activa"}</p>
                   </div>
-
                   <div className="font-bold flex  w-[10%] justify-around">
+
+                 {Utils.getTempActive()&&(
                   <Tooltip title="Copiar" placement="top-start" arrow>
                   <button className="cursor-pointer hover:animate-scale-loop p-2  transition-all duration-300 hover:text-slate-800"
                   onClick={handleClickListItem}>
                   <FileCopyIcon style={{fontSize: '20px'}} className=" transition-all drop-shadow-md hover:drop-shadow-xl duration-300"/>
                   </button>
                   </Tooltip>
+       )}
+            
                   </div>
-                  <ActionDialog open={open} onClose={handleClose} value={value} dataPo={dataPo} temporadaActiva={tempActiva}/>
+                  <ActionDialog open={open} onClose={handleClose} value={value} dataPo={dataPo}/>
                 </div>
               ),
             }}
@@ -570,7 +593,7 @@ export function AsignarLote() {
                 //resolver errores acá y hacer validaciones y darle formato
                 const newDataWithId = {
                   ...newData,
-                  temporada:tempActiva[0]?.temporada,
+                  temporada:Utils.getTempActive(),
                   nombreLote: selectedRow?.nombreLote ?? "",
 
                   aliasLote: newData.aliasLote?.toUpperCase() || null,
