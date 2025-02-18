@@ -22,4 +22,19 @@ export class Utils
           return null;
         }
       }
+
+      static getTempActive(){
+        return sessionStorage.getItem("temporadaActiva");
+      }
+
+      static setTempActive(val){
+        sessionStorage.setItem("temporadaActiva", val);
+      }
+
+      static removeTempActive(){
+        return sessionStorage.removeItem("temporadaActiva");
+      }
+      
+
+
 }

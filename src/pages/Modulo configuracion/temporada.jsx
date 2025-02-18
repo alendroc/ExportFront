@@ -4,6 +4,7 @@ import React, { useState, useEffect  } from "react";
 import { Delete, Edit, AddBox } from '@mui/icons-material';
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
+import {Utils} from '../../models/Utils'
 
 var temporadasService = new TemporadasService
 
@@ -224,6 +225,7 @@ useEffect(() => {
                             if (response.success) {
                                 console.log("Temporada creada exitosamente");
                                 setData(prevData => [ newDataWithId , ...prevData]);
+                                Utils.removeTempActive()
                                 showToast('success', 'Temporada creada', '#2d800e');
                                 resolve();
                             } else {
@@ -283,6 +285,7 @@ useEffect(() => {
                   .then(response => {
                       if (response.success) {
                           setData(updatedData);
+                          Utils.removeTempActive()
                           showToast('success', 'Temporada actualizada', '#2d800e');
                           resolve();
                       } else {
@@ -302,6 +305,7 @@ useEffect(() => {
                     if (response.success) {
                         const dataDelete = data.filter((el) => el.temporada !== oldData.temporada);
                         setData(dataDelete);
+                        Utils.removeTempActive()
                         showToast('success', 'Temporada eliminada', '#2d800e');
                         resolve();
                     } else {
