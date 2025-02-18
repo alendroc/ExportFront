@@ -31,7 +31,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <ProtectedRoute
         isAuthenticated={isAuthenticated}
         userRole={usuario.rolDeUsuario}
-        allowedRoles={["admin"]} // Solo los administradores tienen acceso
+        allowedRoles={["admin"]}
       ><Configuracion/></ProtectedRoute>}>
         <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>

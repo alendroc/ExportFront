@@ -27,6 +27,19 @@ export function AsignarLabor() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [departamentoLabor, setDepartamentoLabor] = useState([]);
 
+  React.useEffect(() => {
+    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
+    Utils.fetchData(laboresService.getAll(), setLabores, "labores");
+     }, []); // Ejecuta el efecto cuando cambia la selección
+     React.useEffect(() => {
+      if (departamentoLabor.length > 0 && tempActiva.length > 0) {
+        Utils.fetchData(
+          laboresTService.getByDepartamento(tempActiva[0]?.temporada, departamentoLabor[0], departamentoLabor[1]),
+          setData,
+          "laboresTemporada"
+        );
+      }
+    }, [departamentoLabor, tempActiva]);
 
     //modificar tamaño
     const handleResize = () => {
@@ -49,11 +62,7 @@ export function AsignarLabor() {
          },[])
   
 
-  React.useEffect(() => {
-    Utils.fetchData(temporadaService.getActual(), setTempActiva, "temporadaActual")
-    Utils.fetchData(laboresService.getAll(), setLabores, "labores");
-    Utils.fetchData(laboresTService.getByDepartamento(tempActiva[0]?.temporada,departamentoLabor[0],departamentoLabor[1]), setData, "labores");
-  }, []);
+
 
   const laboresPorDepartamento = labores.reduce((acc, labor) => {
     if (!acc[labor.departamento]) {
@@ -68,14 +77,79 @@ export function AsignarLabor() {
     setDepartamentoLabor([departamento, labor])
   }
 
-  const columnLabores = [{ title: 'Temporada', field: 'temporada' },
-                         { title: 'N° Siembra', field: 'siembraNumero' },
-                         { title: 'Departamento', field: 'departamento' },
-                         { title: 'Labor', field: 'labor' },
-                         { title: 'Alias Labor', field: 'aliasLabor' },
-                         { title: 'Aplicar a todo', field: 'aplicarATodo' },
-                         { title: 'Aplicar a', field: 'aplicarA' },]
-                         console.log(tempActiva[0]?.temporada,departamentoLabor[0],departamentoLabor[1])
+  const columnLabores = 
+  [{ title: 'Temporada', field: 'temporada', initialEditValue: tempActiva[0]?.temporada, editable: 'never',
+    validate: (rowData) => {
+     
+      if(rowData.temporada?.length > 10){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 10 carácteres"
+      };}
+    },
+   },
+  { title: 'N° Siembra', field: 'siembraNumero', type: "numeric", editable:"onAdd",editable:"onAdd",
+    render: (rowData) => (rowData.siembraNum === 1 ? '1' : '2'),
+    validate:(row)=>{  if (![1, 2].includes(row.siembraNum)) {
+      return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
+     }
+     return true;},
+     editComponent: (props) => (
+      <select
+        value={props.value || ""}
+        onChange={(e) => props.onChange(Number(e.target.value))} 
+      >
+        <option value="">Seleccione...</option>
+        <option value="1">Primera</option>
+        <option value="2">Segunda</option>
+      </select>
+    ),
+    
+  },
+  { title: 'Departamento', field: 'departamento', initialEditValue: departamentoLabor[0], editable: 'never',
+    validate: (rowData) => {
+      if(rowData.departamento?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    }
+   },
+  { title: 'Labor', field: 'labor', initialEditValue: departamentoLabor[1], editable: 'never',
+    validate: (rowData) => {
+      if(rowData.labor?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    }
+   },
+  { title: 'Alias Labor', field: 'aliasLabor',editable:"onAdd",
+    validate: (rowData) => {
+      if((rowData.aliasLabor || "").length === 0){return false}
+      if(rowData.aliasLabor?.trim() ===""){
+        return {
+          isValid: false,
+          helperText: "No se permite el campo vacío"
+      };}
+      if(rowData.aliasLabor?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    }
+  },
+  { title: 'Aplicar a todo', field: 'aplicarATodo',editable:"onAdd", },
+  { title: 'Aplicar a', field: 'aplicarA',editable:"onAdd",
+    validate: (rowData) => {
+      if(rowData.aplicarA?.length > 50){
+        return {
+          isValid: false,
+          helperText: "El límite de la columna es de 50 carácteres"
+      };}
+    }
+  }]
+                       
     return (
   <Container>
   <div className="group relative w-32 h-12 mb-3 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">
@@ -118,7 +192,7 @@ export function AsignarLabor() {
 
     <MaterialTable
      size="small"
-     data={data}
+     data={data || []}
      title={<div style={{ fontSize: '16px'}}>Asignar labores de temporada</div>}
      columns={columnLabores || []}
      options={{
@@ -156,8 +230,6 @@ export function AsignarLabor() {
                          
                              }}>
                                <MTableToolbar style={{ padding: '0' }} {...props}></MTableToolbar>
-                               
-                  
                               </div>
                             ),
                           }}
@@ -203,6 +275,7 @@ localization={{
  .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-ig9rso-MuiToolbar-root{
     padding-right: 0;
   }
+
 
  @media (min-width: 700px){
     .MuiTableCell-root {

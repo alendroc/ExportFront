@@ -21,7 +21,7 @@ export class LaboresTService{
             if (data.isSuccess && data.status === 200) {
                 //console.log('exitooooo.');
                 //console.log("data", data)
-                return { success: true, LotesPO: data.lotesPO };
+                return { success: true, laboresTemporada: data.laboresTemporada };
             } else {
                 console.log('No se encontraron labores.');
                 return { success: false, status: data.status };
@@ -58,7 +58,7 @@ export class LaboresTService{
             console.log("response",data)
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, LotesPO: data.lotesPO };
+                return { success: true, laboresTemporada: data.laboresTemporada };
             } else {
                 console.log('LaboresT no encontrado.');
                 return { success: false, status: data.status };
@@ -91,7 +91,7 @@ export class LaboresTService{
                 const data = await response.json();
     
                 if (data.isSuccess && data.status === 201) {
-                    return { success: true, LaborT: data.LaborT };
+                    return { success: true, laboresTemporada: data.laboresTemporada };
                 } else {
                     console.log('Error al crear el Labor.');
                     return { success: false, status: data.status };
@@ -124,7 +124,7 @@ export class LaboresTService{
                 const data = await response.json();
     
                 if (data.isSuccess && data.status === 200) {
-                    return { success: true, LotePO: data.LotePO };
+                    return { success: true, laboresTemporada: data.laboresTemporada };
                 } else {
                     console.log('Error al actualizar el laborT.');
                     return { success: false, status: data.status };
