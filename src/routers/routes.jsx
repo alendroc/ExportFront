@@ -16,6 +16,7 @@ import { Labores } from "../pages/Modulo configuracion/labores.jsx"
 import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 import { AsignarLote } from "../pages/Modulo Programa O/asignarLote.jsx";
 import { AsignarLabor } from "../pages/Modulo Programa O/asignarLabor.jsx";
+import { Certificaciones } from "../pages/Modulo configuracion/certificaciones.jsx";
 
 
 export const MyRoutes = ({isAuthenticated, usuario}) => {
@@ -35,6 +36,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>
+        <Route path="certificaciones" element={<Certificaciones/>}/>
         <Route path="productos" element={<Productos/>}/>
         <Route path="temporadas" element={<Temporada/>}/>
         <Route path="adminUsuarios" element={<Usuarios/>}/>
