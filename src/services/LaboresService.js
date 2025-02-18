@@ -106,7 +106,7 @@ export class LaboresService{
     async update(id, departamento, descripcion) {
         try {
             console.log("el labor: ",id)
-            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}/${descripcion}`, {
+            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}/${descripcion.toUpperCase()}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
