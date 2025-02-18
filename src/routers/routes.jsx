@@ -31,7 +31,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <ProtectedRoute
         isAuthenticated={isAuthenticated}
         userRole={usuario.rolDeUsuario}
-        allowedRoles={["admin"]}
+        allowedRoles={["ADMIN"]}
       ><Configuracion/></ProtectedRoute>}>
         <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
@@ -49,7 +49,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <ProtectedRoute
         isAuthenticated={isAuthenticated}
         userRole={usuario.rolDeUsuario}
-        allowedRoles={["admin"]}
+        allowedRoles={["ADMIN"]}
       ><ProgramaO/></ProtectedRoute>}>
         <Route index element={<Navigate to="asignar-Lotes" replace />} />
         <Route path="asignar-Lotes" element={<AsignarLote/>}/>

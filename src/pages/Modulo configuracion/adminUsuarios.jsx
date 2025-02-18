@@ -15,6 +15,7 @@ const depUsuarioService = new DepUsuarioService();
 export function Usuarios() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [errors, setErrors] = useState({});
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [departamentos, setDepartamentos] = useState([]);
   const [nuevoUsuario, setNuevoUsuario] = useState({
@@ -85,10 +86,40 @@ useEffect(() => {
     setNuevoUsuario(prevState => ({ ...prevState, departamentos: selectedDepartments }));
   }, [departamentos]);
 
-  const handleInputChange = (e) => {  
-    const { name, value } = e.target;  
-    setNuevoUsuario({ ...nuevoUsuario, [name]: value.trimStart() }); 
-};  
+
+  const validateInput = (name, value) => {
+    let errorMsg = "";
+
+    if (!value.trim()) {
+        errorMsg = "Este campo es obligatorio";
+    } else {
+        switch (name) {
+            case "usuario":
+                if (value.length < 3) errorMsg = "El usuario debe tener al menos 3 caracteres";
+                if (value.length > 20) errorMsg = "El usuario no puede tener más de 20 caracteres";
+                break;
+            case "contrasena":
+                if (value.length < 6) errorMsg = "La contraseña debe tener al menos 6 caracteres";
+                if (value.length > 50) errorMsg = "La contraseña no puede tener más de 50 caracteres";
+                break;
+            case "idEmpleado":
+                if (value.length > 20) errorMsg = "El ID de empleado no puede tener más de 20 caracteres";
+                if (!/^[a-zA-Z0-9]+$/.test(value)) errorMsg = "El ID de empleado debe ser alfanumérico";
+                break;
+            default:
+                break;
+        }
+    }
+
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: errorMsg }));
+};
+
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNuevoUsuario({ ...nuevoUsuario, [name]: value.trimStart() });
+    validateInput(name, value);
+  }; 
 
 const handleDepartmentChange = (event, newValue) => {  
   setSelectedDepartments(newValue); 
@@ -139,6 +170,20 @@ const handleDepartmentChange = (event, newValue) => {
 
   const handleSubmit = async (e) => {  
     e.preventDefault();
+
+    const newErrors = {};
+    Object.keys(nuevoUsuario).forEach((key) => {
+      if (typeof nuevoUsuario[key] === "string") {
+        nuevoUsuario[key] = nuevoUsuario[key].trim();
+      }
+    });
+    
+  
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      showToast('error', 'Por favor completa todos los campos correctamente.', '#9c1010');
+      return;
+    }
 
     if (!nuevoUsuario.usuario.trim() || !nuevoUsuario.rolDeUsuario.trim() || 
     !nuevoUsuario.contrasena.trim() || !nuevoUsuario.idEmpleado.trim()) {
@@ -203,60 +248,78 @@ const handleDepartmentChange = (event, newValue) => {
   return (
     <Container>
       <Form onSubmit={handleSubmit}>
-        <h3>{isEditing ? 'Editar Usuario' : 'Agregar Usuario'}</h3>
-        <input 
-          type="text" 
-          name="usuario" 
-          placeholder="Nombre de Usuario" 
-          value={nuevoUsuario.usuario} 
-          onChange={handleInputChange} 
-          required 
-        />
-        <select 
-          name="rolDeUsuario" 
-          value={nuevoUsuario.rolDeUsuario} 
-          onChange={handleInputChange} 
-          required
-        >
-          <option value="" disabled>Seleccione un rol</option>
-          <option value="ADMIN">ADMIN</option>
-          <option value="GENERAL">GENERAL</option>
-        </select>
-        <input 
-          type="password" 
-          name="contrasena" 
-          placeholder="Contraseña" 
-          value={nuevoUsuario.contrasena} 
-          onChange={handleInputChange} 
-          required 
-        />
-        <input 
-          type="text" 
-          name="idEmpleado" 
-          placeholder="ID Empleado" 
-          value={nuevoUsuario.idEmpleado} 
-          onChange={handleInputChange} 
-          required 
-        />
-       <Autocomplete  
-          required 
-          multiple  
-          options={departamentos}  
-          getOptionLabel={(option) => option.departamento} 
-          value={selectedDepartments}  
-          onChange={handleDepartmentChange}  
-          renderInput={(params) => (  
-            <TextField {...params} variant="outlined" label="Departamentos" placeholder="Seleccione" />  
-          )}  
-        />
+    <h3>{isEditing ? 'Editar Usuario' : 'Agregar Usuario'}</h3>
+    
+    <TextField 
+      label="Nombre de Usuario"
+      name="usuario"
+      value={nuevoUsuario.usuario}
+      onChange={handleInputChange}
+      error={!!errors.usuario}
+      helperText={errors.usuario}
+      required
+    />
 
-        <ButtonContainer>
-          <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
-          {isEditing && (
-            <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
-          )}
-        </ButtonContainer>
-      </Form>
+    <TextField 
+      select
+      name="rolDeUsuario"
+      value={nuevoUsuario.rolDeUsuario}
+      onChange={handleInputChange}
+      error={!!errors.rolDeUsuario}
+      helperText={errors.rolDeUsuario}
+      SelectProps={{ native: true }}
+      required
+    >
+      <option value="" disabled>Seleccione un rol</option>
+      <option value="ADMIN">ADMIN</option>
+      <option value="GENERAL">GENERAL</option>
+    </TextField>
+
+    <TextField 
+      label="Contraseña"
+      type="password"
+      name="contrasena"
+      value={nuevoUsuario.contrasena}
+      onChange={handleInputChange}
+      error={!!errors.contrasena}
+      helperText={errors.contrasena}
+      required
+    />
+
+    <TextField 
+      label="ID Empleado"
+      name="idEmpleado"
+      value={nuevoUsuario.idEmpleado}
+      onChange={handleInputChange}
+      error={!!errors.idEmpleado}
+      helperText={errors.idEmpleado}
+      required
+    />
+
+    <Autocomplete
+      multiple
+      options={departamentos}
+      getOptionLabel={(option) => option.departamento}
+      value={selectedDepartments}
+      onChange={handleDepartmentChange}
+      renderInput={(params) => (
+        <TextField 
+          {...params} 
+          variant="outlined" 
+          label="Departamentos" 
+          error={!!errors.departamentos}
+          helperText={errors.departamentos}
+          
+        />
+      )}
+    />
+
+    <ButtonContainer>
+      <button type="submit">{isEditing ? 'Actualizar Usuario' : 'Agregar Usuario'}</button>
+      {isEditing && <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>}
+    </ButtonContainer>
+  </Form>
+
       <MaterialTable
         size="small"  
         title="Lista de Usuarios"  
