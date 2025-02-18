@@ -41,7 +41,7 @@ function App() {
       icon: <IoMdSettings  />,
       to: "/Configuracion",
       submenu: [
-        //{ name: "UMC", href: "/Configuracion/umc" },//unidad de medidas y certificacion
+        { name: "Certificaciones", href: "/Configuracion/certificaciones" },//unidad de medidas y certificacion
         { name: "Articulos", href: "/Configuracion/articulos"},
         { name: "Temporada", href: "/Configuracion/temporadas"},
         { name: "Lotes", href: "/Configuracion/lotes"},

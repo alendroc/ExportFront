@@ -6,6 +6,38 @@ export class CertificacionService {
         this.apiUrl = `${server.url}certificaciones/`; // Asegúrate de que la URL sea correcta  
     }  
 
+
+    async getAll() {  
+        try {  
+            const response = await fetch(this.apiUrl, {  
+                method: 'GET',  
+                headers: {  
+                    'Content-Type': 'application/json'  
+                }  
+            });  
+
+            if (!response.ok) {  
+                throw new Error(`Error al obtener las certificaciones: ${response.statusText}`);  
+            }  
+
+            const data = await response.json();  
+            console.log("Respuesta de la API:", data);  
+
+            if (data.isSuccess && data.status === 200 && Array.isArray(data.certificaciones)) {  
+                return { success: true, certificaciones: data.certificaciones };  
+            } else {  
+                console.log('No se encontraron certificaciones.');  
+                return { success: false, status: data.status, certificaciones: [] };  
+            }  
+        } catch (error) {  
+            if (error.message.includes('Failed to fetch')) {  
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+            } else {  
+                throw new Error(error.message);  
+            }  
+        }  
+    }  
+
     // Obtener certificaciones por ID de producto  
     async getByProductoId(idProducto) {  
         try {  
@@ -73,67 +105,67 @@ export class CertificacionService {
         }  
     }  
 
-    // Actualizar una certificación por ID  
-    async update(id, certificacion) {  
-        try {  
-            const response = await fetch(`${this.apiUrl}${id}`, {  
-                method: 'PUT',  
-                headers: {  
-                    'Content-Type': 'application/json'  
-                },  
-                body: JSON.stringify(certificacion)  
-            });  
-
-            if (!response.ok) {  
-                throw new Error(`Error al actualizar la certificación: ${response.statusText}`);  
-            }  
-
-            const data = await response.json();  
-
-            if (data.isSuccess && data.status === 200) {  
-                return { success: true, certificacion: data.certificacion };  
-            } else {  
-                console.log('Error al actualizar la certificación.');  
-                return { success: false, status: data.status };  
-            }  
-        } catch (error) {  
-            if (error.message.includes('Failed to fetch')) {  
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
-            } else {  
-                throw new Error(error.message);  
-            }  
-        }  
-    }  
-
-    // Eliminar una certificación por ID  
-    async delete(id) {  
-        try {  
-            const response = await fetch(`${this.apiUrl}${id}`, {  
-                method: 'DELETE',  
-                headers: {  
-                    'Content-Type': 'application/json'  
+        // Actualizar una certificación por ID y nombre de certificación  
+        async update(idProducto, nombreCertificacion, certificacion) {  
+            try {  
+                const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
+                    method: 'PUT',  
+                    headers: {  
+                        'Content-Type': 'application/json'  
+                    },  
+                    body: JSON.stringify(certificacion)  
+                });  
+    
+                if (!response.ok) {  
+                    throw new Error(`Error al actualizar la certificación: ${response.statusText}`);  
                 }  
-            });  
-
-            if (!response.ok) {  
-                const errorData = await response.json();  
-                throw new Error(`Error al eliminar la certificación: ${errorData.message || response.statusText}`);  
+    
+                const data = await response.json();  
+    
+                if (data.isSuccess && data.status === 200) {  
+                    return { success: true, certificacion: data.certificacion };  
+                } else {  
+                    console.log('Error al actualizar la certificación.');  
+                    return { success: false, status: data.status };  
+                }  
+            } catch (error) {  
+                if (error.message.includes('Failed to fetch')) {  
+                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+                } else {  
+                    throw new Error(error.message);  
+                }  
             }  
-
-            const data = await response.json();  
-
-            if (data.isSuccess && data.status === 200) {  
-                return { success: true, message: data.message };  
-            } else {  
-                console.log('Error al eliminar la certificación.');  
-                return { success: false, status: data.status };  
-            }  
-        } catch (error) {  
-            if (error.message.includes('Failed to fetch')) {  
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
-            } else {  
-                throw new Error(error.message);  
+        }  
+    
+        // Eliminar una certificación por ID y nombre de certificación  
+        async delete(idProducto, nombreCertificacion) {  
+            try {  
+                const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
+                    method: 'DELETE',  
+                    headers: {  
+                        'Content-Type': 'application/json'  
+                    }  
+                });  
+    
+                if (!response.ok) {  
+                    const errorData = await response.json();  
+                    throw new Error(`Error al eliminar la certificación: ${errorData.message || response.statusText}`);  
+                }  
+    
+                const data = await response.json();  
+    
+                if (data.isSuccess && data.status === 200) {  
+                    return { success: true, message: data.message };  
+                } else {  
+                    console.log('Error al eliminar la certificación.');  
+                    return { success: false, status: data.status };  
+                }  
+            } catch (error) {  
+                if (error.message.includes('Failed to fetch')) {  
+                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+                } else {  
+                    throw new Error(error.message);  
+                }  
             }  
         }  
     }  
-}

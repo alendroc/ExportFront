@@ -16,6 +16,7 @@ import { Labores } from "../pages/Modulo configuracion/labores.jsx"
 import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 import { AsignarLote } from "../pages/Modulo Programa O/asignarLote.jsx";
 import { AsignarLabor } from "../pages/Modulo Programa O/asignarLabor.jsx";
+import { Certificaciones } from "../pages/Modulo configuracion/certificaciones.jsx";
 
 
 export const MyRoutes = ({isAuthenticated, usuario}) => {
@@ -30,11 +31,12 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <ProtectedRoute
         isAuthenticated={isAuthenticated}
         userRole={usuario.rolDeUsuario}
-        allowedRoles={["admin"]} // Solo los administradores tienen acceso
+        allowedRoles={["ADMIN"]}
       ><Configuracion/></ProtectedRoute>}>
         <Route index element={<Navigate to="articulos" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>
+        <Route path="certificaciones" element={<Certificaciones/>}/>
         <Route path="productos" element={<Productos/>}/>
         <Route path="temporadas" element={<Temporada/>}/>
         <Route path="adminUsuarios" element={<Usuarios/>}/>
@@ -47,7 +49,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <ProtectedRoute
         isAuthenticated={isAuthenticated}
         userRole={usuario.rolDeUsuario}
-        allowedRoles={["admin"]}
+        allowedRoles={["ADMIN"]}
       ><ProgramaO/></ProtectedRoute>}>
         <Route index element={<Navigate to="asignar-Lotes" replace />} />
         <Route path="asignar-Lotes" element={<AsignarLote/>}/>

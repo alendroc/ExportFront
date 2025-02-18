@@ -8,6 +8,7 @@ export class Utils
             if (typeof setDta === 'function') {
               setDta(response[logName]);
             }
+       
             return response[logName];
           } else {
             console.log(`No se pudieron obtener los ${logName}.`);

@@ -5,31 +5,32 @@ import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import { showToast } from "../../components/helpers";
 import { LaboresService } from "../../services/LaboresService";
-import { DepartamentoService } from "../../services/DepartamentoService"
+import { DepartamentoService } from "../../services/DepartamentoService";
 
-var laboresService = new LaboresService;
-var departamentoService = new DepartamentoService;
+const laboresService = new LaboresService();
+const departamentoService = new DepartamentoService();
 
 export function Labores() {
   const [data, setData] = useState([]);
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [departamentosDisponibles, setDepartamentosDisponibles] = useState([]);
+  const [dataFiltrada, setDataFiltrada] = useState([]);
+  const [departamento, setDepartamento] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await laboresService.getAll();
         if (response.success) {
-          console.log(response);
-          // Accede a los valores de labores correctamente
           const labores = response.labores || [];
-          setData(labores); // Establecer el estado con el arreglo de labores
-          console.log("Labores obtenidos:", labores); // Verifica los datos que recibes
+          setData(labores);
+          // Si no se ha seleccionado ningún departamento, mostramos todas las labores
+          setDataFiltrada(labores);
         } else {
-          console.log("No se pudieron obtener los labores.");
+          console.log("No se pudieron obtener las labores.");
         }
       } catch (error) {
-        console.error("Error al obtener las variedades:", error);
+        console.error("Error al obtener las labores:", error);
       }
     };
 
@@ -39,7 +40,6 @@ export function Labores() {
         if (response.success) {
           const departamentos = response.departamentos || [];
           setDepartamentosDisponibles(departamentos);
-          console.log("Departamentos obtenidos:", departamentos);
         } else {
           console.error("No se pudieron obtener los departamentos.");
         }
@@ -52,31 +52,37 @@ export function Labores() {
     fetchDepartamentos();
   }, []);
 
-  console.log(departamentosDisponibles);
   const columns = [
-
-    { title: "Labor", field: "labor", editable: 'onAdd', validate: (row) => (row.labor || "").length !== 0 },
+    { 
+      title: "Labor", 
+      field: "labor", 
+      editable: 'onAdd', 
+      validate: (row) => (row.labor || "").length !== 0 
+    },
     {
       title: "Departamento",
       field: "departamento",
       editable: 'onAdd', // Solo editable al agregar, no al actualizar
-      validate: (row) => (row.departamento || "").length !== 0, // Hace que sea obligatorio
+      // Si quieres que al agregar la asignación del departamento sea obligatoria, puedes dejar la validación acá
+      validate: (row) => (row.departamento || "").length !== 0,
       editComponent: ({ value, onChange }) => (
         <FormControl sx={{ m: 1, minWidth: 140 }}>
-          <InputLabel id="departamento-label" style={{ fontSize: "14px" }} >Departamento</InputLabel>
+          <InputLabel id="departamento-label" style={{ fontSize: "14px" }}>
+            Departamento
+          </InputLabel>
           <Select
             labelId="departamento-label"
             value={value || ""}
             onChange={(e) => onChange(e.target.value)}
             label="Departamento"
             sx={{
-              fontSize: '14px',   // Ajusta el tamaño de la fuente del Select
-              minWidth: 200,      // Ajusta el tamaño mínimo del Select
+              fontSize: '14px',
+              minWidth: 200,
             }}
           >
-            {departamentosDisponibles.map((departamento) => (
-              <MenuItem key={departamento.departamento} sx={{ fontSize: '12px' }} value={departamento.departamento}>
-                {departamento.departamento}
+            {departamentosDisponibles.map((dept) => (
+              <MenuItem key={dept.departamento} sx={{ fontSize: '12px' }} value={dept.departamento}>
+                {dept.departamento}
               </MenuItem>
             ))}
           </Select>
@@ -86,7 +92,7 @@ export function Labores() {
     { title: "Descripción", field: "descripcion" },
   ];
 
-  // Detecta el tamaño de la pantalla para ajustar la altura máxima del cuerpo
+  // Ajuste de la altura máxima según el tamaño de la pantalla
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 1300) {
@@ -102,17 +108,53 @@ export function Labores() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  // Función de filtrado opcional por departamento
+  const handleChangeDepartamento = (event) => {
+    const departamentoSeleccionado = event.target.value;
+    setDepartamento(departamentoSeleccionado);
+    if (departamentoSeleccionado === "") {
+      // Si no se selecciona ningún departamento, muestra todos los datos
+      setDataFiltrada(data);
+    } else {
+      setDataFiltrada(data.filter(d => d.departamento === departamentoSeleccionado));
+    }
+  };
+
   return (
-    <Container >
-      <MaterialTable size="small"
+    <Container>
+      <div style={{ marginTop: '20px' }}>
+        <FormControl sx={{ m: 1, minWidth: 150 }}>
+          <InputLabel id="demo-simple-select-autowidth-label">Departamento</InputLabel>
+          <Select
+            labelId="demo-simple-select-autowidth-label"
+            id="demo-simple-select-autowidth"
+            value={departamento}
+            onChange={handleChangeDepartamento}
+            autoWidth
+            label="Departamento"
+          >
+            {/* Opción para no filtrar */}
+            <MenuItem value="">
+              <em>Todos</em>
+            </MenuItem>
+            {departamentosDisponibles.map((e) => (
+              <MenuItem key={e.departamento} value={e.departamento}>
+                {e.departamento + " - " + e.encargado}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </div>
+
+      <MaterialTable
+        size="small"
         title="Gestión de labores"
-        data={data}
-        columns={columns || []}
+        data={dataFiltrada}
+        columns={columns}
         options={{
           actionsColumnIndex: -1,
           addRowPosition: "first",
           maxBodyHeight: maxBodyHeight,
-          padding: onabort,
           paging: false,
           headerStyle: {
             position: 'sticky',
@@ -218,6 +260,11 @@ export function Labores() {
                   console.log(response);
                   if (response.success) {
                     setData(updatedData);
+                    if (departamento && departamento !== "") {
+                      setDataFiltrada(updatedData.filter(item => item.departamento === departamento));
+                    } else {
+                      setDataFiltrada(updatedData);
+                    }
                     showToast('success', 'Labor actualizada', '#2d800e');
                     resolve();
                   } else {

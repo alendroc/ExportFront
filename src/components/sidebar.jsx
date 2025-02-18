@@ -80,7 +80,7 @@ const cambiarContraseña = (e) => {
 
   // Modificacion de arreglos de sidebar
   const restriccionRoles = {
-    general: ["Configuracion",]
+    general: ["Configuracion"],
   };
 
   const rolUsuario = restriccionRoles[usuario.rolDeUsuario] || [];
