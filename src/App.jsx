@@ -8,6 +8,11 @@ import { GiWatermelon, GiSugarCane, GiPlantsAndAnimals, GiFactory } from "react-
 import { IoMdSettings } from "react-icons/io";
 import { FaDroplet, FaStore, FaCloudRain, FaHandHoldingDroplet,FaGears } from "react-icons/fa6";
 import {Login } from "../src/pages/Login.jsx";
+import { Utils } from "./models/Utils.js";
+import { TemporadasService } from "./services/TemporadasService.js";
+import { showToast } from "./components/helpers.jsx";
+
+var temporadaService= new TemporadasService;
 
 function App() {
   const [isActive, setIsActive] = useState(true);
@@ -23,6 +28,18 @@ function App() {
     }
     console.log(theme)
   }, [theme]);
+
+  useEffect(() => {
+   if(!Utils.getTempActive()){
+     Utils.fetchData(temporadaService.getActual(), null, "temporadaActual")
+            .then(temp => {
+              if (temp && temp.length > 0) {
+              const nuevaTemporada = temp[0]?.temporada??null;
+              Utils.setTempActive(nuevaTemporada)
+              }
+          }).catch(error => console.error("Error en las peticiones:", error));
+   }
+  }, []);
 
   const autenticacion = () =>{sessionStorage.getItem('sesion') === 'activa' ? setIsAuthenticated(true) : setIsAuthenticated(false);}
   const usuario = JSON.parse(sessionStorage.getItem('usuario'));
