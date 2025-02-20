@@ -1,8 +1,10 @@
 import {server} from './global.js'
+import { Service } from './Service.js'; 
 
-export class UsuarioService {
+export class UsuarioService extends Service{
 
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
 
@@ -43,37 +45,40 @@ export class UsuarioService {
         }
     }
 
-
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}usuarios`, { 
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Error al obtener los usuarios: ${response.statusText}`);
-            }
-    
-            const data = await response.json();
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, usuarios: data.usuarios };
-            } else {
-                console.warn('No se encontraron usuarios.', data.message);
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else if (error.name === 'TypeError') {
-                throw new Error('Hubo un problema al procesar la respuesta del servidor. Verifica el formato de la respuesta.');
-            } else {
-                throw new Error(`Error inesperado: ${error.message}`);
-            }
-        }
+    async getAll(){
+        const subclase="usuarios"
+        return super.getAll(subclase,subclase,subclase)
     }
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}usuarios`, { 
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener los usuarios: ${response.statusText}`);
+    //         }
+    
+    //         const data = await response.json();
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, usuarios: data.usuarios };
+    //         } else {
+    //             console.warn('No se encontraron usuarios.', data.message);
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else if (error.name === 'TypeError') {
+    //             throw new Error('Hubo un problema al procesar la respuesta del servidor. Verifica el formato de la respuesta.');
+    //         } else {
+    //             throw new Error(`Error inesperado: ${error.message}`);
+    //         }
+    //     }
+    // }
     
     
     

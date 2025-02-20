@@ -1,42 +1,47 @@
-import { server } from './global.js';  
+import { server } from './global.js'; 
+import { Service } from './Service.js'; 
 
-export class CertificacionService {  
+export class CertificacionService extends Service{  
     
-    constructor() {  
+    constructor() { 
+        super(); 
         this.apiUrl = `${server.url}certificaciones/`; // Asegúrate de que la URL sea correcta  
     }  
 
+    async getAll(){
+        const subclase="certificaciones"
+        return super.getAll(subclase,subclase,subclase)
+    }
+    // async getAll() {  
+    //     try {  
+    //         const response = await fetch(this.apiUrl, {  
+    //             method: 'GET',  
+    //             headers: {  
+    //                 'Content-Type': 'application/json'  
+    //             }  
+    //         });  
 
-    async getAll() {  
-        try {  
-            const response = await fetch(this.apiUrl, {  
-                method: 'GET',  
-                headers: {  
-                    'Content-Type': 'application/json'  
-                }  
-            });  
+    //         if (!response.ok) {  
+    //             throw new Error(`Error al obtener las certificaciones: ${response.statusText}`);  
+    //         }  
 
-            if (!response.ok) {  
-                throw new Error(`Error al obtener las certificaciones: ${response.statusText}`);  
-            }  
+    //         const data = await response.json();  
+    //         console.log("Respuesta de la API:", data);  
 
-            const data = await response.json();  
-            console.log("Respuesta de la API:", data);  
-
-            if (data.isSuccess && data.status === 200 && Array.isArray(data.certificaciones)) {  
-                return { success: true, certificaciones: data.certificaciones };  
-            } else {  
-                console.log('No se encontraron certificaciones.');  
-                return { success: false, status: data.status, certificaciones: [] };  
-            }  
-        } catch (error) {  
-            if (error.message.includes('Failed to fetch')) {  
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
-            } else {  
-                throw new Error(error.message);  
-            }  
-        }  
-    }  
+    //         if (data.isSuccess && data.status === 200 && Array.isArray(data.certificaciones)) {  
+    //             return { success: true, certificaciones: data.certificaciones };  
+    //         } else {  
+    //             console.log('No se encontraron certificaciones.');  
+    //             return { success: false, status: data.status, certificaciones: [] };  
+    //         }  
+    //     } catch (error) {  
+    //         if (error.message.includes('Failed to fetch')) {  
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+    //         } else {  
+    //             throw new Error(error.message);  
+    //         }  
+    //     }  
+    // }  
 
     // Obtener certificaciones por ID de producto  
     async getByProductoId(idProducto) {  

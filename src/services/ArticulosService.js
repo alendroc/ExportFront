@@ -1,39 +1,17 @@
 import {server} from './global.js'
+import { Service } from './Service.js';
 
-export class ArticulosService {
+export class ArticulosService extends Service{
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
 
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}articulos`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`Error al obtener los articulos: ${response.statusText}`);
-            }
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                console.log('exitooooo.');
-                return { success: true, articulos: data.articulos };
-            } else {
-                console.log('No se encontraron articulos.');
-                return { success: false, status: data.status };
-            }
-
-        }catch (error){
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async getAll(){
+        const subclase="articulos"
+        return super.getAll(subclase,subclase,subclase)
     }
+
     async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}articulos/${id}`, {

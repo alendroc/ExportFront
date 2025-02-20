@@ -1,39 +1,45 @@
 import { server } from './global.js';
+import { Service } from './Service.js'; 
 
-export class LoteService{
+export class LoteService extends Service{
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
-
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}Lotes`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`Error al obtener los lostes: ${response.statusText}`);
-            }
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                console.log('exitooooo.');
-                return { success: true, lotes: data.lotes };
-            } else {
-                console.log('No se encontraron lotes.');
-                return { success: false, status: data.status };
-            }
-
-        }catch (error){
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async getAll(){
+        const url="Lotes";
+        const data="lotes";
+        return super.getAll(url,data,data)
     }
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}Lotes`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener los lostes: ${response.statusText}`);
+    //         }
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             console.log('exitooooo.');
+    //             return { success: true, lotes: data.lotes };
+    //         } else {
+    //             console.log('No se encontraron lotes.');
+    //             return { success: false, status: data.status };
+    //         }
+
+    //     }catch (error){
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     async getLotesActivos() {
         try {

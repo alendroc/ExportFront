@@ -1,40 +1,50 @@
 import { server } from './global.js';
+import { Service } from './Service.js';
 
-export class LotePOService{
+export class LotePOService extends Service{
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
 
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}LotesPO`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`Error al obtener los lotesPO: ${response.statusText}`);
-            }
-            const data = await response.json();
+    async getAll(){
+        const url="LotesPo"
+        const dataName ="LotesPO"
+        const data="lotesPO"
 
-            if (data.isSuccess && data.status === 200) {
-                //console.log('exitooooo.');
-                //console.log("data", data)
-                return { success: true, LotesPO: data.lotesPO };
-            } else {
-                console.log('No se encontraron lotes.');
-                return { success: false, status: data.status };
-            }
-
-        }catch (error){
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+        return super.getAll(url,dataName,data)
     }
+
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}LotesPO`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener los lotesPO: ${response.statusText}`);
+    //         }
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             //console.log('exitooooo.');
+    //             //console.log("data", data)
+    //             return { success: true, LotesPO: data.lotesPO };
+    //         } else {
+    //             console.log('No se encontraron lotes.');
+    //             return { success: false, status: data.status };
+    //         }
+
+    //     }catch (error){
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     async getByTemporada(temporada) {
        

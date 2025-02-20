@@ -1,41 +1,47 @@
 import { server } from './global.js';
+import { Service } from './Service.js'; 
 
-export class ProductoService {
+export class ProductoService extends Service{
     
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
-
-    // Obtener lista de productos
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}productos`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error al obtener los productos: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, productos: data.productos };
-            } else {
-                console.log('No se encontraron productos.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    
+    async getAll(){
+        const subclase="productos";
+        return super.getAll(subclase,subclase,subclase)
     }
+    // Obtener lista de productos
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}productos`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener los productos: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, productos: data.productos };
+    //         } else {
+    //             console.log('No se encontraron productos.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     // Obtener un producto por ID
     async getById(id) {
