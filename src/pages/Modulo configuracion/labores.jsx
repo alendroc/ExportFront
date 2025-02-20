@@ -53,11 +53,30 @@ export function Labores() {
   }, []);
 
   const columns = [
-    { 
-      title: "Labor", 
-      field: "labor", 
-      editable: 'onAdd', 
-      validate: (row) => (row.labor || "").length !== 0 
+    {
+      title: "Labor",
+      field: "labor",
+      editable: 'onAdd',
+      validate: (row) => {
+        if ((row.labor || "").length === 0) { 
+          return {
+            isValid: false,
+            helperText: "Debe rellenar el campo"
+          } 
+        }
+        if (row.labor?.length > 50) {
+          return {
+            isValid: false,
+            helperText: "El límite de la columna es de 50 carácteres"
+          };
+        }
+        if (row.labor?.trim() === "") {
+          return {
+            isValid: false,
+            helperText: "No se permite el campo vacío"
+          };
+        }
+      }
     },
     {
       title: "Departamento",
@@ -89,7 +108,16 @@ export function Labores() {
         </FormControl>
       ),
     },
-    { title: "Descripción", field: "descripcion" },
+    {
+      title: "Descripción", field: "descripcion", validate: (row) => {
+        if (row.labor?.length > 500) {
+          return {
+            isValid: false,
+            helperText: "El límite de la columna es de 500 carácteres"
+          };
+        }
+      }
+    },
   ];
 
   // Ajuste de la altura máxima según el tamaño de la pantalla
