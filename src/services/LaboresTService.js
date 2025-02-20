@@ -146,15 +146,22 @@ export class LaboresTService extends Service{
                 }
             }
         }
-        async delete(temporada, departamento, labor, siembraNumero) {
-            try {
+
+        async delete(temporada, departamento, labor, siembraNumero){
+            const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`;
+            const dataName="Labor"
+            return super.delete(url,dataName)
+
+        }
+        // async delete(temporada, departamento, labor, siembraNumero) {
+        //     try {
     
-                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
+        //         const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
+        //             method: 'DELETE',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             }
+        //         });
     
         //         if (response.status === 404) {
         //             throw new Error('c no encontrado.');
