@@ -105,8 +105,12 @@ export class LoteService extends Service{
             }
         }
     }
-
     async create(lote) {
+        const url="Lotes"
+        const dataName="lotes"
+        return super.create(url,lote,dataName)
+    }
+   /* async create(lote) {
         try {
             console.log("lote por agregar:", lote)
             const response = await fetch(`${this.apiUrl}Lotes`, {
@@ -137,7 +141,7 @@ export class LoteService extends Service{
             }
         }
     }
-
+*/
     async update(id, lotes) {
         try {
             console.log("el ide: ",id,"el Lote: ",lotes)

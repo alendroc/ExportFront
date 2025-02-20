@@ -118,6 +118,11 @@ export class LotePOService extends Service{
     }
 
     async create(lotePo) {
+       const url="LotesPO"
+       const dataName="LotePO"
+       return super.create(url,lotePo,dataName)
+    }
+    /*async create(lotePo) {
         try {
             console.log("lote por agregar:", lotePo)
             const response = await fetch(`${this.apiUrl}LotesPO`, {
@@ -147,7 +152,7 @@ export class LotePOService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async PegarLote(lotesPo) {
         try {

@@ -37,6 +37,38 @@ export class Service{
         }
     }
 
+    async create(url,contenido,dataName) {
+        try {
+            
+            const response = await fetch(`${this.apiUrl}${url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(contenido)
+                
+            });
+            console.log("response",response)
+            if (!response.ok) {
+                throw new Error(`Error al crear el ${dataName}: ${response.statusText}`);
+            }
+            const data = await response.json();
+
+            if (data.isSuccess && data.status === 201) {
+                return { success: true, [dataName]: data[dataName] };
+            } else {
+                //console.log('Error al crear el ', dataName);
+                return { success: false, status: data.status };
+            }
+        } catch (error) {
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }
+        }
+    }
+
 
     async delete(url,dataName) {
         try {

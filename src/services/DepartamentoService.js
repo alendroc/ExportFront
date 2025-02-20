@@ -50,7 +50,7 @@ export class DepartamentoService extends Service{
 
 
 
-    async getById(id) {
+    /*async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}Departamentos/${id}`, {
                 method: 'GET',
@@ -83,9 +83,14 @@ export class DepartamentoService extends Service{
                 throw new Error(error.message, error);
             }
         }
+    }*/
+   
+    async create(data) {
+        const url="Departamentos"
+        const dataName="departamentos"
+        return super.create(url,data,dataName)
     }
-
-    async create(departamento) {
+    /*async create(departamento) {
         try {
             console.log("Departamento por agregar:", departamento)
             const response = await fetch(`${this.apiUrl}Departamentos`, {
@@ -116,7 +121,7 @@ export class DepartamentoService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async update(id, departamentos) {
         try {

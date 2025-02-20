@@ -119,8 +119,12 @@ export class UsuarioService extends Service{
         }
     }
 
-    // Crear un nuevo usuario
-    async create(usuario) {
+   async create (usuario){
+         const url="usuarios"
+         const dataName="usuario"
+         return super.create(url,usuario,dataName)
+   }
+   /* async create(usuario) {
         try {
             const response = await fetch(`${this.apiUrl}usuarios`, {
                 method: 'POST',
@@ -151,7 +155,7 @@ export class UsuarioService extends Service{
                 throw new Error(error.message);
             }
         }
-    }
+    }*/
 
     // Actualizar un usuario por ID
     async update(id, usuario) {

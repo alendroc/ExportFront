@@ -12,7 +12,7 @@ export class ArticulosService extends Service{
         return super.getAll(subclase,subclase,subclase)
     }
 
-    async getById(id) {
+    /*async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}articulos/${id}`, {
                 method: 'GET',
@@ -45,9 +45,13 @@ export class ArticulosService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
-
+    }*/
     async create(articulo) {
+        const url="articulos"
+        const dataName="articulo"
+        return super.create(url,articulo,dataName)
+    }
+    /*async create(articulo) {
         try {
             console.log("Articulo por agregar:", articulo)
             const response = await fetch(`${this.apiUrl}articulos`, {
@@ -77,7 +81,7 @@ export class ArticulosService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
     async update(id, articulos) {
         try {
             console.log("el ide: ",id,"el articulo: ",articulos)

@@ -77,8 +77,12 @@ export class CertificacionService extends Service{
         }  
     }  
 
-    // Crear una nueva certificación  
-    async create(certificacion) {  
+    async create(certificacion) {
+        const url="certificaciones"
+        const dataName="certificacion"
+        return super.create(url,certificacion,dataName)
+    }
+    /*async create(certificacion) {  
         try {  
             const response = await fetch(this.apiUrl, {  
                 method: 'POST',  
@@ -108,7 +112,7 @@ export class CertificacionService extends Service{
                 throw new Error(error.message);  
             }  
         }  
-    }  
+    }  */
 
         // Actualizar una certificación por ID y nombre de certificación  
         async update(idProducto, nombreCertificacion, certificacion) {  
