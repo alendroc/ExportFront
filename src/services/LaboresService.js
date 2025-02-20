@@ -112,6 +112,13 @@ export class LaboresService extends Service{
         }
     }*/
 
+        //NO PARECE COMPATIBLE
+
+        // async update(id, departamento, descripcion){
+        //     const url=`labores/${id}/${departamento}/${descripcion.toUpperCase()}`;
+        //     const dataName="hibridos"
+        //     return super.update(url,hibridoObj,dataName)
+        // }
     async update(id, departamento, descripcion) {
         try {
             console.log("el labor: ",id)

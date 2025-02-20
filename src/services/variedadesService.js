@@ -75,71 +75,82 @@ export class VariedadesService extends Service{
             }
         }
     }*/
-    async create(variedad) {
-        try {
-            console.log("Articulo por agregar:", variedad)
-            const response = await fetch(`${this.apiUrl}variedades`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(variedad)
-            });
 
-            if (!response.ok) {
-                throw new Error(`Error al crear la variedad: ${response.statusText}`);
-            }
+        async create (variedad){
+            const url="variedades"
+            const dataName="variedad"
+            return super.create(url,variedad,dataName)
+      }
+    // async create(variedad) {
+    //     try {
+    //         console.log("Articulo por agregar:", variedad)
+    //         const response = await fetch(`${this.apiUrl}variedades`, {
+    //             method: 'POST',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(variedad)
+    //         });
 
-            const data = await response.json();
+    //         if (!response.ok) {
+    //             throw new Error(`Error al crear la variedad: ${response.statusText}`);
+    //         }
 
-            if (data.isSuccess && data.status === 201) {
-                return { success: true, variedad: data.variedad };
-            } else {
-                console.log('Error al crear la varidad.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 201) {
+    //             return { success: true, variedad: data.variedad };
+    //         } else {
+    //             console.log('Error al crear la varidad.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
+
+    async update(cultivo, variedad, variedades){
+        const url=`variedades/${cultivo}/${variedad}`;
+        const dataName="variedades"
+        return super.update(url,variedades,dataName)
     }
-
-    async update(cultivo, variedad, variedades) {
-        try {
-            console.log("Cultivo:", cultivo, "Variedad:", variedad, "Datos a actualizar:", variedades)
-            const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
+    // async update(cultivo, variedad, variedades) {
+    //     try {
+    //         console.log("Cultivo:", cultivo, "Variedad:", variedad, "Datos a actualizar:", variedades)
+    //         const response = await fetch(`${this.apiUrl}variedades/${cultivo}/${variedad}`, {
                 
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(variedades)
-            });
-            console.log(response)
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(variedades)
+    //         });
+    //         console.log(response)
 
-            if (!response.ok) {
-                throw new Error(`Error al actualizar la variedad: ${response.statusText}`);
-            }
+    //         if (!response.ok) {
+    //             throw new Error(`Error al actualizar la variedad: ${response.statusText}`);
+    //         }
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, variedades: data.variedades };
-            } else {
-                console.log('Error al actualizar la variedad.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
-    }
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, variedades: data.variedades };
+    //         } else {
+    //             console.log('Error al actualizar la variedad.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     async delete(cultivo, variedad){
         const url=`variedades/${cultivo}/${variedad}`;

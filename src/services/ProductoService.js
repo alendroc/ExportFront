@@ -126,36 +126,41 @@ export class ProductoService extends Service{
     
 
     // Actualizar un producto por ID
-    async update(id, producto) {
-        try {
-            const response = await fetch(`${this.apiUrl}productos/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(producto)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error al actualizar el producto: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, producto: data.producto };
-            } else {
-                console.log('Error al actualizar el producto.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async update(id, producto){
+        const url=`productos/${id}`;
+        const dataName="producto"
+        return super.update(url,producto,dataName)
     }
+    // async update(id, producto) {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(producto)
+    //         });
+
+    //         if (!response.ok) {
+    //             throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, producto: data.producto };
+    //         } else {
+    //             console.log('Error al actualizar el producto.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     async delete(id){
         const url=`productos/${id}`;

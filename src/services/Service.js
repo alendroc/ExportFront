@@ -74,7 +74,7 @@ export class Service{
 
 
 
-    async update(url, contenido,dataName, dataResponse) {  
+    async update(url, contenido,dataName) {  
         try {  
             const response = await fetch(`${this.apiUrl}${url}`, {  
                 method: 'PUT',  
@@ -91,7 +91,7 @@ export class Service{
             const data = await response.json();  
 
             if (data.isSuccess && data.status === 200) {  
-                return { success: true, [dataName]: data[dataResponse] };  
+                return { success: true, [dataName]: data[dataName] };  
             } else {  
                 console.log(`Error al actualizar la ${dataName}.`);  
                 return { success: false, status: data.status };  

@@ -117,40 +117,46 @@ export class LaboresTService extends Service{
             }
         }
        */
-        async update(temporada, departamento, siembraNumero,labor, aliasLabor, laborT) {
-            try {
-               // console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero,aliasLabor, laborT)
-                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${siembraNumero}/${labor}/${aliasLabor}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                   
-                    body: JSON.stringify(laborT)
-                    
-                });
-                console.log("Body enviado:", JSON.stringify(laborT));
-                if (!response.ok) {
-                    throw new Error(`Error al actualizar el laborT: ${response.statusText}`);
-                }
-    
-                const data = await response.json();
-    
-                if (data.isSuccess && data.status === 200) {
-                    return { success: true, laboresTemporada: data.laboresTemporada };
-                } else {
-                    console.log('Error al actualizar el laborT.');
-                    return { success: false, status: data.status };
-                }
-            } catch (error) {
-                console.log(error)
-                if (error.message.includes('Failed to fetch')) {
-                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-                } else {
-                    throw new Error(error.message, error);
-                }
-            }
+
+        async update(temporada, departamento, siembraNumero,labor, aliasLabor, laborT){
+            const url=`LaboresT/${temporada}/${departamento}/${siembraNumero}/${labor}/${aliasLabor}`;
+            const dataName="laboresTemporada"
+            return super.update(url,laborT,dataName)
         }
+        // async update(temporada, departamento, siembraNumero,labor, aliasLabor, laborT) {
+        //     try {
+        //        // console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero,aliasLabor, laborT)
+        //         const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${siembraNumero}/${labor}/${aliasLabor}`, {
+        //             method: 'PUT',
+        //             headers: {
+        //                 'Content-Type': 'application/json'
+        //             },
+                   
+        //             body: JSON.stringify(laborT)
+                    
+        //         });
+        //         console.log("Body enviado:", JSON.stringify(laborT));
+        //         if (!response.ok) {
+        //             throw new Error(`Error al actualizar el laborT: ${response.statusText}`);
+        //         }
+    
+        //         const data = await response.json();
+    
+        //         if (data.isSuccess && data.status === 200) {
+        //             return { success: true, laboresTemporada: data.laboresTemporada };
+        //         } else {
+        //             console.log('Error al actualizar el laborT.');
+        //             return { success: false, status: data.status };
+        //         }
+        //     } catch (error) {
+        //         console.log(error)
+        //         if (error.message.includes('Failed to fetch')) {
+        //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+        //         } else {
+        //             throw new Error(error.message, error);
+        //         }
+        //     }
+        // }
 
         async delete(temporada, departamento, labor, siembraNumero,aliasLabor){
             const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}/${aliasLabor}`;

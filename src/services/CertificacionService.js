@@ -116,36 +116,41 @@ export class CertificacionService extends Service{
     }  */
 
         // Actualizar una certificación por ID y nombre de certificación  
-        async update(idProducto, nombreCertificacion, certificacion) {  
-            try {  
-                const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
-                    method: 'PUT',  
-                    headers: {  
-                        'Content-Type': 'application/json'  
-                    },  
-                    body: JSON.stringify(certificacion)  
-                });  
+        async update(idProducto, nombreCertificacion, certificacion){
+            const url=`${idProducto}/${nombreCertificacion}`;
+            const dataName="certificacion"
+            return super.update(url,certificacion,dataName)
+        }
+        // async update(idProducto, nombreCertificacion, certificacion) {  
+        //     try {  
+        //         const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
+        //             method: 'PUT',  
+        //             headers: {  
+        //                 'Content-Type': 'application/json'  
+        //             },  
+        //             body: JSON.stringify(certificacion)  
+        //         });  
     
-                if (!response.ok) {  
-                    throw new Error(`Error al actualizar la certificación: ${response.statusText}`);  
-                }  
+        //         if (!response.ok) {  
+        //             throw new Error(`Error al actualizar la certificación: ${response.statusText}`);  
+        //         }  
     
-                const data = await response.json();  
+        //         const data = await response.json();  
     
-                if (data.isSuccess && data.status === 200) {  
-                    return { success: true, certificacion: data.certificacion };  
-                } else {  
-                    console.log('Error al actualizar la certificación.');  
-                    return { success: false, status: data.status };  
-                }  
-            } catch (error) {  
-                if (error.message.includes('Failed to fetch')) {  
-                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
-                } else {  
-                    throw new Error(error.message);  
-                }  
-            }  
-        }  
+        //         if (data.isSuccess && data.status === 200) {  
+        //             return { success: true, certificacion: data.certificacion };  
+        //         } else {  
+        //             console.log('Error al actualizar la certificación.');  
+        //             return { success: false, status: data.status };  
+        //         }  
+        //     } catch (error) {  
+        //         if (error.message.includes('Failed to fetch')) {  
+        //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+        //         } else {  
+        //             throw new Error(error.message);  
+        //         }  
+        //     }  
+        // }  
     
         async delete(idProducto, nombreCertificacion){
             const url=`${idProducto}/${nombreCertificacion}`;

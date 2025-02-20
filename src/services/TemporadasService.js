@@ -146,7 +146,7 @@ export class TemporadasService extends Service{
     async update(id,temporadas){
         const url=`temporadas/${id}`;
         const dataName="temporadas"
-        return super.update(url,temporadas,dataName,dataName)
+        return super.update(url,temporadas,dataName)
     }
     // async update(id, temporadas) {
     //     try {
