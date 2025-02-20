@@ -205,7 +205,7 @@ export function AsignarLabor() {
           title={<div style={{ fontSize: '16px' }}>Asignar labores de temporada</div>}
           columns={columnLabores}
           options={{
-            actionsColumnIndex: -1,
+            
             addRowPosition: "first",
             maxBodyHeight: maxBodyHeight,
             paging: false,
@@ -324,7 +324,7 @@ export function AsignarLabor() {
                 }
                 console.log("dataId")
                
-                 /* const isDuplicate = updatedDataT.some((e, idx) => 
+                 const isDuplicate = updatedDataT.some((e, idx) => 
                     e.siembraNumero === newDataWithId.siembraNumero &&
                     e.temporada === newDataWithId.temporada &&
                     e.departamento === newDataWithId.departamento &&
@@ -336,7 +336,7 @@ export function AsignarLabor() {
                     showToast('error', 'Labor ya asignado', '#9c1010');
                     reject('Error al actualizar el Labor, valores duplicados');
                     return;
-                }*/
+                }
            
                 updatedDataT[index] = newDataWithId;
               
@@ -355,9 +355,29 @@ export function AsignarLabor() {
               .catch(error => {
                   reject(`Error de red: ${error.message}`);
               });
-                })
+                })  
               },
-              onRowDelete: (oldData) => { }
+              onRowDelete: (oldData) => {
+                return new Promise((resolve, reject) => {
+                  laboresTService.delete(oldData.temporada, oldData.departamento, oldData.labor, oldData.siembraNumero, oldData.aliasLabor)
+                  .then(response => {
+                    if (response.success) {
+                      const dataDelete = data.filter((el) =>
+                      !(el.temporada === oldData.temporada && el.departamento === oldData.departamento
+                        && el.labor === oldData.labor  &&
+                        el.siembraNumero === oldData.siembraNumero && el.aliasLabor === oldData.aliasLabor));
+                        setData(dataDelete);
+                          showToast('success', 'Labor eliminado del Programa Operativo', '#2d800e');
+                          resolve();
+                     } else{     
+                     showToast('error', '`Error al eliminar el labor del Programa Operativo', '#9c1010');
+                     reject('No se pudo eliminar el labor.');
+                     }
+                  }).catch(error => {
+                    reject(`Error al eliminar: ${error.message}`);
+                });
+                })
+               }
           }}>
 
         </MaterialTable>

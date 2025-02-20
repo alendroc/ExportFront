@@ -139,15 +139,16 @@ export class LaboresTService{
                 }
             }
         }
-        async delete(temporada, departamento, labor, siembraNumero) {
+        async delete(temporada, departamento, labor, siembraNumero, aliasLabor) {
+            console.log("Datos a eliminar:", temporada, departamento, labor, siembraNumero,aliasLabor)
             try {
-    
-                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
+                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}/${aliasLabor}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
+                console.log(response)
     
                 if (response.status === 404) {
                     throw new Error('Labor no encontrado.');
