@@ -86,7 +86,7 @@ export function AsignarLabor() {
       title: 'Temporada', field: 'temporada', initialEditValue: tempActiva[0]?.temporada, editable: 'never',
     },
     {
-      title: 'N° Siembra', field: 'siembraNumero', type: "numeric",
+      title: 'N° Siembra', field: 'siembraNumero', type: "numeric",editable: 'onAdd',
       render: (rowData) => (rowData.siembraNumero === 1 ? 'Primera' : 'Segunda'),
       validate: (row) => {
         if (![1, 2].includes(row.siembraNumero)) {
@@ -129,7 +129,7 @@ export function AsignarLabor() {
       }
     },
     {
-      title: 'Alias Labor', field: 'aliasLabor',
+      title: 'Alias Labor', field: 'aliasLabor',editable: 'onAdd',
       validate: (rowData) => {
         if ((rowData.aliasLabor || "").length === 0) { return false }
         if (rowData.aliasLabor?.trim() === "") {
@@ -313,6 +313,7 @@ export function AsignarLabor() {
                 return new Promise((resolve, reject) => {
                   const index = data.findIndex(item => item.departamento === oldData.departamento && 
                     item.siembraNumero === oldData.siembraNumero && item.temporada===oldData.temporada
+                    && oldData.aliasLabor?.toLowerCase() === item.aliasLabor?.toLowerCase()
                   && item.labor === oldData.labor);
 
                   const updatedDataT = [...data];
@@ -323,7 +324,7 @@ export function AsignarLabor() {
                 }
                 console.log("dataId")
                
-                  /*const isDuplicate = updatedDataT.some((e, idx) => 
+                 /* const isDuplicate = updatedDataT.some((e, idx) => 
                     e.siembraNumero === newDataWithId.siembraNumero &&
                     e.temporada === newDataWithId.temporada &&
                     e.departamento === newDataWithId.departamento &&
@@ -339,7 +340,7 @@ export function AsignarLabor() {
            
                 updatedDataT[index] = newDataWithId;
               
-                laboresTService.update(oldData.temporada,oldData.departamento,oldData.labor,oldData.siembraNumero,newDataWithId)
+                laboresTService.update(oldData.temporada,oldData.departamento,oldData.siembraNumero,oldData.labor, oldData.aliasLabor,newDataWithId)
                 .then(response =>{
                   console.log("test")
                   if (response.success) {

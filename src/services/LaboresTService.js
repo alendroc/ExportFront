@@ -4,7 +4,6 @@ export class LaboresTService{
     constructor() {
         this.apiUrl = server.url;
     }
-
     async getAll() {
         try {
             const response = await fetch(`${this.apiUrl}LaboresT`, {
@@ -105,20 +104,20 @@ export class LaboresTService{
                 }
             }
         }
-
-        async update(temporada, departamento, labor, siembraNumero, laborT) {
+       
+        async update(temporada, departamento, siembraNumero,labor, aliasLabor, laborT) {
             try {
-                console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero)
-    
-                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
+               // console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero,aliasLabor, laborT)
+                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${siembraNumero}/${labor}/${aliasLabor}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                    
                     body: JSON.stringify(laborT)
+                    
                 });
-                    console.log("Datos a actualizar:", response)
+                console.log("Body enviado:", JSON.stringify(laborT));
                 if (!response.ok) {
                     throw new Error(`Error al actualizar el laborT: ${response.statusText}`);
                 }
