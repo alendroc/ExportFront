@@ -273,7 +273,8 @@ export function Articulos() {
                   }
                 })
                 .catch(error => {
-                  reject(`Error al eliminar: ${error.message}`);
+                  showToast('error', error, '#9c1010')
+                  resolve()
                 });
             });
 

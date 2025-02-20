@@ -232,8 +232,9 @@ export function Departamento(){
                   reject(`Error al eliminar: ${error.message}`);
                 });
               }catch(error){
-                console.log(error)
-                reject('Ocurrió un error inesperado');}
+                showToast('error', error, '#9c1010')
+                resolve()
+              }
             });
         },
       }}

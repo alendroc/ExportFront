@@ -146,39 +146,38 @@ export class LaboresTService extends Service{
                 }
             }
         }
-        async delete(temporada, departamento, labor, siembraNumero, aliasLabor) {
-            console.log("Datos a eliminar:", temporada, departamento, labor, siembraNumero,aliasLabor)
+        async delete(temporada, departamento, labor, siembraNumero) {
             try {
-                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}/${aliasLabor}`, {
+    
+                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
-                console.log(response)
     
-                if (response.status === 404) {
-                    throw new Error('Labor no encontrado.');
-                }
+        //         if (response.status === 404) {
+        //             throw new Error('c no encontrado.');
+        //         }
     
-                if (!response.ok) {
-                    throw new Error(`Error al eliminar el Labor: ${response.statusText}`);
-                }
+        //         if (!response.ok) {
+        //             throw new Error(`Error al eliminar el Labor: ${response.statusText}`);
+        //         }
     
-                const data = await response.json();
+        //         const data = await response.json();
     
-                if (data.isSuccess && data.status === 200) {
-                    return { success: true, message: data.message };
-                } else {
-                    console.log('Error al eliminar el Labor.');
-                    return { success: false, status: data.status };
-                }
-            } catch (error) {
-                if (error.message.includes('Failed to fetch')) {
-                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-                } else {
-                    throw new Error(error.message, error);
-                }
-            }
-        }
+        //         if (data.isSuccess && data.status === 200) {
+        //             return { success: true, message: data.message };
+        //         } else {
+        //             console.log('Error al eliminar el Labor.');
+        //             return { success: false, status: data.status };
+        //         }
+        //     } catch (error) {
+        //         if (error.message.includes('Failed to fetch')) {
+        //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+        //         } else {
+        //             throw new Error(error.message, error);
+        //         }
+        //     }
+        // }
 }

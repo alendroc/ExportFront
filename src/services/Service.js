@@ -38,5 +38,45 @@ export class Service{
     }
 
 
-    
+    async delete(url,dataName) {
+        try {
+            const response = await fetch(`${this.apiUrl}${url}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (response.status === 404) {
+                throw new Error(`${dataName} no encontrado.`);
+            }
+            const data = await response.json();
+
+            if (!response.ok) {
+                //console.log("error",data)
+                if(data.innerError.includes("conflicted with the REFERENCE constraint"))
+                    throw new Error("Elementos en uso");
+                throw new Error(`Error al eliminar el ${dataName}: ${response.statusText}`);
+            }
+
+
+            if (data.isSuccess && data.status === 200) {
+                return { success: true, message: data.message };
+            } else {
+                console.log(`Error al eliminar el ${dataName}.`);
+                return { success: false, status: data.status };
+            }
+        } catch (error) { 
+            console.log("error",error)
+
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }
+        }
+    }
+
+
+
 }
