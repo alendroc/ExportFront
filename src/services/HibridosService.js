@@ -75,7 +75,10 @@ export class HibridosService extends Service{
             }
         }
     }
-    async create(hibrido) {
+    async create(data) {
+        return super.create("hibridos", data, "hibrido")
+    }
+   /* async create(hibrido) {
         try {
             console.log("hibrido por agregar:", hibrido)
             const response = await fetch(`${this.apiUrl}hibridos`, {
@@ -105,7 +108,7 @@ export class HibridosService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async update(cultivo, variedad,hibrido, hibridoObj) {
         try {

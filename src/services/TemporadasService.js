@@ -71,7 +71,7 @@ export class TemporadasService extends Service{
         }
     }
 
-    async getById(id) {
+    /*async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
                 method: 'GET',
@@ -104,9 +104,14 @@ export class TemporadasService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async create(temporada) {
+        const url="temporadas"
+        const dataName="temporadas"
+        return super.create(url,temporada,dataName)
+    }
+    /*async create(temporada) {
         try {
             console.log("temporada por agregar:", temporada)
             const response = await fetch(`${this.apiUrl}temporadas`, {
@@ -136,7 +141,7 @@ export class TemporadasService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async update(id,temporadas){
         const url=`temporadas/${id}`;

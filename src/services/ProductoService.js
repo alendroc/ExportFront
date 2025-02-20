@@ -78,7 +78,13 @@ export class ProductoService extends Service{
         }
     }
 
-    async create(producto) {
+    async create(producto){
+        const url="productos";
+        const dataName="producto";
+        return super.create(url,producto,dataName)
+    }
+
+   /*async create(producto) {
         try {
             console.log("URL de la API:", `${this.apiUrl}productos`);
             console.log("Producto a crear:", producto); // Imprime el producto que estás enviando
@@ -116,7 +122,7 @@ export class ProductoService extends Service{
             }
         }
     }
-    
+    */
     
 
     // Actualizar un producto por ID

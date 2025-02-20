@@ -41,7 +41,7 @@ export class VariedadesService extends Service{
     //     }
     // }
 
-    async getById(id) {
+   /* async getById(id) {
         try {
             const response = await fetch(`${this.apiUrl}variedades/${id}`, {
                 method: 'GET',
@@ -74,7 +74,7 @@ export class VariedadesService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
     async create(variedad) {
         try {
             console.log("Articulo por agregar:", variedad)

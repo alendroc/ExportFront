@@ -78,8 +78,13 @@ export class LaboresTService extends Service{
             }
         }
     }
-
-        async create(LaborT) {
+    
+    async create(LaborT) {
+        const url="LaboresT"
+        const dataName="laboresTemporada"
+        return super.create(url,LaborT,dataName)
+    }
+       /* async create(LaborT) {
             try {
                 console.log("Labor por agregar:", LaborT)
                 const response = await fetch(`${this.apiUrl}LaboresT`, {
@@ -111,7 +116,7 @@ export class LaboresTService extends Service{
                 }
             }
         }
-       
+       */
         async update(temporada, departamento, siembraNumero,labor, aliasLabor, laborT) {
             try {
                // console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero,aliasLabor, laborT)
@@ -147,8 +152,8 @@ export class LaboresTService extends Service{
             }
         }
 
-        async delete(temporada, departamento, labor, siembraNumero){
-            const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`;
+        async delete(temporada, departamento, labor, siembraNumero,aliasLabor){
+            const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}/${aliasLabor}`;
             const dataName="Labor"
             return super.delete(url,dataName)
 

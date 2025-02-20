@@ -74,8 +74,12 @@ export class LaboresService extends Service{
             }
         }
     }
-
     async create(labor) {
+        const url="labores",
+        dataName="labores"
+        return super.create(url,labor,dataName)
+    }
+    /*async create(labor) {
         try {
             console.log("Labor por agregar:", labor)
             const response = await fetch(`${this.apiUrl}labores`, {
@@ -106,7 +110,7 @@ export class LaboresService extends Service{
                 throw new Error(error.message, error);  
             }
         }
-    }
+    }*/
 
     async update(id, departamento, descripcion) {
         try {
