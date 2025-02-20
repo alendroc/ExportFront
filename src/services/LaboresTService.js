@@ -147,8 +147,8 @@ export class LaboresTService extends Service{
             }
         }
 
-        async delete(temporada, departamento, labor, siembraNumero){
-            const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`;
+        async delete(temporada, departamento, labor, siembraNumero,aliasLabor){
+            const url=`LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}/${aliasLabor}`;
             const dataName="Labor"
             return super.delete(url,dataName)
 
