@@ -1,39 +1,45 @@
 import {server} from './global.js'
+import { Service } from './Service.js'; 
 
-export class VariedadesService {
+export class VariedadesService extends Service{
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
 
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}variedades`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!response.ok) {
-                throw new Error(`Error al obtener las variedades: ${response.statusText}`);
-            }
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                console.log('exitooooo.');
-                return { success: true, variedades: data.variedades };
-            } else {
-                console.log('No se encontraron variedades.');
-                return { success: false, status: data.status };
-            }
-
-        }catch (error){
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async getAll(){
+        const subclase="variedades"
+        return super.getAll(subclase,subclase,subclase)
     }
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}variedades`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener las variedades: ${response.statusText}`);
+    //         }
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             console.log('exitooooo.');
+    //             return { success: true, variedades: data.variedades };
+    //         } else {
+    //             console.log('No se encontraron variedades.');
+    //             return { success: false, status: data.status };
+    //         }
+
+    //     }catch (error){
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
     async getById(id) {
         try {

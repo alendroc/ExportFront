@@ -1,42 +1,49 @@
 import { server } from './global.js';
+import { Service } from './Service.js'; 
 
-export class DepartamentoService{
+export class DepartamentoService extends Service{
     constructor() {
+        super();
         this.apiUrl = server.url;
     }
 
-    async getAll() {
-        try {
-            const response = await fetch(`${this.apiUrl}Departamentos`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (!response.ok) {
-                throw new Error(`Error al obtener los departamentos: ${response.statusText}`);
-            }
-    
-            const data = await response.json();
-            console.log("Datos recibido s del servidor:", data); // Verificar contenido de 'data'
-    
-            if (data.isSuccess && (data.status === 200 || data.status === 204)) {
-                console.log("Departamentos recibidos:", data.departamentos); // Acceder a 'departamentos' con minúscula
-                return { success: true, departamentos: data.departamentos };
-            } else {
-                console.log("Error en la respuesta:", data.status, data.isSuccess);
-                return { success: false, status: data.status };
-            }
-    
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async getAll(){
+        const url="Departamentos"
+        const data="departamentos"
+        return super.getAll(url,data,data)
     }
+    // async getAll() {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}Departamentos`, {
+    //             method: 'GET',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         if (!response.ok) {
+    //             throw new Error(`Error al obtener los departamentos: ${response.statusText}`);
+    //         }
+    
+    //         const data = await response.json();
+    //         console.log("Datos recibido s del servidor:", data); // Verificar contenido de 'data'
+    
+    //         if (data.isSuccess && (data.status === 200 || data.status === 204)) {
+    //             console.log("Departamentos recibidos:", data.departamentos); // Acceder a 'departamentos' con minúscula
+    //             return { success: true, departamentos: data.departamentos };
+    //         } else {
+    //             console.log("Error en la respuesta:", data.status, data.isSuccess);
+    //             return { success: false, status: data.status };
+    //         }
+    
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
 
     
