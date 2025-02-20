@@ -83,11 +83,10 @@ export class LaboresTService{
                     },
                     body: JSON.stringify(LaborT)
                 });
-    
+                console.log("Labor por agregar:", response)
                 if (!response.ok) {
                     throw new Error(`Error al crear el Labor: ${response.statusText}`);
                 }
-    
                 const data = await response.json();
     
                 if (data.isSuccess && data.status === 201) {
@@ -97,26 +96,29 @@ export class LaboresTService{
                     return { success: false, status: data.status };
                 }
             } catch (error) {
+                console.log("Labor por agregar:", error)
                 if (error.message.includes('Failed to fetch')) {
                     throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
                 } else {
+                    
                     throw new Error(error.message, error);
                 }
             }
         }
 
-        async update(departamento, labor, laborT) {
+        async update(temporada, departamento, labor, siembraNumero, laborT) {
             try {
-                console.log("Datos a actualizar:", laborT)
+                console.log("Datos a actualizar:", temporada, departamento, labor, siembraNumero)
     
-                const response = await fetch(`${this.apiUrl}LaboresT/${departamento}/${labor}`, {
+                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
+                   
                     body: JSON.stringify(laborT)
                 });
-    
+                    console.log("Datos a actualizar:", response)
                 if (!response.ok) {
                     throw new Error(`Error al actualizar el laborT: ${response.statusText}`);
                 }
@@ -130,6 +132,7 @@ export class LaboresTService{
                     return { success: false, status: data.status };
                 }
             } catch (error) {
+                console.log(error)
                 if (error.message.includes('Failed to fetch')) {
                     throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
                 } else {
@@ -137,10 +140,10 @@ export class LaboresTService{
                 }
             }
         }
-        async delete(departamento, labor,) {
+        async delete(temporada, departamento, labor, siembraNumero) {
             try {
     
-                const response = await fetch(`${this.apiUrl}LaboresT/${departamento}/${labor}`, {
+                const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}/${siembraNumero}`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json'

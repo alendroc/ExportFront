@@ -10,6 +10,7 @@ import { LaboresService } from "../../services/LaboresService";
 import { LaboresTService } from "../../services/LaboresTService";
 import { TemporadasService } from "../../services/TemporadasService";
 import { Utils } from '../../models/Utils';
+import { showToast } from "../../components/helpers";
 import MaterialTable, { MTableToolbar } from "@material-table/core";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 
@@ -83,21 +84,12 @@ export function AsignarLabor() {
   const columnLabores =
     [{
       title: 'Temporada', field: 'temporada', initialEditValue: tempActiva[0]?.temporada, editable: 'never',
-      validate: (rowData) => {
-
-        if (rowData.temporada?.length > 10) {
-          return {
-            isValid: false,
-            helperText: "El límite de la columna es de 10 carácteres"
-          };
-        }
-      },
     },
     {
-      title: 'N° Siembra', field: 'siembraNumero', type: "numeric", editable: "onAdd", editable: "onAdd",
-      render: (rowData) => (rowData.siembraNum === 1 ? '1' : '2'),
+      title: 'N° Siembra', field: 'siembraNumero', type: "numeric",
+      render: (rowData) => (rowData.siembraNumero === 1 ? 'Primera' : 'Segunda'),
       validate: (row) => {
-        if (![1, 2].includes(row.siembraNum)) {
+        if (![1, 2].includes(row.siembraNumero)) {
           return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
         }
         return true;
@@ -116,7 +108,7 @@ export function AsignarLabor() {
     },
     {
       title: 'Departamento', field: 'departamento', initialEditValue: departamentoLabor[0], editable: 'never',
-      validate: (rowData) => {
+     validate: (rowData) => {
         if (rowData.departamento?.length > 50) {
           return {
             isValid: false,
@@ -137,7 +129,7 @@ export function AsignarLabor() {
       }
     },
     {
-      title: 'Alias Labor', field: 'aliasLabor', editable: "onAdd",
+      title: 'Alias Labor', field: 'aliasLabor',
       validate: (rowData) => {
         if ((rowData.aliasLabor || "").length === 0) { return false }
         if (rowData.aliasLabor?.trim() === "") {
@@ -154,17 +146,17 @@ export function AsignarLabor() {
         }
       }
     },
-    { title: 'Aplicar a todo', field: 'aplicarATodo', editable: "onAdd", },
+    { title: 'Aplicar a todo', field: 'aplicarATodo', type: "boolean", },
     {
-      title: 'Aplicar a', field: 'aplicarA', editable: "onAdd",
-      validate: (rowData) => {
+      title: 'Aplicar a', field: 'aplicarA',
+      /*validate: (rowData) => {
         if (rowData.aplicarA?.length > 50) {
           return {
             isValid: false,
             helperText: "El límite de la columna es de 50 carácteres"
           };
         }
-      }
+      }*/
     }]
 
   return (
@@ -183,7 +175,7 @@ export function AsignarLabor() {
             bgcolor: 'background.paper',
             position: 'relative',
             overflow: 'auto',
-            fontSize: '9px',
+            height: 'fit-content',
             maxHeight: 300,
             '& ul': { padding: 0 },
           }}
@@ -193,7 +185,7 @@ export function AsignarLabor() {
           {Object.entries(laboresPorDepartamento).map(([departamento, labores]) => (
             <li key={`section-${departamento}`}>
               <ul>
-                <ListSubheader>{departamento}</ListSubheader>
+                <ListSubheader >{departamento}</ListSubheader>
                 {labores.map((labor, index) => (
                   <ListItemButton key={`item-${departamento}-${index}`}
                     selected={selectedIndex === `${departamento}-${index}`} // Compara con el seleccionado
@@ -211,7 +203,7 @@ export function AsignarLabor() {
           size="small"
           data={data || []}
           title={<div style={{ fontSize: '16px' }}>Asignar labores de temporada</div>}
-          columns={columnLabores || []}
+          columns={columnLabores}
           options={{
             actionsColumnIndex: -1,
             addRowPosition: "first",
@@ -271,14 +263,100 @@ export function AsignarLabor() {
             },
           }}
           editable={{
+            onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+            onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
             onRowAdd: isAddEnabled
               ? (newData) =>
                 new Promise((resolve, reject) => {
-                  // Aquí colocas la lógica para agregar el nuevo dato.
-                  // Por ejemplo, puedes actualizar el estado 'data' o hacer una petición a un servicio.
-                  resolve();
+                  const newDataWithId = {
+                    
+                    ...newData,
+                    temporada: tempActiva[0]?.temporada,
+                    departamento: departamentoLabor[0],
+                    labor: departamentoLabor[1],
+                    siembraNumero: newData.siembraNumero || 1,
+                    aliasLabor: newData.aliasLabor|| null,
+                    aplicarATodo: newData.aplicarATodo || false,
+                    aplicarA: newData.aplicarA || null,
+                  
+                  }
+                  console.log("newDataWithId: ",newDataWithId);
+
+                  const isDuplicate = data.some(e =>
+                    e.siembraNumero === newDataWithId.siembraNumero &&
+                    e.temporada === newDataWithId.temporada &&
+                    e.departamento === newDataWithId.departamento &&
+                    e.labor === newDataWithId.labor &&
+                    e.aliasLabor?.toLowerCase() === newDataWithId.aliasLabor?.toLowerCase()
+                  );
+                  if (isDuplicate) {
+                   showToast('error', 'Ya existe un labor con ese Alias', '#9c1010')
+                   reject('Error: Ya existe un labor con ese Alias')
+                   return
+                 }
+                  laboresTService.create(newDataWithId)
+                  .then( response => {
+                    if (response.success) {
+                      console.log("Lote asignado exitosamente");
+                      setData(prevData => [ newDataWithId , ...prevData]);
+                      showToast('success', 'Labor agregado correctamente', '#107c10')
+                      resolve();
+                    }else{
+                      reject(`Error al asignar el labor: ${response.message}`);
+                    }
+                  }).catch(error => {
+                    reject(`Error de red: ${error.message}`);
+                });
+              })
+              : undefined,
+              onRowUpdate: (newData, oldData) => {
+                return new Promise((resolve, reject) => {
+                  const index = data.findIndex(item => item.departamento === oldData.departamento && 
+                    item.siembraNumero === oldData.siembraNumero && item.temporada===oldData.temporada
+                  && item.labor === oldData.labor);
+
+                  const updatedDataT = [...data];
+
+                  const newDataWithId = {
+                    ...newData,
+                   // descripcion: newData.descripcion && newData.descripcion.trim() !== "" ? newData.descripcion.toUpperCase() : null,
+                }
+                console.log("dataId")
+               
+                  /*const isDuplicate = updatedDataT.some((e, idx) => 
+                    e.siembraNumero === newDataWithId.siembraNumero &&
+                    e.temporada === newDataWithId.temporada &&
+                    e.departamento === newDataWithId.departamento &&
+                    e.labor === newDataWithId.labor &&
+                    e.aliasLabor?.toLowerCase() === newDataWithId.aliasLabor?.toLowerCase() &&
+                  idx !== index);
+                 
+                  if (isDuplicate) {
+                    showToast('error', 'Labor ya asignado', '#9c1010');
+                    reject('Error al actualizar el Labor, valores duplicados');
+                    return;
+                }*/
+           
+                updatedDataT[index] = newDataWithId;
+              
+                laboresTService.update(oldData.temporada,oldData.departamento,oldData.labor,oldData.siembraNumero,newDataWithId)
+                .then(response =>{
+                  console.log("test")
+                  if (response.success) {
+                      setData(updatedDataT);
+                      showToast('success', 'Labor actualizado', '#2d800e');
+                      resolve();
+                  } else {
+                      reject(`Error al actualizar el Labor: ${response.message}`);
+                      showToast('error', '`Error al actualizar el Labor', '#9c1010');
+                  }
+              })
+              .catch(error => {
+                  reject(`Error de red: ${error.message}`);
+              });
                 })
-              : undefined, // Si no se cumple la condición, no se define la función y el botón se oculta
+              },
+              onRowDelete: (oldData) => { }
           }}>
 
         </MaterialTable>
@@ -295,24 +373,46 @@ const Container = styled.div`
     color: black;
     font-family: 'popins', sans-serif;
  }
-
+ .css-l328gy-MuiListSubheader-root{
+  font-size: 12px;
+ }
  .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-ig9rso-MuiToolbar-root{
     padding-right: 0;
   }
 
+  .ListSubheader{
+    font-size: 12px;
+ }
 
  @media (min-width: 700px){
     .MuiTableCell-root {
       padding: 4px 8px;
-     font-size: 12px !important;
+     font-size: 9px !important;
    }
+   .css-1a1whku-MuiTypography-root{
+    font-size: 10px;
+    color: black;
+    font-family: 'popins', sans-serif;
+ }
+ .css-l328gy-MuiListSubheader-root{
+  font-size: 14px;
+ }
   }
  
  @media (min-width: 1200px){
+    max-width: 1400px;
     .MuiTableCell-root {
       padding: 4px 8px;
      font-size: 12px !important;
    }
+   .css-1a1whku-MuiTypography-root{
+    font-size: 12px;
+    color: black;
+    font-family: 'popins', sans-serif;
+ }
+ .css-l328gy-MuiListSubheader-root{
+  font-size: 14px;
+ }
   }
   @media (min-width: 1600px) {
  max-width: 1400px;
@@ -323,8 +423,8 @@ const Container = styled.div`
      padding: 4px 8px; 
      font-size: 16px !important;
    }
-   .css-1a1whku-MuiTypography-root{
-    font-size: 16px;
-   }
+ 
+
+
   }
   `
