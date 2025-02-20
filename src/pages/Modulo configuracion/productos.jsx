@@ -359,8 +359,8 @@ const EDITABLE_COLUMNS = [
                   }
                 })
                 .catch(error => {
-                  showToast('error', error.message, '#9c1010');
-                  reject(error.message);
+                showToast('error', error, '#9c1010')
+                resolve()
                 });
             });
           },

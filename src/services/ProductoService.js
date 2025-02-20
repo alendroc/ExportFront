@@ -151,43 +151,48 @@ export class ProductoService extends Service{
         }
     }
 
-    async delete(id) {
-        if (!id) {
-            throw new Error('ID del producto no proporcionado.');
-        }
-    
-        try {
-            const response = await fetch(`${this.apiUrl}productos/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (response.status === 404) {
-                throw new Error('Producto no encontrado.');
-            }
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
-            }
-    
-            const data = await response.json();
-    
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar el producto.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message);
-            }
-        }
+    async delete(id){
+        const url=`productos/${id}`;
+        const dataName="Producto"
+        return super.delete(url,dataName)
     }
+    // async delete(id) {
+    //     if (!id) {
+    //         throw new Error('ID del producto no proporcionado.');
+    //     }
+    
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         if (response.status === 404) {
+    //             throw new Error('Producto no encontrado.');
+    //         }
+    
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
+    //         }
+    
+    //         const data = await response.json();
+    
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar el producto.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message);
+    //         }
+    //     }
+    // }
     
 }

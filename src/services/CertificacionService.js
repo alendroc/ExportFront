@@ -142,35 +142,40 @@ export class CertificacionService extends Service{
             }  
         }  
     
+        async delete(idProducto, nombreCertificacion){
+            const url=`${idProducto}/${nombreCertificacion}`;
+            const dataName="certificación"
+            return super.delete(url,dataName)
+        }
         // Eliminar una certificación por ID y nombre de certificación  
-        async delete(idProducto, nombreCertificacion) {  
-            try {  
-                const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
-                    method: 'DELETE',  
-                    headers: {  
-                        'Content-Type': 'application/json'  
-                    }  
-                });  
+        // async delete(idProducto, nombreCertificacion) {  
+        //     try {  
+        //         const response = await fetch(`${this.apiUrl}${idProducto}/${nombreCertificacion}`, {  
+        //             method: 'DELETE',  
+        //             headers: {  
+        //                 'Content-Type': 'application/json'  
+        //             }  
+        //         });  
     
-                if (!response.ok) {  
-                    const errorData = await response.json();  
-                    throw new Error(`Error al eliminar la certificación: ${errorData.message || response.statusText}`);  
-                }  
+        //         if (!response.ok) {  
+        //             const errorData = await response.json();  
+        //             throw new Error(`Error al eliminar la certificación: ${errorData.message || response.statusText}`);  
+        //         }  
     
-                const data = await response.json();  
+        //         const data = await response.json();  
     
-                if (data.isSuccess && data.status === 200) {  
-                    return { success: true, message: data.message };  
-                } else {  
-                    console.log('Error al eliminar la certificación.');  
-                    return { success: false, status: data.status };  
-                }  
-            } catch (error) {  
-                if (error.message.includes('Failed to fetch')) {  
-                    throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
-                } else {  
-                    throw new Error(error.message);  
-                }  
-            }  
-        }  
+        //         if (data.isSuccess && data.status === 200) {  
+        //             return { success: true, message: data.message };  
+        //         } else {  
+        //             console.log('Error al eliminar la certificación.');  
+        //             return { success: false, status: data.status };  
+        //         }  
+        //     } catch (error) {  
+        //         if (error.message.includes('Failed to fetch')) {  
+        //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+        //         } else {  
+        //             throw new Error(error.message);  
+        //         }  
+        //     }  
+        // }  
     }  

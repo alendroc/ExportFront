@@ -139,38 +139,43 @@ export class LaboresService extends Service{
         }
     }
 
-    async delete(id, departamento) {
-        try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.status === 404) {
-                throw new Error('Labor no encontrado.');
-            }
-
-            if (!response.ok) {
-                throw new Error(`Error al eliminar el labor: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar el labor.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async delete(id, departamento){
+        const url=`labores/${id}/${departamento}`;
+        const dataName="labor"
+        return super.delete(url,dataName)
     }
+    // async delete(id, departamento) {
+    //     try {
+    //         console.log(id)
+    //         const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+
+    //         if (response.status === 404) {
+    //             throw new Error('Labor no encontrado.');
+    //         }
+
+    //         if (!response.ok) {
+    //             throw new Error(`Error al eliminar el labor: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar el labor.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 }

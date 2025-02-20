@@ -311,10 +311,14 @@ useEffect(() => {
                     } else {
                         reject('No se pudo eliminar la temporada.');
                     }
+                    
                 })
                 .catch(error => {
-                    reject(`Error al eliminar: ${error.message}`);
+                  showToast('error', error, '#9c1010')
+                  resolve()
+                
                 });
+             
             });
         },
       }}

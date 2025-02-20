@@ -12,35 +12,6 @@ export class TemporadasService extends Service{
         const subclase="temporadas"
         return super.getAll(subclase,subclase,subclase)
     }
-    // async getAll() {
-    //     try {
-    //         const response = await fetch(`${this.apiUrl}temporadas`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    //         if (!response.ok) {
-    //             throw new Error(`Error al obtener las temporadas: ${response.statusText}`);
-    //         }
-    //         const data = await response.json();
-
-    //         if (data.isSuccess && data.status === 200) {
-    //             return { success: true, temporadas: data.temporadas };
-    //         } else {
-    //             console.log('No se encontraron temporadas.');
-    //             return { success: false, status: data.status };
-    //         }
-
-    //     }catch (error){
-    //         if (error.message.includes('Failed to fetch')) {
-    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-    //         } else {
-    //             throw new Error(error.message, error);
-    //         }
-    //     }
-    // }
-
 
     async getTemporadasFechas() {
         try {
@@ -199,40 +170,46 @@ export class TemporadasService extends Service{
         }
     }
 
-    async delete(id) {
-        try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            if (response.status === 404) {
-                throw new Error('Temporada no encontrado.');
-            }
-
-            if (!response.ok) {
-                throw new Error(`Error al eliminar la temporada: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar la temporada.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async delete(id){
+        const url=`temporadas/${id}`;
+        const dataName="temporada"
+        return super.delete(url,dataName)
     }
+
+    // async delete(id) {
+    //     try {
+    //         console.log(id)
+    //         const response = await fetch(`${this.apiUrl}temporadas/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+
+    //         if (response.status === 404) {
+    //             throw new Error('Temporada no encontrado.');
+    //         }
+
+    //         if (!response.ok) {
+    //             throw new Error(`Error al eliminar la temporada: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar la temporada.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
 
 }
