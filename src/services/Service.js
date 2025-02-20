@@ -8,6 +8,7 @@ export class Service{
 
     async getAll(url, dataName,dataResponse) {
         try {
+            console.log("URL de la petición:", `${this.apiUrl}${url}`);
             const response = await fetch(`${this.apiUrl}${url}`, {
                 method: 'GET',
                 headers: {
@@ -18,6 +19,7 @@ export class Service{
                 throw new Error(`Error al obtener los ${dataResponse}: ${response.statusText}`);
             }
             const data = await response.json();
+            console.log("Respuesta de la API:", data);  
 
             if (data.isSuccess && data.status === 200) {
                 //console.log('exitooooo.');
@@ -36,6 +38,40 @@ export class Service{
             }
         }
     }
+
+
+
+
+    async update(url, contenido,dataName, dataResponse) {  
+        try {  
+            const response = await fetch(`${this.apiUrl}${url}`, {  
+                method: 'PUT',  
+                headers: {  
+                    'Content-Type': 'application/json'  
+                },  
+                body: JSON.stringify(contenido)  
+            });  
+
+            if (!response.ok) {  
+                throw new Error(`Error al actualizar la ${dataName}: ${response.statusText}`);  
+            }  
+
+            const data = await response.json();  
+
+            if (data.isSuccess && data.status === 200) {  
+                return { success: true, [dataName]: data[dataResponse] };  
+            } else {  
+                console.log(`Error al actualizar la ${dataName}.`);  
+                return { success: false, status: data.status };  
+            }  
+        } catch (error) {  
+            if (error.message.includes('Failed to fetch')) {  
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');  
+            } else {  
+                throw new Error(error.message);  
+            }  
+        }  
+    } 
 
 
     async delete(url,dataName) {

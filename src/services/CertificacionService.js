@@ -5,13 +5,14 @@ export class CertificacionService extends Service{
     
     constructor() { 
         super(); 
-        this.apiUrl = `${server.url}certificaciones/`; // Asegúrate de que la URL sea correcta  
+        this.apiUrl = server.url; // Asegúrate de que la URL sea correcta  
     }  
 
     async getAll(){
         const subclase="certificaciones"
         return super.getAll(subclase,subclase,subclase)
     }
+
     // async getAll() {  
     //     try {  
     //         const response = await fetch(this.apiUrl, {  
@@ -28,7 +29,7 @@ export class CertificacionService extends Service{
     //         const data = await response.json();  
     //         console.log("Respuesta de la API:", data);  
 
-    //         if (data.isSuccess && data.status === 200 && Array.isArray(data.certificaciones)) {  
+    //         if (data.isSuccess && data.status === 200 ) {  
     //             return { success: true, certificaciones: data.certificaciones };  
     //         } else {  
     //             console.log('No se encontraron certificaciones.');  
