@@ -120,7 +120,14 @@ const EDITABLE_COLUMNS = [
   { 
     title: "Restricción Ingreso", 
     field: "restriccionIngreso", 
-    editable: 'always' 
+    editable: 'always' ,
+     type:"numeric",
+    validate: rowData => {
+      const isDecimal = /^\d*\.?\d+$/.test(rowData.restriccionIngreso);
+      if(!rowData.restriccionIngreso){return true}
+
+      return rowData.restriccionIngreso && isDecimal  ? { isValid: true, helperText: "numeros decimales ejemplo: 12,4" }: false;
+  }
   },
   { 
     title: "Descripción", 
