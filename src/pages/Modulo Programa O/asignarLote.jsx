@@ -11,7 +11,7 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip,
    RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material'
 import {Utils} from '../../models/Utils'
-import ActionDialog from '../../components/copiar'
+import {ActionDialog, activacionDialog} from '../../components/copiar'
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
@@ -121,12 +121,11 @@ const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0
 
 
 export function AsignarLote() {
+  const { open, value, handleClickListItem, handleClose } = activacionDialog();
    const [data, setData] = useState([]);
    const [dataPo, setDataPo] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
    const [activarSelectRow, setActivarSelectRow] = useState(true);
-   const [open, setOpen] = React.useState(false);
-   const [value, setValue] = React.useState('');
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
   const containerRef = useRef(null);
@@ -148,19 +147,6 @@ export function AsignarLote() {
     return () => window.removeEventListener("resize", checkWrap);
   }, []);
 
-
-  //Dialog//
-  const handleClickListItem = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (newValue) => {
-    setOpen(false);
-
-    if (newValue) {
-      setValue(newValue);
-    }
-  };
 
   //modificar tamaño
   const handleResize = () => {
@@ -208,16 +194,6 @@ export function AsignarLote() {
       
     return (
     <Container ref={containerRef} className={isWrapped ? "isWrapped" : ""}>
-     {/* {dataPo.length > 0 && lotePoService ? (  
-      
-      <ActionDialog  
-        onClose={handleClose}
-        open={open}  
-        value={value}  
-        dataPo={dataPo??[]}  
-        service={lotePoService}  
-      />  
-    ) : null}   */}
         <MaterialTable 
               size="small"
               data={data}

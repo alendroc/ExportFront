@@ -6,6 +6,31 @@ import { TemporadasService } from "../services/TemporadasService";
 import { showToast } from "../components/helpers";
 
 var temporadaService= new TemporadasService;
+
+export const activacionDialog = () => {
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState('');
+
+  const handleClickListItem = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (newValue) => {
+    setOpen(false);
+    if (newValue) {
+      setValue(newValue);
+    }
+  };
+
+  return {
+    open,
+    value,
+    handleClickListItem,
+    handleClose,
+  };
+};
+
+
 export function ActionDialog({ onClose, value: valueProp, open, data, service, ...other }) {
   const [value, setValue] = useState(valueProp);
   const radioGroupRef = useRef(null);
