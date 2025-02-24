@@ -12,7 +12,6 @@ export function ActionDialog({ onClose, value: valueProp, open, data, service, .
   const [temporadasOpciones, setTemporadasOpciones] = useState(['']);
 
   useEffect(() => {
-    console.log("temporadas", service, `data ${data}`)
     if (open) {
       setValue('');
     }
@@ -108,8 +107,8 @@ ActionDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   value: PropTypes.string.isRequired,
-  dataPo: PropTypes.any.isRequired,
-  lotePoService: PropTypes.any.isRequired,
+  data: PropTypes.any.isRequired,
+  Service: PropTypes.any.isRequired,
 };
 
 export default ActionDialog;

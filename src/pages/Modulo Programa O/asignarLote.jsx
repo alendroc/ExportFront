@@ -205,22 +205,19 @@ export function AsignarLote() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
        },[])
-
-       useEffect(() => {
-        console.log('dataPo:', dataPo);
-        console.log('service:', lotePoService);
-      }, [dataPo, lotePoService]);
       
     return (
     <Container ref={containerRef} className={isWrapped ? "isWrapped" : ""}>
-     {dataPo.length > 0 && lotePoService ? (  
+     {/* {dataPo.length > 0 && lotePoService ? (  
+      
       <ActionDialog  
-        onClose={handleClose}  
+        onClose={handleClose}
+        open={open}  
         value={value}  
-        data={dataPo}  
+        dataPo={dataPo??[]}  
         service={lotePoService}  
       />  
-    ) : null}  
+    ) : null}   */}
         <MaterialTable 
               size="small"
               data={data}
@@ -591,7 +588,8 @@ export function AsignarLote() {
        )}
             
                   </div>
-                  <ActionDialog open={open} onClose={handleClose} value={value} dataPo={dataPo}/>
+        
+                  <ActionDialog open={open} onClose={handleClose} value={value} data={dataPo} service={lotePoService}  />
                 </div>
               ),
             }}
