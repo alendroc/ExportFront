@@ -11,13 +11,13 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip,
    RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material'
 import {Utils} from '../../models/Utils'
-
+import ActionDialog from '../../components/copiar'
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
 const loteNoSeleccionadoText="Debe seleccionar un lote"
 
-
+/*
 function ActionDialog(props) {
   const { onClose, value: valueProp, open,dataPo, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
@@ -112,7 +112,7 @@ ActionDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   value: PropTypes.string.isRequired,
-};
+};*/
 
 const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
   {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
@@ -180,7 +180,6 @@ export function AsignarLote() {
   //para los fetch
    useEffect(() => {
     const tempGuardada = Utils.getTempActive()
-    
     if (tempGuardada) {
       Utils.fetchData(loteService.getLotesActivos(), setData, "lotes")
       Utils.fetchData(lotePoService.getByTemporada(tempGuardada), setDataPo, "LotesPO");
@@ -207,9 +206,21 @@ export function AsignarLote() {
         return () => window.removeEventListener("resize", handleResize);
        },[])
 
-
+       useEffect(() => {
+        console.log('dataPo:', dataPo);
+        console.log('service:', lotePoService);
+      }, [dataPo, lotePoService]);
+      
     return (
     <Container ref={containerRef} className={isWrapped ? "isWrapped" : ""}>
+     {dataPo.length > 0 && lotePoService ? (  
+      <ActionDialog  
+        onClose={handleClose}  
+        value={value}  
+        data={dataPo}  
+        service={lotePoService}  
+      />  
+    ) : null}  
         <MaterialTable 
               size="small"
               data={data}
