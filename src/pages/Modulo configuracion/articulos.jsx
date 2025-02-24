@@ -19,7 +19,7 @@ const columns = [
     }},
 
     { title: "Nombre de articulo", headerStyle: { minWidth: 120 },  field: "nombreArticulo",validate: (row) =>{
-      if((row.nombreArticulo || "").length === 0){return false}  
+      if((row.nombreArticulo || "").length === 0)return false 
       if(row.nombreArticulo?.length > 50){
         return {
           isValid: false,
@@ -127,12 +127,12 @@ export function Articulos() {
       <MaterialTable size="small"
         title="Gestión de Artículos"
         data={data}
-        columns={columns || []}
+        columns={columns}
         options={{
           actionsColumnIndex: -1,
           maxBodyHeight: maxBodyHeight,
           addRowPosition: "first",
-          padding: onabort,
+          padding:  "dense",
           paging: false,
           headerStyle: {
             position: 'sticky',

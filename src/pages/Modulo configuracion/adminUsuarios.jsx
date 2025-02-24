@@ -382,7 +382,7 @@ const handleDepartmentChange = (event, newValue) => {
 }
 
 const Container = styled.div`
-  padding: 20px;
+
 `;
 
 const ButtonContainer = styled.div`
@@ -395,13 +395,11 @@ const Form = styled.form`
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+  gap: 12px;
   width: 50%;
   
   input, select {
-    margin: 10px 0;
-    padding: 10px;
     border-radius: 5px;
-    border: 1px solid #ccc;
   }
 
   button {
