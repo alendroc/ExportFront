@@ -151,14 +151,13 @@ export function Departamento(){
                                 console.log("Departamento creado exitosamente");
                                 setData(prevData => [ newDataWithId , ...prevData]);
                                 showToast('success', 'Departamento creado', '#2d800e');
-                                resolve(); // Resolvemos la promesa si todo fue bien
+                                resolve(); 
                             } else {
-                                
                                 reject(`Error al crear el departamento: ${response.message}`);
                             }
                         })
                         .catch(error => {
-                          //console.log(error)
+                          console.log(error, newDataWithId)
                           showToast('error', error,'#9c1010'); 
                           reject(`Error de red: ${error.message}`);
                         });
@@ -232,8 +231,9 @@ export function Departamento(){
                   reject(`Error al eliminar: ${error.message}`);
                 });
               }catch(error){
-                console.log(error)
-                reject('Ocurrió un error inesperado');}
+                showToast('error', error, '#9c1010')
+                resolve()
+              }
             });
         },
       }}

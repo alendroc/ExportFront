@@ -118,6 +118,11 @@ export class LotePOService extends Service{
     }
 
     async create(lotePo) {
+       const url="LotesPO"
+       const dataName="LotePO"
+       return super.create(url,lotePo,dataName)
+    }
+    /*async create(lotePo) {
         try {
             console.log("lote por agregar:", lotePo)
             const response = await fetch(`${this.apiUrl}LotesPO`, {
@@ -147,7 +152,7 @@ export class LotePOService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async PegarLote(lotesPo) {
         try {
@@ -185,73 +190,83 @@ export class LotePOService extends Service{
         }
     }
 
-    async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
-        try {
-            console.log("Datos a actualizar:", lotePO)
-
-            const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(lotePO)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error al actualizar el lotePO: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, LotePO: data.LotePO };
-            } else {
-                console.log('Error al actualizar el lotePO.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async update(temporada, siembraNum, nombreLote, aliasLote, lotePO){
+        const url=`LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`;
+        const dataName="LotePO"
+        return super.update(url,lotePO,dataName)
     }
+    // async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
+    //     try {
+    //         console.log("Datos a actualizar:", lotePO)
 
-    async delete(temporada, siembraNum, nombreLote, aliasLote) {
-        try {
-            console.log("temporada:", temporada, "siembraNum:", siembraNum,"nombreLote:",nombreLote ,
-                "aliasLote:",aliasLote,)
+    //         const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(lotePO)
+    //         });
 
-            const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+    //         if (!response.ok) {
+    //             throw new Error(`Error al actualizar el lotePO: ${response.statusText}`);
+    //         }
 
-            if (response.status === 404) {
-                throw new Error('Lote no encontrado.');
-            }
+    //         const data = await response.json();
 
-            if (!response.ok) {
-                throw new Error(`Error al eliminar el Lote: ${response.statusText}`);
-            }
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, LotePO: data.LotePO };
+    //         } else {
+    //             console.log('Error al actualizar el lotePO.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar el lote.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async delete(temporada, siembraNum, nombreLote, aliasLote){
+        const url=`LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`;
+        const dataName="Lote"
+        return super.delete(url,dataName)
     }
+    // async delete(temporada, siembraNum, nombreLote, aliasLote) {
+    //     try {
+    //         console.log("temporada:", temporada, "siembraNum:", siembraNum,"nombreLote:",nombreLote ,
+    //             "aliasLote:",aliasLote,)
+
+    //         const response = await fetch(`${this.apiUrl}LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+
+    //         if (response.status === 404) {
+    //             throw new Error('Lote no encontrado.');
+    //         }
+
+    //         if (!response.ok) {
+    //             throw new Error(`Error al eliminar el Lote: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar el lote.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 }

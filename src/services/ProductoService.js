@@ -78,7 +78,13 @@ export class ProductoService extends Service{
         }
     }
 
-    async create(producto) {
+    async create(producto){
+        const url="productos";
+        const dataName="producto";
+        return super.create(url,producto,dataName)
+    }
+
+   /*async create(producto) {
         try {
             console.log("URL de la API:", `${this.apiUrl}productos`);
             console.log("Producto a crear:", producto); // Imprime el producto que estás enviando
@@ -116,78 +122,88 @@ export class ProductoService extends Service{
             }
         }
     }
-    
+    */
     
 
     // Actualizar un producto por ID
-    async update(id, producto) {
-        try {
-            const response = await fetch(`${this.apiUrl}productos/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(producto)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error al actualizar el producto: ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, producto: data.producto };
-            } else {
-                console.log('Error al actualizar el producto.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    async update(id, producto){
+        const url=`productos/${id}`;
+        const dataName="producto"
+        return super.update(url,producto,dataName)
     }
+    // async update(id, producto) {
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(producto)
+    //         });
 
-    async delete(id) {
-        if (!id) {
-            throw new Error('ID del producto no proporcionado.');
-        }
-    
-        try {
-            const response = await fetch(`${this.apiUrl}productos/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
-            if (response.status === 404) {
-                throw new Error('Producto no encontrado.');
-            }
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
-            }
-    
-            const data = await response.json();
-    
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar el producto.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message);
-            }
-        }
+    //         if (!response.ok) {
+    //             throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+    //         }
+
+    //         const data = await response.json();
+
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, producto: data.producto };
+    //         } else {
+    //             console.log('Error al actualizar el producto.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
+
+    async delete(id){
+        const url=`productos/${id}`;
+        const dataName="Producto"
+        return super.delete(url,dataName)
     }
+    // async delete(id) {
+    //     if (!id) {
+    //         throw new Error('ID del producto no proporcionado.');
+    //     }
+    
+    //     try {
+    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
+    
+    //         if (response.status === 404) {
+    //             throw new Error('Producto no encontrado.');
+    //         }
+    
+    //         if (!response.ok) {
+    //             const errorData = await response.json();
+    //             throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
+    //         }
+    
+    //         const data = await response.json();
+    
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar el producto.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message);
+    //         }
+    //     }
+    // }
     
 }

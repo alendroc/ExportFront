@@ -228,8 +228,8 @@ export function Certificaciones() {
                                     }  
                                 })  
                                 .catch(error => {  
-                                    showToast('error', error, '#9c1010');  
-                                    reject(`Error al eliminar: ${error.message}`);  
+                                   showToast('error', error, '#9c1010')
+                                   resolve() 
                                 });  
                         });  
                     },

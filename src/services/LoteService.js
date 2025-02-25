@@ -105,8 +105,12 @@ export class LoteService extends Service{
             }
         }
     }
-
     async create(lote) {
+        const url="Lotes"
+        const dataName="lotes"
+        return super.create(url,lote,dataName)
+    }
+   /* async create(lote) {
         try {
             console.log("lote por agregar:", lote)
             const response = await fetch(`${this.apiUrl}Lotes`, {
@@ -137,71 +141,82 @@ export class LoteService extends Service{
             }
         }
     }
+*/
 
-    async update(id, lotes) {
-        try {
-            console.log("el ide: ",id,"el Lote: ",lotes)
-            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(lotes)
-            });
+async update(id, lotes){
+    const url=`Lotes/${id}`;
+    const dataName="lotes"
+    return super.update(url,lotes,dataName)
+}
+    // async update(id, lotes) {
+    //     try {
+    //         console.log("el ide: ",id,"el Lote: ",lotes)
+    //         const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
+    //             method: 'PUT',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             },
+    //             body: JSON.stringify(lotes)
+    //         });
 
-            if (!response.ok) {
-                throw new Error(`Error al actualizar el lote: ${response.statusText}`);
-            }
+    //         if (!response.ok) {
+    //             throw new Error(`Error al actualizar el lote: ${response.statusText}`);
+    //         }
 
-            const data = await response.json();
+    //         const data = await response.json();
 
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, lotes: data.lotes };
-            } else {
-                console.log('Error al actualizar el lote.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, lotes: data.lotes };
+    //         } else {
+    //             console.log('Error al actualizar el lote.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
+
+    async delete(id){
+        const url=`Lotes/${id}`;
+        const dataName="Lote"
+        return super.delete(url,dataName)
     }
+    // async delete(id) {
+    //     try {
+    //         console.log(id)
+    //         const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
+    //             method: 'DELETE',
+    //             headers: {
+    //                 'Content-Type': 'application/json'
+    //             }
+    //         });
 
-    async delete(id) {
-        try {
-            console.log(id)
-            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+    //         if (response.status === 404) {
+    //             throw new Error('Lote no encontrado.');
+    //         }
 
-            if (response.status === 404) {
-                throw new Error('Lote no encontrado.');
-            }
+    //         if (!response.ok) {
+    //             throw new Error(`Error al eliminar el Lote: ${response.statusText}`);
+    //         }
 
-            if (!response.ok) {
-                throw new Error(`Error al eliminar el Lote: ${response.statusText}`);
-            }
+    //         const data = await response.json();
 
-            const data = await response.json();
-
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
-            } else {
-                console.log('Error al eliminar el lote.');
-                return { success: false, status: data.status };
-            }
-        } catch (error) {
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message, error);
-            }
-        }
-    }
+    //         if (data.isSuccess && data.status === 200) {
+    //             return { success: true, message: data.message };
+    //         } else {
+    //             console.log('Error al eliminar el lote.');
+    //             return { success: false, status: data.status };
+    //         }
+    //     } catch (error) {
+    //         if (error.message.includes('Failed to fetch')) {
+    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+    //         } else {
+    //             throw new Error(error.message, error);
+    //         }
+    //     }
+    // }
 }

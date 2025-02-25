@@ -11,13 +11,13 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip,
    RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material'
 import {Utils} from '../../models/Utils'
-
+import {ActionDialog, activacionDialog} from '../../components/copiar'
 var loteService = new LoteService;
 var lotePoService = new LotePOService;
 var temporadaService= new TemporadasService;
 const loteNoSeleccionadoText="Debe seleccionar un lote"
 
-
+/*
 function ActionDialog(props) {
   const { onClose, value: valueProp, open,dataPo, ...other } = props;
   const [value, setValue] = React.useState(valueProp);
@@ -112,7 +112,7 @@ ActionDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   open: PropTypes.bool.isRequired,
   value: PropTypes.string.isRequired,
-};
+};*/
 
 const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0 0 0 5px"},  cellStyle: { fontSize: "10px",padding:"0 0 0 5px", width: "30px"}},
   {title: 'Area', field: 'area', type: "numeric",headerStyle:{padding:"0 8px 0 0", width: "30px"},cellStyle: { fontSize: "10px",padding:"0 8px 0 0",  width: "30px"}},
@@ -121,12 +121,11 @@ const columnLote = [{title: 'Lote', field: 'nombreLote', headerStyle:{padding:"0
 
 
 export function AsignarLote() {
+  const { open, value, handleClickListItem, handleClose } = activacionDialog();
    const [data, setData] = useState([]);
    const [dataPo, setDataPo] = useState([]);
    const [selectedRow, setSelectedRow] = useState(null);
    const [activarSelectRow, setActivarSelectRow] = useState(true);
-   const [open, setOpen] = React.useState(false);
-   const [value, setValue] = React.useState('');
   const [maxBodyHeight, setMaxBodyHeight] = useState(480);
   const [widthNpdy, setwidthNpdy] = useState(700);
   const containerRef = useRef(null);
@@ -149,19 +148,6 @@ export function AsignarLote() {
   }, []);
 
 
-  //Dialog//
-  const handleClickListItem = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (newValue) => {
-    setOpen(false);
-
-    if (newValue) {
-      setValue(newValue);
-    }
-  };
-
   //modificar tamaño
   const handleResize = () => {
     if (window.innerWidth < 1300) {
@@ -180,7 +166,6 @@ export function AsignarLote() {
   //para los fetch
    useEffect(() => {
     const tempGuardada = Utils.getTempActive()
-    
     if (tempGuardada) {
       Utils.fetchData(loteService.getLotesActivos(), setData, "lotes")
       Utils.fetchData(lotePoService.getByTemporada(tempGuardada), setDataPo, "LotesPO");
@@ -206,8 +191,7 @@ export function AsignarLote() {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
        },[])
-
-
+      
     return (
     <Container ref={containerRef} className={isWrapped ? "isWrapped" : ""}>
         <MaterialTable 
@@ -580,7 +564,8 @@ export function AsignarLote() {
        )}
             
                   </div>
-                  <ActionDialog open={open} onClose={handleClose} value={value} dataPo={dataPo}/>
+        
+                  <ActionDialog open={open} onClose={handleClose} value={value} data={dataPo} service={lotePoService}  />
                 </div>
               ),
             }}
