@@ -11,6 +11,9 @@ var loteService = new LoteService;
 const columns = [
     { title: "Lote", field: "nombreLote", editable: 'onAdd', validate: (row) => {
       if((row.nombreLote || "").length === 0){return false}
+      if(row.nombreLote?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.nombreLote?.length > 20){
         return {
           isValid: false,

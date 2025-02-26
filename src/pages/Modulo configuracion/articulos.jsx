@@ -20,6 +20,10 @@ const columns = [
 
     { title: "Nombre de articulo", headerStyle: { minWidth: 120 },  field: "nombreArticulo",validate: (row) =>{
       if((row.nombreArticulo || "").length === 0)return false 
+
+      if(row.nombreArticulo?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.nombreArticulo?.length > 50){
         return {
           isValid: false,
@@ -29,6 +33,9 @@ const columns = [
   
     { title: "Marca",  headerStyle: { minWidth: 50 }, field: "marca",validate: (row) => {
       if((row.marca || "").length === 0){return false}
+      if(row.marca?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.marca?.length > 50){
         return {
           isValid: false,
@@ -38,6 +45,9 @@ const columns = [
 
     { title: "Modelo", width: "50px", field: "modelo",validate: (row) => {
       if((row.modelo || "").length === 0){return false}
+      if(row.modelo?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.modelo?.length > 50){
         return {
           isValid: false,
@@ -71,6 +81,9 @@ const columns = [
 
     { title: "Tipo", headerStyle: { minWidth: 20, }, field: "tipo",validate: (row) => {
       if((row.tipo || "").length === 0){return false}
+      if(row.tipo?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.tipo?.length > 50){
         return {
           isValid: false,

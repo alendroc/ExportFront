@@ -165,6 +165,8 @@ const handleChangeVariedad = (event) => {
       
         { title: "Hibrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
           if((row.hibrido || "").length === 0){return false}
+          if(row.hibrido?.trim() ===""){
+            return {isValid: false,helperText: "No se permite el campo vacío"};} 
           if(row.hibrido?.length > 50){
             return {
               isValid: false,

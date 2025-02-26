@@ -11,6 +11,8 @@ const columns = [
     { title: "Departamento", field: "departamento", editable: 'onAdd',
       validate: (row) =>{
        if((row.departamento || "").length === 0){return false}
+       if(row.departamento?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};} 
        if(row.departamento.length > 50){
         return {
           isValid: false,
