@@ -17,7 +17,7 @@ import {Hibridos } from "../pages/Modulo configuracion/hibridos.jsx"
 import { AsignarLote } from "../pages/Modulo Programa O/asignarLote.jsx";
 import { AsignarLabor } from "../pages/Modulo Programa O/asignarLabor.jsx";
 import { Certificaciones } from "../pages/Modulo configuracion/certificaciones.jsx";
-
+import { AsignarDDT } from "../pages/Modulo Programa O/asignarDTT.jsx";
 
 export const MyRoutes = ({isAuthenticated, usuario}) => {
   return (
@@ -54,6 +54,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <Route index element={<Navigate to="asignar-Lotes" replace />} />
         <Route path="asignar-Lotes" element={<AsignarLote/>}/>
         <Route path="asignar-Labores" element={<AsignarLabor/>} />
+        <Route path="asignar-DDT" element={<AsignarDDT/>} />
       </Route>
 
     </Routes>

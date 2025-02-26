@@ -1,10 +1,9 @@
-import { server } from './global.js';  
 import { Service } from './Service.js'; 
 
 export class DepUsuarioService extends Service{  
     constructor() {  
         super();
-        this.apiUrl = `${server.url}depusuarios/`;  
+        this.apiUrl = `${this.getApiUrl()}depusuarios/`;  
     }  
 
     // Crear una nueva relación de DepUsuario  

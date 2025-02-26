@@ -58,11 +58,11 @@ export function Labores() {
       field: "labor",
       editable: 'onAdd',
       validate: (row) => {
-        if ((row.labor || "").length === 0) { 
+        if ((row.labor || "").length === 0) {
           return {
             isValid: false,
             helperText: "Debe rellenar el campo"
-          } 
+          }
         }
         if (row.labor?.length > 50) {
           return {
@@ -245,6 +245,7 @@ export function Labores() {
                   if (response.success) {
                     console.log("Labor creado exitosamente");
                     setData(prevData => [newDataWithId, ...prevData]);
+                    setDataFiltrada(prevData => [newDataWithId, ...prevData]);
                     showToast('success', 'Labor creada', '#2d800e');
                     resolve(); // Resolvemos la promesa si todo fue bien
                   } else {
@@ -283,7 +284,7 @@ export function Labores() {
               }*/
               updatedData[index] = newDataWithId;
 
-              laboresService.update(oldData.labor, oldData.departamento, newData.descripcion) // Asumiendo que `oldData` tiene un campo `id`
+              laboresService.update(oldData.labor, oldData.departamento, newDataWithId) // Asumiendo que `oldData` tiene un campo `id`
                 .then(response => {
                   console.log(response);
                   if (response.success) {
@@ -316,6 +317,7 @@ export function Labores() {
                       (el) => !(el.labor === oldData.labor && el.departamento === oldData.departamento)
                     );
                     setData(dataDelete);
+                    setDataFiltrada(dataDelete);
                     showToast('success', 'Labor eliminada', '#2d800e');
                     resolve();
                   } else {
