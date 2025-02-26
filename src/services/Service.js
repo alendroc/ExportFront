@@ -6,6 +6,10 @@ export class Service{
         this.apiUrl = server.url;
     }
 
+    getApiUrl(){
+        return this.apiUrl;
+    }
+
     async getAll(url, dataName,dataResponse) {
         try {
             console.log("URL de la petición:", `${this.apiUrl}${url}`);
@@ -144,7 +148,4 @@ export class Service{
             }
         }
     }
-
-
-
 }

@@ -1,11 +1,9 @@
-import { server } from './global.js'; 
-import { Service } from './Service.js'; 
+import { Service } from './Service.js';
 
 export class CertificacionService extends Service{  
     
     constructor() { 
-        super(); 
-        this.apiUrl = server.url; // Asegúrate de que la URL sea correcta  
+        super();
     }  
 
     async getAll(){
@@ -47,7 +45,7 @@ export class CertificacionService extends Service{
     // Obtener certificaciones por ID de producto  
     async getByProductoId(idProducto) {  
         try {  
-            const response = await fetch(`${this.apiUrl}${idProducto}`, {  
+            const response = await fetch(`${this.getApiUrl()}${idProducto}`, {  
                 method: 'GET',  
                 headers: {  
                     'Content-Type': 'application/json'  

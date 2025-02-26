@@ -1,10 +1,8 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class LoteService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
     async getAll(){
         const url="Lotes";
@@ -43,7 +41,7 @@ export class LoteService extends Service{
 
     async getLotesActivos() {
         try {
-            const response = await fetch(`${this.apiUrl}Lotes/activos`, {
+            const response = await fetch(`${this.getApiUrl()}Lotes/activos`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -73,7 +71,7 @@ export class LoteService extends Service{
 
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}Lotes/${id}`, {
+            const response = await fetch(`${this.getApiUrl()}Lotes/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
