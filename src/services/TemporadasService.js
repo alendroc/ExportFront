@@ -1,11 +1,9 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class TemporadasService extends Service{
 
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
 
     async getAll(){
@@ -15,7 +13,7 @@ export class TemporadasService extends Service{
 
     async getTemporadasFechas() {
         try {
-            const response = await fetch(`${this.apiUrl}temporadas/fechas`, {
+            const response = await fetch(`${this.getApiUrl()}temporadas/fechas`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -44,7 +42,7 @@ export class TemporadasService extends Service{
 
     async getActual() {
         try {
-            const response = await fetch(`${this.apiUrl}temporadas/activa`, {
+            const response = await fetch(`${this.getApiUrl()}temporadas/activa`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

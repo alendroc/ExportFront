@@ -1,16 +1,14 @@
-import {server} from './global.js'
 import { Service } from './Service.js'; 
 
 export class UsuarioService extends Service{
 
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
 
     async login(user) {
         try {
-            const respuesta = await fetch(`${this.apiUrl}login`, {
+            const respuesta = await fetch(`${this.getApiUrl()}login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

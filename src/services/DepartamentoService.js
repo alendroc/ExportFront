@@ -1,10 +1,8 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class DepartamentoService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
 
     async getAll(){

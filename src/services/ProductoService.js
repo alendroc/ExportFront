@@ -1,11 +1,9 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class ProductoService extends Service{
     
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
     
     async getAll(){
@@ -46,7 +44,7 @@ export class ProductoService extends Service{
     // Obtener un producto por ID
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}productos/${id}`, {
+            const response = await fetch(`${this.getApiUrl()}productos/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
