@@ -26,7 +26,7 @@ export function AsignarDDT() {
   const [widthNpdy, setWidthNpdy] = useState(700);  
   const [selectedIndex, setSelectedIndex] = useState(null);  
   const [departamentoLabor, setDepartamentoLabor] = useState([]);  
-  const [ddtList, setDdtList] = useState([]);  
+  //const [ddtList, setDdtList] = useState([]);  
   const [isAddEnabled, setIsAddEnabled] = useState(false);  
   const [selectedRow, setSelectedRow] = useState(null); 
   const [ddtValue, setDdtValue] = useState('');
@@ -114,8 +114,6 @@ export function AsignarDDT() {
 }, [selectedRow]);  
 
 
-
-
   const columnsDDT = [  
     {  
       title: 'Ddts',  
@@ -126,8 +124,9 @@ export function AsignarDDT() {
 
   const addDdt = () => {  
     console.log("Añadiendo DDT:", ddtValue);  
-  
+    
     if (selectedRow && ddtValue.trim()) {  
+        
         const newDdt = {  
             Ddt: ddtValue,  
             Temporada: selectedRow.temporada,  
@@ -139,24 +138,24 @@ export function AsignarDDT() {
 
         console.log("Datos a enviar:", JSON.stringify(newDdt, null, 2));  
 
+        // Cambia la forma en que manejas las DDT  
         ddtLaboresService.create(newDdt)  
-            .then(() => {  
-                console.log("DDT agregado correctamente");  
-                setDdtData(prevList => [...prevList, newDdt]);  
+            .then(response => {  
+                console.log("DDT agregado correctamente", response);  
+                const newDdtRow = { ddt: response.ddt || ddtValue };  
+
+                setDdtData(prevData => {  
+                    const updatedData = [newDdtRow, ...prevData];  
+                    console.log("data actualizada", updatedData);  
+                    return updatedData;  
+                });  
                 setDdtValue("");  
                 showToast('success', 'DDT agregado correctamente', '#107c10');  
             })  
             .catch(error => {  
-                if (error.response) {  
-                    console.error("Error en el backend:", error.response.data);  
-                    showToast('error', `Error en el servidor: ${error.response.data.message || "Error desconocido"}`, '#9c1010');  
-                } else {  
-                    console.error("Error en la solicitud:", error.message);  
-                    showToast('error', `Error en la solicitud: ${error.message}`, '#9c1010');  
-                }  
-                //setDdtValue("");  
-            });            
-            
+                console.error("Error al agregar el DDT", error);  
+                showToast('error', 'Error al agregar el DDT', '#d32f2f');   
+            });  
     } else {  
         console.warn("Faltan datos: selectedRow o ddtValue está vacío");  
         showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');  
@@ -164,7 +163,8 @@ export function AsignarDDT() {
 };
 
 
-const updateDdt = (oldDdt, newDdt) => {
+
+const updateDdt = async (oldDdt, newDdt) => {
     const { temporada, siembraNumero, departamento, labor, aliasLabor } = selectedRow;
 
     if (!oldDdt || !newDdt || isNaN(newDdt.ddt)) {
@@ -187,18 +187,22 @@ const updateDdt = (oldDdt, newDdt) => {
 
     console.log("🚀 Enviando actualización a la API con:", { ddtToUpdate, updatedDdt });
 
-    return ddtLaboresService.update(temporada, departamento, siembraNumero, labor.trim(), aliasLabor.trim(), ddtToUpdate, updatedDdt)
-        .then(() => {  
-            setDdtData(prevList => prevList.map(ddt =>  
-                ddt.Ddt === ddtToUpdate ? { ...ddt, Ddt: newDdtValue } : ddt  
-            ));
-            showToast('success', 'DDT actualizado correctamente', '#107c10');
-        })  
-        .catch(error => {  
-            console.error("❌ Error al actualizar DDT:", error.message);
-            showToast('error', `Error al actualizar el DDT: ${error.message}`, '#9c1010');
-            return Promise.reject();
+    try {
+        await ddtLaboresService.update(temporada, departamento, siembraNumero, labor.trim(), aliasLabor.trim(), ddtToUpdate, updatedDdt);
+        setDdtData(prevList => {
+            return prevList.map(ddt => {
+                if (ddt.ddt === ddtToUpdate) {
+                    return { ...ddt, ddt: newDdtValue };
+                }
+                return ddt;
+            });
         });
+        showToast('success', 'DDT actualizado correctamente', '#107c10');
+    } catch (error) {
+        console.error("❌ Error al actualizar DDT:", error.message);
+        showToast('error', `Error al actualizar el DDT: ${error.message}`, '#9c1010');
+        return await Promise.reject();
+    }
 };
 
 
@@ -296,9 +300,9 @@ const deleteDdt = (ddtRow) => {
                     
 
                   <div className="flex gap-2">  
-      {/* Contenedor para las tablas */}  
-      <div style={{ flex: 1 }}> {/* Espacio flexible para la tabla "Asignar DDT a Labores de temporada" */}  
-        <MaterialTable  
+            {/* Contenedor para las tablas */}  
+            <div style={{ flex: 1 }}>  
+                <MaterialTable  
                   onRowClick={(event, rowData) => {
                     setSelectedRow(rowData); 
                     console.log("Fila seleccionada:", rowData); 
@@ -365,6 +369,7 @@ const deleteDdt = (ddtRow) => {
                     <MaterialTable
                         title="Lista de DDTs"
                         data={ddtData}
+                        //key={ddtData.length}
                         columns={columnsDDT}
                         style={{ width: widthNpdy, maxWidth: "200px" }}
                         localization={{
@@ -411,7 +416,7 @@ const deleteDdt = (ddtRow) => {
                         }}
                         actions={[  
                             {  
-                                icon: () => <Delete style={{ fontSize: "18px", color: "gray" }} />,  
+                                icon: () => <Delete style={{ fontSize: "18px", color: "red" }} />,  
                                 tooltip: 'Eliminar DDT',  
                                 onClick: (event, rowData) => deleteDdt(rowData)  
                             }  
