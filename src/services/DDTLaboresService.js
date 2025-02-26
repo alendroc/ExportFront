@@ -91,26 +91,29 @@ export class DDTLaboresService extends Service {
                 headers: { 'Content-Type': 'application/json' },  
                 body: JSON.stringify(ddtLabor)  
             });  
-    
+        
             if (!response.ok) {  
                 const errorData = await response.json(); 
                 throw new Error(errorData.message || `Error al crear el Labor: ${response.statusText}`);  
             }  
-            
+        
             const data = await response.json();  
-            return data.isSuccess && data.status === 201 ? { success: true, ddtLabor: data.DDTLabor } : { success: false, status: data.status };  
-            
-        } catch (error) {  
-            if (error.response) {  
-                console.error("Error en la respuesta del servidor:", error.response.data);  
-            } else if (error.request) {  
-                console.error("No hubo respuesta del servidor:", error.request);  
-            } else {  
-                console.error("Error en la configuración de la solicitud:", error.message);  
+            if (data.isSuccess && data.status === 201) {
+                console.log("DDT agregado correctamente 1:", data.DdtLabor); 
+                console.log("DDT agregado correctamente 2:", data.DDTLabor); 
+                console.log("DDT agregado correctamente 3:", data.ddtLabor); 
+                return { success: true, ddtLabor: data.ddtLabor };
+            } else {
+                console.error("Error al agregar DDT:", data.message);
+                return { success: false, status: data.status };
             }  
+        
+        } catch (error) {  
+            console.error("Error en la solicitud:", error.message);  
             throw new Error(error.message.includes('Failed to fetch') ? 'No se pudo conectar al servidor. Verifica si el backend está corriendo.' : error.message);  
         }  
     }
+    
 
     async update(temporada, departamento, siembraNumero, labor, aliasLabor, ddt, laborData) {  
         try {  
