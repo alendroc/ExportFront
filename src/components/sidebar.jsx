@@ -18,7 +18,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, usuario, setSidebarOpen, 
   const [nombreUsuario, setNombreUsuario] = useState('')
 
 
-  console.log(usuario.rolDeUsuario);
+ 
   useEffect(() => {
     // Recuperar el usuario desde sessionStorage y actualizar el estad
     if (usuario && usuario.usuario) {

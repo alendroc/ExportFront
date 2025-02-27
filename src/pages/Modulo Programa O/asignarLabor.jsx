@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import * as React from 'react';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import { Tooltip} from '@mui/material';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { useState } from "react";
 import ListItemText from '@mui/material/ListItemText';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -13,12 +14,14 @@ import { Utils } from '../../models/Utils';
 import { showToast } from "../../components/helpers";
 import MaterialTable, { MTableToolbar } from "@material-table/core";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
+import {ActionDialog, activacionDialog} from '../../components/copiar'
 
 var laboresService = new LaboresService;
 var laboresTService = new LaboresTService;
 var temporadaService = new TemporadasService;
 
 export function AsignarLabor() {
+  const { open, value, handleClickListItem, handleClose } = activacionDialog();
   const [labores, setLabores] = useState([]);
   const [data, setData] = useState([]);
   const [tempActiva, setTempActiva] = useState([]);
@@ -149,14 +152,14 @@ export function AsignarLabor() {
     { title: 'Aplicar a todo', field: 'aplicarATodo', type: "boolean", },
     {
       title: 'Aplicar a', field: 'aplicarA',
-      /*validate: (rowData) => {
+      validate: (rowData) => {
         if (rowData.aplicarA?.length > 50) {
           return {
             isValid: false,
             helperText: "El límite de la columna es de 50 carácteres"
           };
         }
-      }*/
+      }
     }]
 
   return (
@@ -178,14 +181,30 @@ export function AsignarLabor() {
             height: 'fit-content',
             maxHeight: 300,
             '& ul': { padding: 0 },
+            boxShadow: selectedIndex
+            ? '0px 4px 12px rgba(0, 0, 0, 0.211)' // Sombra fija cuando hay algo seleccionado
+            : '0px 4px 12px rgba(0, 0, 0, 0.336)', // Sombra inicial
+          animation: selectedIndex ? 'none' : 'parpadeo 1.5s infinite',
+          '@keyframes parpadeo': {
+            '0%': { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.211)' },
+            '50%': { boxShadow: '0px 4px 12px rgba(255, 85, 0, 0.4)' }, // Cambia el color o intensidad
+            '100%': { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.211)' },
+          },
           }}
-          className="shadow-lg rounded-lg"
+          className=" rounded-lg"
           subheader={<li />}
         >
           {Object.entries(laboresPorDepartamento).map(([departamento, labores]) => (
             <li key={`section-${departamento}`}>
               <ul>
-                <ListSubheader >{departamento}</ListSubheader>
+                <ListSubheader
+                    sx={{
+                      backgroundColor: '#ea9875', // Color de fondo del subheader
+                      color: 'white', // Color del texto
+                      fontWeight: 'bold',
+                      lineHeight: '2.6',
+                      fontSize: '12px',
+                    }} >{departamento}</ListSubheader>
                 {labores.map((labor, index) => (
                   <ListItemButton key={`item-${departamento}-${index}`}
                     selected={selectedIndex === `${departamento}-${index}`} // Compara con el seleccionado
@@ -236,9 +255,33 @@ export function AsignarLabor() {
                 backgroundColor: '#50ad53',
                 height: '60px',
                 color: 'white',
-
+                display: 'flex',
+                alignItems: 'center',
+                padding: '0 1rem',
               }}>
-                <MTableToolbar style={{ padding: '0' }} {...props}></MTableToolbar>
+                <MTableToolbar className={"w-[95%]"} {...props} />
+                <div className={`${isAddEnabled ? 'block' : 'hidden'}`}>
+                {Utils.getTempActive() && (
+                  <Tooltip title="Copiar" placement="top-start" arrow>
+                    <button 
+                      className="cursor-pointer hover:animate-scale-loop p-2 transition-all duration-300 hover:text-slate-800"
+                      onClick={handleClickListItem}
+                    >
+                      <FileCopyIcon 
+                        style={{ fontSize: '20px' }} 
+                        className="transition-all drop-shadow-md hover:drop-shadow-xl duration-300"
+                      />
+                    </button>
+                  </Tooltip>
+                )}
+          
+                <ActionDialog 
+                  open={open} 
+                  onClose={handleClose} 
+                  value={value} 
+                  data={data} 
+                  service={laboresTService}  
+                /></div>
               </div>
             ),
           }}
@@ -387,23 +430,16 @@ export function AsignarLabor() {
     </Container>);
 }
 const Container = styled.div`
-
   gap: 10px;
  .css-1a1whku-MuiTypography-root{
     font-size: 12px;
     color: black;
     font-family: 'popins', sans-serif;
  }
- .css-l328gy-MuiListSubheader-root{
-  font-size: 12px;
- }
+
  .MuiToolbar-root.MuiToolbar-gutters.MuiToolbar-regular.css-ig9rso-MuiToolbar-root{
     padding-right: 0;
   }
-
-  .ListSubheader{
-    font-size: 12px;
- }
 
  @media (min-width: 700px){
     .MuiTableCell-root {

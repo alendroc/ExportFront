@@ -59,10 +59,10 @@ export class LaboresTService extends Service{
             }
 
             const data = await response.json();
-            console.log("response",data)
+          
 
-            if (data.isSuccess && data.status === 200) {
-                return { success: true, laboresTemporada: data.laboresTemporada };
+            if (data.isSuccess && data.status === 200 || data.status === 204) {
+                return { success: true, laboresTemporada: data.laboresTemporada || []  };
             } else {
                 console.log('LaboresT no encontrado.');
                 return { success: false, status: data.status };
@@ -82,6 +82,13 @@ export class LaboresTService extends Service{
         const dataName="laboresTemporada"
         return super.create(url,LaborT,dataName)
     }
+
+    async copiar(data){
+        const url="LaboresT/CopiarLaboresT"
+        const dataName="laboresTemporada"
+        return super.copiar(url,data,dataName)
+    }
+
        /* async create(LaborT) {
             try {
                 console.log("Labor por agregar:", LaborT)

@@ -266,25 +266,43 @@ const deleteDdt = (ddtRow) => {
                     Temporada: {tempActiva[0]?.temporada ?? "No hay temporada activa"}  
                   </span>  
                 </div>  
-                <div className="flex gap-2">  
-                  <List  
-                    sx={{  
-                      width: '100%',  
-                      maxWidth: 180,  
-                      bgcolor: 'background.paper',  
-                      position: 'relative',  
-                      overflow: 'auto',  
-                      height: 'fit-content',  
-                      maxHeight: 300,  
-                      '& ul': { padding: 0 },  
-                    }}  
-                    className="shadow-lg rounded-lg"  
+            <div className="flex  gap-2">
+              {/*Pareja 1*/}  
+              <div className="">
+              <List  
+                   sx={{
+                    width: '100%',
+                    maxWidth: 180,
+                    bgcolor: 'background.paper',
+                    position: 'relative',
+                    overflow: 'auto',
+                    height: 'fit-content',
+                    maxHeight: 300,
+                    '& ul': { padding: 0 },
+                    boxShadow: selectedIndex
+                    ? '0px 4px 12px rgba(0, 0, 0, 0.211)' // Sombra fija cuando hay algo seleccionado
+                    : '0px 4px 12px rgba(0, 0, 0, 0.336)', // Sombra inicial
+                  animation: selectedIndex ? 'none' : 'parpadeo 1.5s infinite',
+                  '@keyframes parpadeo': {
+                    '0%': { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.211)' },
+                    '50%': { boxShadow: '0px 4px 12px rgba(255, 85, 0, 0.4)' }, // Cambia el color o intensidad
+                    '100%': { boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.211)' },
+                  },
+                  }}
+                    className=" rounded-lg"  
                     subheader={<li />}  
                   >  
                     {Object.entries(laboresPorDepartamento).map(([departamento, labores]) => (  
                       <li key={`section-${departamento}`}>  
                         <ul>  
-                          <ListSubheader>{departamento}</ListSubheader>  
+                          <ListSubheader
+                           sx={{
+                            backgroundColor: '#ea9875', // Color de fondo del subheader
+                            color: 'white', // Color del texto
+                            fontWeight: 'bold',
+                            lineHeight: '2.6',
+                            fontSize: '12px',
+                          }} >{departamento}</ListSubheader>  
                           {labores.map((labor, index) => (  
                             <ListItemButton key={`item-${departamento}-${index}`}  
                               selected={selectedIndex === `${departamento}-${index}`}  
@@ -296,12 +314,10 @@ const deleteDdt = (ddtRow) => {
                         </ul>  
                       </li>  
                     ))}  
-                  </List>  
-                    
-
-                  <div className="flex gap-2">  
-            {/* Contenedor para las tablas */}  
-            <div style={{ flex: 1 }}>  
+              </List>  
+          </div>
+           {/*responsive abajo*/}
+            <div  > 
                 <MaterialTable  
                   onRowClick={(event, rowData) => {
                     setSelectedRow(rowData); 
@@ -356,8 +372,10 @@ const deleteDdt = (ddtRow) => {
                 
                 
                 </MaterialTable>  
-                </div>  
-                <div>  
+            </div>
+
+            {/*PAreja 2*/}
+            <div  >  
                     <h3>Ingrese el DDT:</h3>   
                     <input  
                     type="text"  
@@ -424,8 +442,7 @@ const deleteDdt = (ddtRow) => {
     
 />
 
-        </div> 
-      </div>  
+            </div>  
     </div>  
               </Container>  
             );  

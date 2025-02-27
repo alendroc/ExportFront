@@ -80,7 +80,7 @@ export class LotePOService extends Service{
                 }
             }}
 
-    async getById(id) {
+    /*async getById(id) {
         try {
             const response = await fetch(`${this.getApiUrl()}LotesPO/${id}`, {
                 method: 'GET',
@@ -113,7 +113,7 @@ export class LotePOService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async create(lotePo) {
        const url="LotesPO"
@@ -152,7 +152,7 @@ export class LotePOService extends Service{
         }
     }*/
 
-    async Copiar(lotesPo) {
+    /*async Copiar(lotesPo) {
         try {
             console.log("lotes por agregar:", lotesPo)
             const response = await fetch(`${this.getApiUrl()}LotesPO/CopiarLotesPo`, {
@@ -186,8 +186,12 @@ export class LotePOService extends Service{
                 throw new Error(error.message, error);
             }
         }
+    }*/
+    async copiar(data){
+        const url="LotesPO/CopiarLotesPo"
+        const dataName="LotePO"
+        return super.copiar(url,data,dataName)
     }
-
     async update(temporada, siembraNum, nombreLote, aliasLote, lotePO){
         const url=`LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`;
         const dataName="LotePO"

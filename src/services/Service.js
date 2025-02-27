@@ -152,4 +152,41 @@ export class Service{
             }
         }
     }
+
+    async copiar(url,contenido,dataName) {
+        try {
+            console.log("elemento por copiar:", contenido)
+            const response = await fetch(`${this.apiUrl}${url}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(contenido)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                if(data.innerError.includes("Cannot insert duplicate key"))
+                    throw new Error(`Ya existe un ${dataName} con esos datos, no se puede duplicar.`);
+                
+                throw new Error(`Error al crear la copia: ${data.statusText}`);
+            }
+
+
+            if (data.isSuccess && data.status === 201) {
+                return { success: true,[dataName]: data[dataName] };
+            } else {
+                console.log('Error al crear la copia-.');
+                return { success: false, status: data.status };
+            }
+        } catch (error) {
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }
+        }
+    }
+
 }

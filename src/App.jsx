@@ -26,7 +26,7 @@ function App() {
     } else {
       document.querySelector('html').classList.remove("dark");
     }
-    console.log(theme)
+  
   }, [theme]);
 
   useEffect(() => {

@@ -2,14 +2,12 @@ import styled from "styled-components";
 import MaterialTable,  { MTableToolbar }  from "@material-table/core";
 import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import React, { useState, useEffect, useRef } from "react";
-import PropTypes from 'prop-types';
 import { LoteService } from "../../services/LoteService";
 import { LotePOService } from "../../services/LotesPOService";
 import { TemporadasService } from "../../services/TemporadasService";
 import { showToast } from "../../components/helpers";
 import FileCopyIcon from '@mui/icons-material/FileCopy';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Tooltip,
-   RadioGroup, FormControlLabel, Radio, IconButton } from '@mui/material'
+import { Tooltip} from '@mui/material'
 import {Utils} from '../../models/Utils'
 import {ActionDialog, activacionDialog} from '../../components/copiar'
 var loteService = new LoteService;
@@ -242,7 +240,7 @@ export function AsignarLote() {
               }}
               components={{
                 Toolbar: (props) => (
-                  <div className="custom-toolbar" style={{ backgroundColor: '#f89358', height: '60px', color: 'white', paddingRight: '0' }}>
+                  <div className="custom-toolbar" style={{ backgroundColor: '#ea9875', height: '60px', color: 'white', paddingRight: '0' }}>
                     <MTableToolbar  {...props}  style={{
             padding: '0',
             top: '0' // Elimina el padding del MTableToolbar
@@ -561,11 +559,11 @@ export function AsignarLote() {
                   <FileCopyIcon style={{fontSize: '20px'}} className=" transition-all drop-shadow-md hover:drop-shadow-xl duration-300"/>
                   </button>
                   </Tooltip>
-       )}
+                    )}
             
                   </div>
         
-                  <ActionDialog open={open} onClose={handleClose} value={value} data={dataPo} service={lotePoService}  />
+                  <ActionDialog open={open} onClose={handleClose} value={value} data={dataPo} service={lotePoService || []}  />
                 </div>
               ),
             }}
