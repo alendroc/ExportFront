@@ -50,10 +50,13 @@ export function Certificaciones() {
             field: "nombreCertificacion",  
             editable: 'onAdd', 
             validate: row => {  
-                const nombreCertificacion = row.nombreCertificacion || "";  
+                const nombreCertificacion = row.nombreCertificacion || ""; 
                 if (nombreCertificacion.length === 0) {  
                     return { isValid: false, helperText: "El nombre de la certificación es obligatorio." };  
                 }  
+                if(row.nombreCertificacion?.trim() ===""){
+                    return {isValid: false,helperText: "No se permite el campo vacío"};
+                } 
                 if (nombreCertificacion.length > 50) {  
                     return { isValid: false, helperText: "El nombre de la certificación debe tener un máximo de 50 caracteres." };  
                 }  
@@ -185,6 +188,7 @@ export function Certificaciones() {
                                     }
                                 })
                                 .catch(error => {
+                                    console.log(error)
                                     showToast('error', error, '#9c1010');
                                     reject(`Error de red: ${error.message}`);
                                 });

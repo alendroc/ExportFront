@@ -1,10 +1,8 @@
-import { server } from './global.js';
 import { Service } from './Service.js';
 
 export class LotePOService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
 
     async getAll(){
@@ -49,7 +47,7 @@ export class LotePOService extends Service{
     async getByTemporada(temporada) {
        
             try {
-                const response = await fetch(`${this.apiUrl}LotesPO/${temporada}`, {
+                const response = await fetch(`${this.getApiUrl()}LotesPO/${temporada}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json'
@@ -84,7 +82,7 @@ export class LotePOService extends Service{
 
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}LotesPO/${id}`, {
+            const response = await fetch(`${this.getApiUrl()}LotesPO/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -157,7 +155,7 @@ export class LotePOService extends Service{
     async Copiar(lotesPo) {
         try {
             console.log("lotes por agregar:", lotesPo)
-            const response = await fetch(`${this.apiUrl}LotesPO/CopiarLotesPo`, {
+            const response = await fetch(`${this.getApiUrl()}LotesPO/CopiarLotesPo`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

@@ -9,6 +9,9 @@ var variedadesService = new VariedadesService;
 const columns = [
     { title: "Cultivo", field: "cultivo", editable: 'onAdd',validate: (row) => {
       if((row.cultivo || "").length === 0){return false}
+      if(row.cultivo?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.cultivo?.length > 50){
         return {
           isValid: false,
@@ -19,6 +22,9 @@ const columns = [
 
     { title: "Variedad", field: "variedad",  editable: 'onAdd', validate: (row) => {
       if((row.variedad || "").length === 0){return false}
+      if(row.variedad?.trim() ===""){
+        return {isValid: false,helperText: "No se permite el campo vacío"};
+    } 
       if(row.variedad?.length > 50){
         return {
           isValid: false,

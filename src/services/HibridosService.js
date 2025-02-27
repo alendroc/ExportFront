@@ -1,10 +1,8 @@
-import {server} from './global.js'
 import { Service } from './Service.js'; 
 
 export class HibridosService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
 
     async getAll(){
@@ -43,7 +41,7 @@ export class HibridosService extends Service{
 
     async getById(id) {
         try {
-            const response = await fetch(`${this.apiUrl}hibridos/${id}`, {
+            const response = await fetch(`${this.getApiUrl()}hibridos/${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

@@ -1,10 +1,8 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class LaboresTService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
     async getAll(){
         const url="LaboresT";
@@ -45,7 +43,7 @@ export class LaboresTService extends Service{
     async getByDepartamento(temporada, departamento, labor) {
        
         try {
-            const response = await fetch(`${this.apiUrl}LaboresT/${temporada}/${departamento}/${labor}`, {
+            const response = await fetch(`${this.getApiUrl()}LaboresT/${temporada}/${departamento}/${labor}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'

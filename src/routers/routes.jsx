@@ -33,7 +33,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         userRole={usuario.rolDeUsuario}
         allowedRoles={["ADMIN"]}
       ><Configuracion/></ProtectedRoute>}>
-        <Route index element={<Navigate to="articulos" replace />} />
+        <Route index element={<Navigate to="certificaciones" replace />} />
         <Route path="variedades" element={<Variedades/>}/>
         <Route path="articulos" element={<Articulos/>}/>
         <Route path="certificaciones" element={<Certificaciones/>}/>

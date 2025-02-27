@@ -6,6 +6,10 @@ export class Service{
         this.apiUrl = server.url;
     }
 
+    getApiUrl(){
+        return this.apiUrl;
+    }
+
     async getAll(url, dataName,dataResponse) {
         try {
             console.log("URL de la petición:", `${this.apiUrl}${url}`);
@@ -50,11 +54,15 @@ export class Service{
                 body: JSON.stringify(contenido)
                 
             });
-            console.log("response",response)
+            const data = await response.json();
+            console.log(data)
+
+         
             if (!response.ok) {
+                if(data.innerError.includes("Cannot insert duplicate key in object"))
+                    throw new Error("Ya existe un registro con este ID");
                 throw new Error(`Error al crear el ${dataName}: ${response.statusText}`);
             }
-            const data = await response.json();
 
             if (data.isSuccess && data.status === 201) {
                 return { success: true, [dataName]: data[dataName] };
@@ -144,7 +152,4 @@ export class Service{
             }
         }
     }
-
-
-
 }

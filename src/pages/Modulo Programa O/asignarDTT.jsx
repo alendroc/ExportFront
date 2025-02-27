@@ -11,6 +11,7 @@ import MaterialTable, { MTableToolbar } from "@material-table/core";
 import { Delete, Edit, AddBox } from '@mui/icons-material';  
 import React, { useState, useEffect } from "react";  
 import { DDTLaboresService } from "../../services/DDTLaboresService";
+import { showToast } from "../../components/helpers";
 
 const laboresService = new LaboresService();  
 const laboresTService = new LaboresTService();  
@@ -25,7 +26,7 @@ export function AsignarDDT() {
   const [widthNpdy, setWidthNpdy] = useState(700);  
   const [selectedIndex, setSelectedIndex] = useState(null);  
   const [departamentoLabor, setDepartamentoLabor] = useState([]);  
-  const [ddtList, setDdtList] = useState([]);  
+  //const [ddtList, setDdtList] = useState([]);  
   const [isAddEnabled, setIsAddEnabled] = useState(false);  
   const [selectedRow, setSelectedRow] = useState(null); 
   const [ddtValue, setDdtValue] = useState('');
@@ -81,34 +82,37 @@ export function AsignarDDT() {
   };  
 
   useEffect(() => {  
-    if (selectedRow?.aliasLabor) {  
-        console.log("📡 Fetching DDTs para aliasLabor:", selectedRow.aliasLabor);
+    const { departamento, labor, aliasLabor } = selectedRow || {};
+  
+    if (departamento && labor && aliasLabor) { 
+        console.log("📡 Fetching DDTs para Departamento, Labor y AliasLabor:", selectedRow.departamento, selectedRow.labor, selectedRow.aliasLabor); 
 
-        ddtLaboresService.getByAliasLabor(selectedRow.aliasLabor)  
+        ddtLaboresService.getByDepartamentoLaborAlias(selectedRow.departamento, selectedRow.labor, selectedRow.aliasLabor)  
             .then(response => {  
+                console.log("Respuesta obtenida:", response); 
+
                 if (response?.success && Array.isArray(response.ddtLabores)) {  
                     const ddtRows = response.ddtLabores.map(ddt => ({  
-                        ddt: ddt.ddt,  // Nos aseguramos de mantener el formato correcto
+                        ddt: ddt.ddt,  
                     }));  
 
-                    console.log("✅ DDTs obtenidos:", ddtRows);
+                    console.log("DDTs procesados:", ddtRows);
                     setDdtData(ddtRows);  
                 } else {  
-                    console.error("⚠️ Formato de respuesta inesperado:", response);
-                    setDdtData([]); // Si hay error, limpiamos la tabla
+                    console.error("Formato de respuesta inesperado:", response);
+                    setDdtData([]); 
                 }  
             })  
             .catch(err => {  
-                console.error("❌ Error al obtener DDTs:", err);
-                setDdtData([]); // Si hay error, limpiamos la tabla
+                console.error(" Error al obtener DDTs:", err);
+                setDdtData([]); 
             });  
     } else {  
-        console.warn("⚠️ No hay selectedRow o aliasLabor vacío");
-        setDdtData([]); // Limpiamos la tabla si no hay una fila seleccionada
+        console.warn("No hay selectedRow, departamento, labor o aliasLabor vacío");
+        setDdtData([]); 
     }
-}, [selectedRow?.aliasLabor]);  // 🚀 Dependemos solo de aliasLabor para detectar cambios
+}, [selectedRow]);  
 
-   
 
   const columnsDDT = [  
     {  
@@ -119,81 +123,100 @@ export function AsignarDDT() {
   
 
   const addDdt = () => {  
-    console.log("Adding DDT:", ddtValue); 
-  
+    console.log("Añadiendo DDT:", ddtValue);  
+    
     if (selectedRow && ddtValue.trim()) {  
+        
         const newDdt = {  
             Ddt: ddtValue,  
             Temporada: selectedRow.temporada,  
             SiembraNumero: selectedRow.siembraNumero,  
             Departamento: selectedRow.departamento,  
             Labor: selectedRow.labor,  
-            AliasLabor: selectedRow.aliasLabor,  
-          };  
-      console.log("Datos a enviar:", JSON.stringify(newDdt, null, 2));
+            AliasLabor: selectedRow.aliasLabor || '',  
+        };  
 
-      ddtLaboresService.create(newDdt)  
-        .then(() => {  
-          console.log("DDT agregado correctamente");
-          setDdtData(prevList => [...prevList, newDdt]);
-          setDdtValue(""); 
-        })  
-        .catch(error => {  
-          console.error("Error al agregar DDT:", error);  
-        });  
-    } else {
-      console.warn("Faltan datos: selectedRow o ddtValue está vacío");
-    }
-  };
+        console.log("Datos a enviar:", JSON.stringify(newDdt, null, 2));  
 
-  const updateDdt = (oldDdt, newDdt) => {  
-    const { temporada, siembraNumero, departamento, labor, aliasLabor } = selectedRow; 
+        // Cambia la forma en que manejas las DDT  
+        ddtLaboresService.create(newDdt)  
+            .then(response => {  
+                console.log("DDT agregado correctamente", response);  
+                const newDdtRow = { ddt: response.ddt || ddtValue };  
 
-    if (!oldDdt || !newDdt) {
+                setDdtData(prevData => {  
+                    const updatedData = [newDdtRow, ...prevData];  
+                    console.log("data actualizada", updatedData);  
+                    return updatedData;  
+                });  
+                setDdtValue("");  
+                showToast('success', 'DDT agregado correctamente', '#107c10');  
+            })  
+            .catch(error => {  
+                console.error("Error al agregar el DDT", error);  
+                showToast('error', 'Error al agregar el DDT', '#d32f2f');   
+            });  
+    } else {  
+        console.warn("Faltan datos: selectedRow o ddtValue está vacío");  
+        showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');  
+    }  
+};
+
+
+
+const updateDdt = async (oldDdt, newDdt) => {
+    const { temporada, siembraNumero, departamento, labor, aliasLabor } = selectedRow;
+
+    if (!oldDdt || !newDdt || isNaN(newDdt.ddt)) {
         console.error("❌ Error: oldDdt o newDdt son inválidos.", { oldDdt, newDdt });
-        return;
+        showToast('error', 'Datos inválidos para actualizar el DDT', '#9c1010');
+        return Promise.reject();
     }
-    const ddtToUpdate = parseInt(oldDdt.ddt, 10);  
-    const newDdtValue = parseInt(newDdt.ddt, 10); 
+
+    const ddtToUpdate = parseInt(oldDdt.ddt, 10);
+    const newDdtValue = parseInt(newDdt.ddt, 10);
 
     const updatedDdt = {  
         Temporada: temporada,  
         SiembraNumero: siembraNumero,  
         Departamento: departamento,  
-        Labor: labor,  
-        AliasLabor: aliasLabor,  
+        Labor: labor.trim(),  
+        AliasLabor: aliasLabor.trim(),  
         Ddt: newDdtValue,  
-    };  
+    };
 
-    console.log("🚀 Enviando actualización a la API con:", {
-        temporada,
-        departamento,
-        siembraNumero,
-        labor,
-        aliasLabor,
-        ddtToUpdate,
-        updatedDdt
-    }); 
-    ddtLaboresService.update(temporada, departamento, siembraNumero, labor, aliasLabor, ddtToUpdate, updatedDdt)  
-        .then(() => {  
-            setDdtData(prevList => prevList.map(ddt =>  
-                ddt.ddt === ddtToUpdate ? { ...ddt, ddt: newDdtValue } : ddt  
-            )); 
-        })  
-        .catch(error => {  
-            console.error("❌ Error al actualizar DDT:", error);  
-        });  
+    console.log("🚀 Enviando actualización a la API con:", { ddtToUpdate, updatedDdt });
+
+    try {
+        await ddtLaboresService.update(temporada, departamento, siembraNumero, labor.trim(), aliasLabor.trim(), ddtToUpdate, updatedDdt);
+        setDdtData(prevList => {
+            return prevList.map(ddt => {
+                if (ddt.ddt === ddtToUpdate) {
+                    return { ...ddt, ddt: newDdtValue };
+                }
+                return ddt;
+            });
+        });
+        showToast('success', 'DDT actualizado correctamente', '#107c10');
+    } catch (error) {
+        console.error("❌ Error al actualizar DDT:", error.message);
+        showToast('error', `Error al actualizar el DDT: ${error.message}`, '#9c1010');
+        return await Promise.reject();
+    }
 };
 
-  const deleteDdt = (ddtRow) => {  
+
+
+const deleteDdt = (ddtRow) => {  
     if (!selectedRow || !ddtRow.ddt) {  
         console.error("No se puede eliminar: Datos inválidos.");  
+        showToast('error', 'No se puede eliminar: Datos inválidos', '#9c1010');
         return;  
     }
 
     const { temporada, departamento, siembraNumero, labor, aliasLabor } = selectedRow;
 
-    if (window.confirm("Are you sure you want to delete this DDT?")) {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este DDT?")) {
         ddtLaboresService.delete(temporada, departamento, siembraNumero, labor, aliasLabor, ddtRow.ddt)  
             .then((response) => {  
                 console.log("Respuesta de eliminación:", response);
@@ -201,12 +224,15 @@ export function AsignarDDT() {
                 if (response.success) {  
                     setDdtData(prevList => prevList.filter(item => item.ddt !== ddtRow.ddt));  
                     console.log("DDT eliminado correctamente");
+                    showToast('success', 'DDT eliminado correctamente', '#107c10');
                 } else {  
                     console.warn("No se pudo eliminar el DDT:", response.message);  
+                    showToast('warning', 'No se pudo eliminar el DDT', '#d89b00');
                 }  
             })  
             .catch(error => {  
-                console.error("Error al eliminar DDT:", error);  
+                console.error("Error al eliminar DDT:", error);
+                showToast('error', 'Error al eliminar el DDT', '#9c1010');
             });  
     }
 };
@@ -274,9 +300,9 @@ export function AsignarDDT() {
                     
 
                   <div className="flex gap-2">  
-      {/* Contenedor para las tablas */}  
-      <div style={{ flex: 1 }}> {/* Espacio flexible para la tabla "Asignar DDT a Labores de temporada" */}  
-        <MaterialTable  
+            {/* Contenedor para las tablas */}  
+            <div style={{ flex: 1 }}>  
+                <MaterialTable  
                   onRowClick={(event, rowData) => {
                     setSelectedRow(rowData); 
                     console.log("Fila seleccionada:", rowData); 
@@ -318,7 +344,7 @@ export function AsignarDDT() {
                     }}  
                     localization={{  
                       body: {  
-                        emptyDataSourceMessage: 'Seleccione un DDT e ingrese los datos',  
+                        emptyDataSourceMessage: 'Seleccione una Labor de la lista',  
                       },  
                       toolbar: {  
                         searchTooltip: 'Buscar',  
@@ -332,91 +358,73 @@ export function AsignarDDT() {
                 </MaterialTable>  
                 </div>  
                 <div>  
-        <h3>Ingrese el DDT:</h3>   
-        <input  
-          type="text"  
-          value={ddtValue}  
-          onChange={(e) => setDdtValue(e.target.value)}  
-        />  
-        <button onClick={addDdt} disabled={!selectedRow}>Agregar DDT</button>  
+                    <h3>Ingrese el DDT:</h3>   
+                    <input  
+                    type="text"  
+                    value={ddtValue}  
+                    onChange={(e) => setDdtValue(e.target.value)}  
+                    />  
+                    <button onClick={addDdt} disabled={!selectedRow}>Agregar DDT</button>  
         
-        <MaterialTable  
-          title="Lista de DDTs"
-          data={ddtData}  
-          columns={columnsDDT}   
-            style={{ width: widthNpdy, maxWidth: "200px" }}
-                      icons={{
-                        Add: () => <AddBox style={{ fontSize: "25px", color: "white" }} />, // Cambia el tamaño del ícono de agregar
-                        Edit: () => <Edit style={{ fontSize: "18px" }} />, // Cambia el tamaño del ícono de editar
-                        Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, // Cambia el tamaño y color del ícono de eliminar
-                      }}
-                      localization={{
-                        body: {
-                          emptyDataSourceMessage: 'Seleccione un labor e ingrese los datos', // Mensaje de datos vacíos en la tabla
-                          editRow: {
-                            deleteText: '¿Estás seguro de que deseas eliminar este labor?', // Cambia el mensaje de confirmación
-                            cancelTooltip: 'Cancelar', // Texto del botón de cancelar
-                            saveTooltip: 'Confirmar',  // Texto del botón de confirmar
-                          },
-                          editTooltip: 'Editar',
-                          deleteTooltip: 'Eliminar',
-                          addTooltip: 'Agregar'
-                        },
-                        header: {
-                          actions: 'Acciones' // Cambia el encabezado de la columna de acciones
-                        },
-                        toolbar: {
-                          searchTooltip: 'Buscar',
-                          searchPlaceholder: 'Buscar', // Cambia el texto del placeholder de búsqueda aquí
-                        },
-                      }}
-                      components={{
-                                  Toolbar: (props) => (
-                                    <div style={{
-                                      backgroundColor: '#50ad53',
-                                      height: '2%',
-                                      color: 'white',
-                      
-                                    }}>
-                                      <MTableToolbar style={{ padding: '0' }} {...props}></MTableToolbar>
-                                    </div>
-                                  ),
-                                }}
+                    <MaterialTable
+                        title="Lista de DDTs"
+                        data={ddtData}
+                        //key={ddtData.length}
+                        columns={columnsDDT}
+                        style={{ width: widthNpdy, maxWidth: "200px" }}
+                        localization={{
+                            body: { emptyDataSourceMessage: 'No posee DDTs' },
+                            header: { actions: '' },
+                        }}
+                        components={{
+                            Toolbar: (props) => (
+                                <div style={{
+                                    backgroundColor: '#50ad53',
+                                    height: '2%',
+                                    color: 'white',
+                                }}>
+                                    <MTableToolbar style={{ padding: '0' }} {...props} />
+                                </div>
+                            ),
+                        }}
+                        options={{
+                            actionsColumnIndex: -1,
+                            paging: false,
+                            search: false,
+                            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#f5f5f5' },
+                        }}
+                        cellEditable={{
+                            onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+                                return new Promise((resolve, reject) => {
+                                    if (!newValue) {
+                                        showToast('error', 'El DDT no puede estar vacío', '#9c1010');
+                                        return reject();
+                                    }
+                        
+                                    const updatedDdt = {
+                                        ...rowData,
+                                        ddt: parseInt(newValue, 10)
+                                    };
+                        
+                                    console.log("🚀 Enviando actualización a la API con:", updatedDdt);
+                        
+                                    updateDdt(rowData, updatedDdt)
+                                        .then(() => resolve())
+                                        .catch(() => reject());
+                                });
+                            }
+                        }}
+                        actions={[  
+                            {  
+                                icon: () => <Delete style={{ fontSize: "18px", color: "red" }} />,  
+                                tooltip: 'Eliminar DDT',  
+                                onClick: (event, rowData) => deleteDdt(rowData)  
+                            }  
+                        ]}  
+    
+/>
 
-            editable={{}}
-          actions={[  
-            {  
-              icon: () => <Edit style={{ fontSize: "18px" }} />,  
-              tooltip: 'Editar DDT',  
-              onClick: (event, rowData) => {  
-                const newDdtValue = prompt("Nuevo DDT:", rowData.ddt);
-if (newDdtValue) {  
-    const updatedDdt = {
-        ...rowData,
-        ddt: newDdtValue
-    };
-
-    console.log("Nuevo DDT antes de actualizar:", updatedDdt);
-
-    updateDdt(rowData, updatedDdt);
-}
-
-              },  
-            },  
-            {  
-                icon: () => <Delete style={{ fontSize: "18px", color: "red" }} />,  
-                tooltip: 'Eliminar DDT',  
-                onClick: (event, rowData) => deleteDdt(rowData)  
-            }  
-          ]}  
-          options={{  
-            actionsColumnIndex: -1,  
-            paging: false,  
-            search: false,  
-            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#f5f5f5' },  
-          }}  
-        />  
-      </div> 
+        </div> 
       </div>  
     </div>  
               </Container>  
@@ -425,7 +433,8 @@ if (newDdtValue) {
           
           const Container = styled.div`  
             gap: 10px;  
-            
+            display: flex;
+            flex-wrap: wrap;
             
             .css-1a1whku-MuiTypography-root {  
               font-size: 12px;  

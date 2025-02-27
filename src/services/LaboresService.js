@@ -1,10 +1,8 @@
-import { server } from './global.js';
 import { Service } from './Service.js'; 
 
 export class LaboresService extends Service{
     constructor() {
         super();
-        this.apiUrl = server.url;
     }
     async getAll(){
         const subclase="labores"
@@ -42,7 +40,7 @@ export class LaboresService extends Service{
 
     async getById(labor, departamento) {
         try {
-            const response = await fetch(`${this.apiUrl}labores/${labor}/${departamento}`, {
+            const response = await fetch(`${this.getApiUrl()}labores/${labor}/${departamento}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
@@ -74,6 +72,7 @@ export class LaboresService extends Service{
             }
         }
     }
+    
     async create(labor) {
         const url="labores",
         dataName="labores"
@@ -114,19 +113,20 @@ export class LaboresService extends Service{
 
         //NO PARECE COMPATIBLE
 
-        // async update(id, departamento, descripcion){
-        //     const url=`labores/${id}/${departamento}/${descripcion.toUpperCase()}`;
-        //     const dataName="hibridos"
-        //     return super.update(url,hibridoObj,dataName)
-        // }
-    async update(id, departamento, descripcion) {
+    async update(id, departamento, labor){
+        const url=`labores/${id}/${departamento}`;
+        const dataName="labor"
+        return super.update(url,labor,dataName)
+    }
+    /*async update(id, departamento, labor) {
         try {
             console.log("el labor: ",id)
-            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}/${descripcion.toUpperCase()}`, {
+            const response = await fetch(`${this.apiUrl}labores/${id}/${departamento}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
                 },
+                body: JSON.stringify(labor),
             });
 
             if (!response.ok) {
@@ -148,7 +148,7 @@ export class LaboresService extends Service{
                 throw new Error(error.message, error);
             }
         }
-    }
+    }*/
 
     async delete(id, departamento){
         const url=`labores/${id}/${departamento}`;
