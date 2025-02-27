@@ -154,7 +154,7 @@ export class LotePOService extends Service{
         }
     }*/
 
-    async PegarLote(lotesPo) {
+    async Copiar(lotesPo) {
         try {
             console.log("lotes por agregar:", lotesPo)
             const response = await fetch(`${this.apiUrl}LotesPO/CopiarLotesPo`, {

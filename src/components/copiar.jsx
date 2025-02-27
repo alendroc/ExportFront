@@ -65,7 +65,7 @@ export function ActionDialog({ onClose, value: valueProp, open, data, service, .
       return;
     }
   
-    if (!service || typeof service.PegarLote !== 'function') {
+    if (!service || typeof service.Copiar !== 'function') {
       showToast('error', 'El servicio no está definido correctamente', '#9c1010');
       return;
     }
@@ -73,7 +73,7 @@ export function ActionDialog({ onClose, value: valueProp, open, data, service, .
     const copyData = data.map(lote => ({ ...lote, temporada: value }));
   
     try {
-      const response = await service.PegarLote(copyData);
+      const response = await service.Copiar(copyData);
       if (response.success) {
         showToast('success', `Elementos copiados a la temporada ${value}`, '#2d800e');
       } else {
