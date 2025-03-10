@@ -150,7 +150,7 @@ export function AsignarLote() {
   const handleResize = () => {
     if (window.innerWidth < 1300) {
      setMaxBodyHeight(470);
-     setwidthNpdy(630);
+     setwidthNpdy(700);
     }else if (window.innerWidth < 2000) {
       setMaxBodyHeight(580);
       setwidthNpdy(950); 

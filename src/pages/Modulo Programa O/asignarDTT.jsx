@@ -116,7 +116,7 @@ export function AsignarDDT() {
 
   const columnsDDT = [  
     {  
-      title: 'Ddts',  
+      title: 'DDTS',  
       field: 'ddt',  
     },  
   ];  
@@ -253,7 +253,6 @@ const deleteDdt = (ddtRow) => {
                 title: 'Labor', field: 'labor', initialEditValue: departamentoLabor[1], editable: 'never',    
               },  
               {  
-
                 title: 'Alias Labor', field: 'aliasLabor', editable: 'never',  
               }  
             ];  
@@ -385,7 +384,7 @@ const deleteDdt = (ddtRow) => {
                     <button onClick={addDdt} disabled={!selectedRow}>Agregar DDT</button>  
         
                     <MaterialTable
-                        title="Lista de DDTs"
+                       
                         data={ddtData}
                         //key={ddtData.length}
                         columns={columnsDDT}
@@ -408,8 +407,9 @@ const deleteDdt = (ddtRow) => {
                         options={{
                             actionsColumnIndex: -1,
                             paging: false,
+                            toolbar: false,
                             search: false,
-                            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#f5f5f5' },
+                            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#50ad53', color: 'white' },
                         }}
                         cellEditable={{
                             onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
@@ -438,10 +438,7 @@ const deleteDdt = (ddtRow) => {
                                 tooltip: 'Eliminar DDT',  
                                 onClick: (event, rowData) => deleteDdt(rowData)  
                             }  
-                        ]}  
-    
-/>
-
+                        ]}/>
             </div>  
     </div>  
               </Container>  
