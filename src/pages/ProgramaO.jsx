@@ -1,8 +1,7 @@
 import styled from "styled-components";
 import * as React from 'react';
-import { useEffect } from 'react';
-import { useNavigate, Outlet } from 'react-router-dom';
-export function ProgramaO() {
+import { Outlet } from 'react-router-dom';
+export function  ProgramaO() {
   return (
     <Container className="p-3">
         <Outlet />

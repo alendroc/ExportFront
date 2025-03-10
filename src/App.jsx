@@ -110,11 +110,11 @@ function App() {
       icon: <FaDroplet />,
       to: "/Riego",
       submenu: [
-        { name: "Asignar productos", href: "/riego/asignar-productos" },
-        { name: "Hacer pedidos", href: "/riego/hacer-pedidos" },
-        { name: "Modificar o añadir otros pedidos", href: "/riego/modificar-pedidos" },
-        { name: "Registro de boletas más productos", href: "/riego/registro-boletas-productos" },
-        { name: "Registro de boletas solo agua", href: "/riego/registro-boletas-agua" },
+        { name: "Asignar productos", href: "/Riego/asignar-productos", width: "90px" },
+        { name: "Hacer pedidos", href: "/riego/hacer-pedidos",  width: "70px" },
+        { name: "Modificar o añadir otros pedidos", href: "/riego/modificar-pedidos", width: "130px" },
+        { name: "Registro de boletas más productos", href: "/riego/registro-boletas-productos", width: "150px" },
+        { name: "Registro de boletas solo agua", href: "/riego/registro-boletas-agua", width: "130px" },
       ]
     },
     {

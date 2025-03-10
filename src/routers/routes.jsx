@@ -2,6 +2,8 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import ProtectedRoute from "../routers/ProtectedRoute";
 import { Configuracion } from "../pages/Configuracion";
 import { ProgramaO } from "../pages/ProgramaO.jsx";
+import { Riego } from "../pages/Riego.jsx";
+import { AsignarProducto } from "../pages/Modulo de riego/asignarProductos.jsx";
 import { Navegacion } from "../pages/Navegacion";
 import {NavegacionP} from "../pages/Modulo Navegacion/navegacion1.jsx";
 import { Variedades } from "../pages/Modulo configuracion/variedades.jsx";
@@ -56,7 +58,15 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
         <Route path="asignar-Labores" element={<AsignarLabor/>} />
         <Route path="asignar-DDT" element={<AsignarDDT/>} />
       </Route>
-
+      <Route path="Riego" element={
+        <ProtectedRoute
+        isAuthenticated={isAuthenticated}
+        userRole={usuario.rolDeUsuario}
+        allowedRoles={["ADMIN","GENERAL"]}
+      ><Riego/></ProtectedRoute>}>
+        <Route index element={<Navigate to="asignar-productos" replace />}/>
+        <Route path="asignar-productos" element={<AsignarProducto/>}/>
+      </Route>
     </Routes>
   );
 }
