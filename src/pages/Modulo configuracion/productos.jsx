@@ -45,16 +45,15 @@ export function Productos() {
         ...prev,  
         [idProducto]: response.certificaciones,  
       }));  
-      console.log("Certificaciones obtenidas para", idProducto, response.certificaciones); // Agrega este log  
-    
+      console.log("Certificaciones obtenidas para", idProducto, response.certificaciones);  
     } else {  
-      console.log(`No se encontraron certificaciones para el producto ${idProducto}`);  
-    }  
+        console.error(`Error al obtener certificaciones para el producto ${idProducto}:`, response.message);  
+      }
   } catch (error) {  
     console.error(`Error al obtener certificaciones para el producto ${idProducto}:`, error);  
   }  
 };
-  
+
 useEffect(() => {  
   const uniqueIds = [...new Set(data.map(p => p.idProducto.trim()))].filter(Boolean);  
   if (uniqueIds.length > 0) {  
@@ -190,7 +189,7 @@ const EDITABLE_COLUMNS = [
         columns={EDITABLE_COLUMNS || []}
         data={data}
         options={{
-          actionsColumnIndex: -1,
+          actionsColumnIndex: 0, // Move actions column to the left
           addRowPosition: "first",
           maxBodyHeight: maxBodyHeight, 
           padding: onabort,
@@ -239,7 +238,7 @@ const EDITABLE_COLUMNS = [
                 ...newData,  
                 activo: newData.activo !== undefined ? newData.activo : false,  
                 nombreDescriptivo: newData.nombreDescriptivo.toUpperCase(),  
-                tipoUso: newData.tipoUso.toUpperCase(),  
+                tipoUso: newData.tipoUso?.toUpperCase() ?? null,  
                 nombreComercial: newData.nombreComercial.toUpperCase(),  
                 ingredienteActivo: newData.ingredienteActivo?.toUpperCase() ?? "",  
                 concentracionIactivo: newData.concentracionIactivo?.toUpperCase() ?? "",  
@@ -249,15 +248,18 @@ const EDITABLE_COLUMNS = [
               const requiredFields = [
                 "idProducto", 
                 "nombreDescriptivo",
-                "tipoUso",
                 "nombreComercial",
                 "unidadMedida"
               ];
+
+              console.log("Datos enviados al backend:", newDataWithId);
+
           
               const emptyFields = requiredFields.filter(field => {  
-                const value = newData[field]?.trimStart(); // Elimina espacios en blancos  
-                return !value; // Verifica si es una cadena vacía  
-              });  
+                const value = newData[field];  
+                return typeof value === "string" ? !value.trim() : value === undefined;  
+              });
+              
           
               if (emptyFields.length > 0) {  
                 showToast('error', `Los siguientes campos están vacíos: ${emptyFields.join(", ")}`, '#9c1010');  
@@ -266,7 +268,10 @@ const EDITABLE_COLUMNS = [
               }  
           
 
-              const missingFields = requiredFields.filter(field => !newDataWithId[field] && newDataWithId[field] !== false);
+              const missingFields = requiredFields.filter(field => 
+                newDataWithId[field] === undefined || newDataWithId[field] === null
+              );
+              
               if (missingFields.length > 0) {
                 showToast('error', `Faltan los siguientes campos: ${missingFields.join(", ")}`, '#9c1010');
                 reject(`Faltan los siguientes campos: ${missingFields.join(", ")}`);

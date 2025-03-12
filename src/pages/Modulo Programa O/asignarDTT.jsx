@@ -118,7 +118,8 @@ export function AsignarDDT() {
   const columnsDDT = [  
     {  
       title: 'DDTS',  
-      field: 'ddt',  
+      field: 'ddt', 
+      type: "numeric", 
     },  
   ];  
   

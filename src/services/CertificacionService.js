@@ -13,7 +13,8 @@ export class CertificacionService extends Service{
 
     async getByProductoId(idProducto) {  
         try {  
-            const response = await fetch(`${this.getApiUrl()}${idProducto}`, {  
+            const response = await fetch(`${this.getApiUrl()}certificaciones/${idProducto}`, {  
+
                 method: 'GET',  
                 headers: {  
                     'Content-Type': 'application/json'  
