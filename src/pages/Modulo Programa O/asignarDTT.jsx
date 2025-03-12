@@ -259,7 +259,7 @@ const deleteDdt = (ddtRow) => {
           
             return (  
               <Container>  
-                <div className="group relative w-32 h-12 mb-3 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">  
+                <div className="group relative w-1/6 h-12 mb-3 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">  
                   <div className="absolute inset-0 bg-gradient-to-r from-orange-300 to-lime-300 transition-all duration-500 scale-x-0 origin-left group-hover:scale-x-100"></div>  
                   <span className="absolute inset-0 text-center text-sm flex items-center justify-center text-slate-900 z-10">  
                     Temporada: {tempActiva[0]?.temporada ?? "No hay temporada activa"}  

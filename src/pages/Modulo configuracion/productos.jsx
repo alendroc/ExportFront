@@ -19,7 +19,7 @@ export function Productos() {
     const fetchProductos = async () => {  
       setLoading(true);  
       try {  
-        const response = await productoService.getAll();  
+        const response = await productoService.getAll();
         if (response.success) {  
           setData(response.productos);  
         } else {  
