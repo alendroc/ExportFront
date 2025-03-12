@@ -7,7 +7,7 @@ export class LotePOService extends Service{
 
     async getAll(){
         const url="LotesPo"
-        const dataName ="LotesPO"
+        const dataName ="lotesPO"
         const data="lotesPO"
 
         return super.getAll(url,dataName,data)
