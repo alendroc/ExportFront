@@ -28,7 +28,7 @@ export class Service{
             if (data.isSuccess && data.status === 200) {
                 //console.log('exitooooo.');
                 //console.log("data", data)
-                return { success: true, [dataName]: data[dataResponse] };
+                return { success: true, [dataName]: data[dataResponse]};
             } else {
                 console.log(`No se encontraron ${dataResponse}.`);
                 return { success: false, status: data.status };
@@ -65,7 +65,7 @@ export class Service{
             }
 
             if (data.isSuccess && data.status === 201) {
-                return { success: true, [dataName]: data[dataName] };
+                return { success: true, status: data.status, [dataName]: data[dataName], message: data.message };
             } else {
                 //console.log('Error al crear el ', dataName);
                 return { success: false, status: data.status };
@@ -99,7 +99,7 @@ export class Service{
             const data = await response.json();  
 
             if (data.isSuccess && data.status === 200) {  
-                return { success: true, [dataName]: data[dataName] };  
+                return { success: true, status: data.status, [dataName]: data[dataName], message: data.message };  
             } else {  
                 console.log(`Error al actualizar la ${dataName}.`);  
                 return { success: false, status: data.status };  
@@ -137,7 +137,7 @@ export class Service{
 
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, message: data.message };
+                return { success: true, status: data.status, message: data.message };
             } else {
                 console.log(`Error al eliminar el ${dataName}.`);
                 return { success: false, status: data.status };

@@ -117,7 +117,7 @@ export class LotePOService extends Service{
 
     async create(lotePo) {
        const url="LotesPO"
-       const dataName="LotePO"
+       const dataName="lotePO"
        return super.create(url,lotePo,dataName)
     }
     /*async create(lotePo) {
@@ -194,7 +194,7 @@ export class LotePOService extends Service{
     }
     async update(temporada, siembraNum, nombreLote, aliasLote, lotePO){
         const url=`LotesPO/${temporada}/${siembraNum}/${nombreLote}/${aliasLote}`;
-        const dataName="LotePO"
+        const dataName="lotePO"
         return super.update(url,lotePO,dataName)
     }
     // async update(temporada, siembraNum, nombreLote, aliasLote, lotePO) {
