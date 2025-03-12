@@ -1,10 +1,14 @@
 import styled from "styled-components";
 import Select, { selectClasses } from '@mui/joy/Select';
+import Input from '@mui/joy/Input';
+import Stack from '@mui/joy/Stack';
 import Option from '@mui/joy/Option';
 import { BsCaretDownFill } from "react-icons/bs";
+import { BsCaretRightFill } from "react-icons/bs";
 import MaterialTable,  { MTableToolbar } from "@material-table/core";
 import React, { useState, useEffect } from "react";
 import { Utils } from "../../models/Utils";
+import Button from '@mui/joy/Button';
 import { ProductoService } from "../../services/ProductoService";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 
@@ -20,9 +24,10 @@ export function AsignarProducto() {
     const [selectedSiembra, setSelectedSiembra] = useState([]);
     const [desactivarSiembra, setDesactivarSiembra] = useState(true);
 
+    const inputRef = React.useRef(null);
       const columns = [
-         { title: 'DDTS', field: 'ddt', cellStyle: {fontSize: '12px' } },
-         { title: 'N° Siembra', field: 'siembraNumero'},
+         { title: 'DDTS', field: 'ddt', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' } },
+         { title: 'N° Siembra', field: 'siembraNumero', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px'  }},
     ]
 
     useEffect(() => {
@@ -63,8 +68,8 @@ console.log("disparador")
     );
     return (
         <Container>
-            <div className="w-min">
-            <div className="flex justify-between bg-white  p-2 rounded-md gap-11 text-sm shadow-sm mb-3">
+            <div style={{width: "25rem", maxWidth: "600px"}}>
+            <div className="flex justify-between bg-white  p-2 rounded-md gap-7 text-xs shadow-sm mb-3">
               <h3>
                 <p>Temporada:</p>
                 <p>{sessionStorage.getItem("temporadaActiva") ?? "No hay temporada activa"}</p></h3>
@@ -73,7 +78,7 @@ console.log("disparador")
                 <p>RIEGO Y DRENAJE</p>
               </h3>
             </div>
-            <div className="flex  rounded-sm gap-11 text-sm mb-3">
+            <div className="flex  rounded-sm gap-7 text-sm mb-3">
       
       <Select
       placeholder="Seleccione un labor"
@@ -81,7 +86,7 @@ console.log("disparador")
       value={selectedLabor}
       onChange={(event, newValue) => setSelectedLabor(newValue)}
       sx={{
-        
+        fontSize: '14px',
         [`& .${selectClasses.indicator}`]: {
           transition: '0.2s',
           [`&.${selectClasses.expanded}`]: {
@@ -104,9 +109,10 @@ console.log("disparador")
       value={selectedSiembra}
       onChange={(event, newValue) => setSelectedSiembra(newValue)}
       disabled={desactivarSiembra}
+      variant={desactivarSiembra ? "solid" : "outlined"}
       sx={{
        width: '8rem',
-       
+       fontSize: '14px',
         [`& .${selectClasses.indicator}`]: {
           transition: '0.2s',
           [`&.${selectClasses.expanded}`]: {
@@ -124,11 +130,13 @@ console.log("disparador")
        <MaterialTable
      data={data || []}
      columns={columns}
-     style={{ width: '' }}
+     style={{ 
+      }}
      options={{
         // rowStyle: rowData => ({
         //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
         //   }),
+        maxBodyHeight: '12rem',
         actionsColumnIndex: -1,
         paging: false,
         toolbar: false,
@@ -136,6 +144,7 @@ console.log("disparador")
         headerStyle: { position: 'sticky', top: 0,fontSize: '12px', backgroundColor: '#408730', color: 'white' },
     }}/>
     </div>
+    <section>
     <MaterialTable
      data={dataProductos || []}
      title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
@@ -146,19 +155,50 @@ console.log("disparador")
         // rowStyle: rowData => ({
         //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
         //   }),
+        maxBodyHeight: '12rem',
         actionsColumnIndex: -1,
         paging: false,
         toolbar: true,
-        search: false,
-        headerStyle: { position: 'sticky', top: 0, fontSize: '12px'},
-      
+        search: true,
+        headerStyle: { position: 'sticky', top: 0, fontSize: '12px', backgroundColor: '#ffffff'},
+        cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' }
     }}
     style={{ width: "25rem", maxWidth: "600px" }}
     components={{
         Toolbar:CustomToolbar,
     }}/>
+    </section>
+    <div className="flex gap-3 bg-white p-2 rounded-md w-min shadow-sm items-end">
+  {['Horas Agua', 'Horas Inyeccion', 'Horas Lavado'].map((label, index) => (
+    <div key={index} className="flex flex-col items-start">
+      <label htmlFor={`input-${index}`} className="text-[12px] font-medium mb-1">
+        {label}
+      </label>
+      <Input
+        id={`input-${index}`}
+        type="number"
+        defaultValue={0}
+        sx={{
+          fontSize: '14px',
+          width: 120,
+          height: 12,
+        }}
+        slotProps={{
+          input: {
+            ref: inputRef,
+            min: 0,
+            step: 0.5,
+          },
+        }}
+      />
+    </div>
+  ))}
+   <Button endDecorator={<BsCaretRightFill/>} color="success"
+   sx={{fontSize: '12px', padding: '20px 10px', height: '2rem'}}>
+        Asignar Producto
+      </Button>
+</div>
     </Container>
-    
     );
  }
  const Container = styled.div`
