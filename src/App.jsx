@@ -232,7 +232,7 @@ function navbar(location,arreglos){
           </div>
         )}
          <div>
-            <MyRoutes  
+            <MyRoutes
             isAuthenticated={isAuthenticated} 
             usuario={usuario}/>
         </div>

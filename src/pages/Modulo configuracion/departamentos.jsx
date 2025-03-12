@@ -227,8 +227,7 @@ export function Departamento(){
                     } else {
                         reject('No se pudo eliminar el departamento.');
                     }
-                })
-                .catch(error => {
+                }).catch(error => {
                   showToast('error', error,'#9c1010'); 
                   reject(`Error al eliminar: ${error.message}`);
                 });

@@ -24,25 +24,25 @@ export const activacionDialog = () => {
 
   return {
     open,
-    value,
     handleClickListItem,
     handleClose,
   };
 };
 
 
-export function ActionDialog({ onClose, value: valueProp, open, data, service, ...other }) {
-  const [value, setValue] = useState(valueProp);
+export function ActionDialog({ onClose, open, data, service, ...other }) {
+  const [value, setValue] = useState(null);
   const radioGroupRef = useRef(null);
   const [temporadasOpciones, setTemporadasOpciones] = useState(['']);
 
   useEffect(() => {
+   
     if (open) {
       setValue('');
     }
     Utils.fetchData(temporadaService.getTemporadasFechas(), setTemporadasOpciones, 'temporadas');
    
-  }, [valueProp, open]);
+  }, [ open]);
 
   const handleEntering = () => {
     if (radioGroupRef.current != null) {
@@ -107,11 +107,11 @@ export function ActionDialog({ onClose, value: valueProp, open, data, service, .
           onChange={handleChange}
         >
           {temporadasOpciones
-            .filter(option => option.temporada !== Utils.getTempActive() ?? 'No hay temporada activa')
-            .map(option => (
+            .filter(option => option.temporada !== Utils.getTempActive() && option.temporada|| 'No hay temporada activa')
+            .map((option, index)=> (
               <FormControlLabel
                 value={option.temporada}
-                key={option.temporada}
+                key={`${option.temporada}-${index}`}
                 control={<Radio />}
                 label={option.temporada}
               />
@@ -127,13 +127,5 @@ export function ActionDialog({ onClose, value: valueProp, open, data, service, .
     </Dialog>
   );
 }
-
-ActionDialog.propTypes = {
-  onClose: PropTypes.func.isRequired,
-  open: PropTypes.bool.isRequired,
-  value: PropTypes.string.isRequired,
-  data: PropTypes.any.isRequired,
-  Service: PropTypes.any.isRequired,
-};
 
 export default ActionDialog;

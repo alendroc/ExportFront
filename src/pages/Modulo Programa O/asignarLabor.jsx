@@ -21,7 +21,7 @@ var laboresTService = new LaboresTService;
 var temporadaService = new TemporadasService;
 
 export function AsignarLabor() {
-  const { open, value, handleClickListItem, handleClose } = activacionDialog();
+  const { open, handleClickListItem, handleClose } = activacionDialog();
   const [labores, setLabores] = useState([]);
   const [data, setData] = useState([]);
   const [tempActiva, setTempActiva] = useState([]);
@@ -164,9 +164,9 @@ export function AsignarLabor() {
 
   return (
     <Container>
-      <div className="group relative w-32 h-12 mb-3 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">
+      <div className="group relative h-12 mb-3 w-1/6 p-2 bg-slate-300 rounded-md overflow-hidden shadow-sm">
         <div className="absolute inset-0 bg-gradient-to-r from-orange-300 to-lime-300 transition-all duration-500 scale-x-0 origin-left group-hover:scale-x-100"></div>
-        <span className="absolute inset-0 text-center text-sm flex items-center justify-center text-slate-900 z-10">
+        <span className="absolute inset-0 text-center text-sm flex items-center justify-center text-slate-900">
           Temporada: {tempActiva[0]?.temporada ?? "No hay temporada activa"}
         </span>
       </div>
@@ -278,7 +278,6 @@ export function AsignarLabor() {
                 <ActionDialog 
                   open={open} 
                   onClose={handleClose} 
-                  value={value} 
                   data={data} 
                   service={laboresTService}  
                 /></div>
@@ -402,6 +401,7 @@ export function AsignarLabor() {
               },
               onRowDelete: (oldData) => {
                 return new Promise((resolve, reject) => {
+                  try{
                   laboresTService.delete(oldData.temporada, oldData.departamento, oldData.labor, oldData.siembraNumero, oldData.aliasLabor)
                   .then(response => {
                     if (response.success) {
@@ -417,10 +417,16 @@ export function AsignarLabor() {
                      reject('No se pudo eliminar el labor.');
                      }
                   }).catch(error => {
-                    reject(`Error al eliminar: ${error.message}`);
+                    const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+                    showToast('error', `Error al eliminar: ${errorMessage}`, '#9c1010');
+                    reject(errorMessage);
                 });
-                })
-               }
+              }catch(error){
+                 showToast('error', error, '#9c1010')
+                resolve()
+              }
+            });
+           }
           }}>
 
         </MaterialTable>
