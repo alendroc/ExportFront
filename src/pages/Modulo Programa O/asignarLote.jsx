@@ -199,6 +199,10 @@ export function AsignarLote() {
               columns={columnLote || []}
               options={{ 
                 selection: true,
+                rowStyle: rowData => ({
+                  backgroundColor: (selectedRow?.nombreLote === rowData.nombreLote) ? '#ea98752e' : '#FFF'
+                }),
+
                 selectionProps: (rowData) => ({
                   onChange: () => {
                     if(activarSelectRow){
@@ -210,7 +214,10 @@ export function AsignarLote() {
                     }
                     
                   },
-                  checked: selectedRow?.nombreLote === rowData.nombreLote ? true : false
+                  checked: selectedRow?.nombreLote === rowData.nombreLote ? true : false,
+                  style: {
+                    color: '#ea9875' // Cambia el color del checkbox aquí
+                  }
                 }),
                 showSelectAllCheckbox: false,
                 showTextRowsSelected: false,

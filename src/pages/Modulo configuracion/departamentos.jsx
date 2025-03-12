@@ -83,7 +83,7 @@ export function Departamento(){
   return(
 <Container >
   <MaterialTable size="small"
-       title="Gestión de departamentos"
+      title="Gestión de departamentos"
       data={data}
       columns={columns || []}
       options={{
