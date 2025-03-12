@@ -10,61 +10,25 @@ export class ProductoService extends Service{
         const subclase="productos";
         return super.getAll(subclase,subclase,subclase)
     }
-    // Obtener lista de productos
-    // async getAll() {
-    //     try {
-    //         const response = await fetch(`${this.apiUrl}productos`, {
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
 
-    //         if (!response.ok) {
-    //             throw new Error(`Error al obtener los productos: ${response.statusText}`);
-    //         }
-
-    //         const data = await response.json();
-
-    //         if (data.isSuccess && data.status === 200) {
-    //             return { success: true, productos: data.productos };
-    //         } else {
-    //             console.log('No se encontraron productos.');
-    //             return { success: false, status: data.status };
-    //         }
-    //     } catch (error) {
-    //         if (error.message.includes('Failed to fetch')) {
-    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-    //         } else {
-    //             throw new Error(error.message, error);
-    //         }
-    //     }
-    // }
-
-    // Obtener un producto por ID
-    async getById(id) {
+    async getIdNameType() {
         try {
-            const response = await fetch(`${this.getApiUrl()}productos/${id}`, {
+            const response = await fetch(`${super.getApiUrl()}productos/asignar/para/ddt`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
-            if (response.status === 404) {
-                throw new Error('Producto no encontrado.');
-            }
-
             if (!response.ok) {
-                throw new Error(`Error al obtener el producto: ${response.statusText}`);
+                throw new Error(`Error al obtener los productos: ${response.statusText}`);
             }
 
             const data = await response.json();
 
             if (data.isSuccess && data.status === 200) {
-                return { success: true, producto: data.producto };
+                return { success: true, productos: data.productos };
             } else {
-                console.log('Producto no encontrado.');
                 return { success: false, status: data.status };
             }
         } catch (error) {
@@ -76,71 +40,22 @@ export class ProductoService extends Service{
         }
     }
 
-    async create(producto){
-        const url="productos";
-        const dataName="producto";
-        return super.create(url,producto,dataName)
-    }
-
-   /*async create(producto) {
-        try {
-            console.log("URL de la API:", `${this.apiUrl}productos`);
-            console.log("Producto a crear:", producto); // Imprime el producto que estás enviando
-    
-            const response = await fetch(`${this.apiUrl}productos`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(producto)
-            });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                console.error("Datos de error:", errorData); // Muestra los datos del error
-                throw new Error(`Error al crear el producto: ${errorData.message || response.statusText}`);
-            }
-    
-            const data = await response.json();
-            console.log("Datos de respuesta:", data); // Imprime la respuesta del servidor
-    
-            // Verifica la estructura de la respuesta
-            if (data.isSuccess && data.status === 201) {
-                return { success: true, producto: data.producto };
-            } else {
-                console.log('Error al crear el producto.');
-                return { success: false, status: data.status || 400 };
-            }
-        } catch (error) {
-            console.error("Error en el método create:", error);
-            if (error.message.includes('Failed to fetch')) {
-                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-            } else {
-                throw new Error(error.message);
-            }
-        }
-    }
-    */
-    
-
-    // Actualizar un producto por ID
-    async update(id, producto){
-        const url=`productos/${id}`;
-        const dataName="producto"
-        return super.update(url,producto,dataName)
-    }
-    // async update(id, producto) {
+    // Obtener un producto por ID
+    // async getById(id) {
     //     try {
-    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
-    //             method: 'PUT',
+    //         const response = await fetch(`${this.getApiUrl()}productos/${id}`, {
+    //             method: 'GET',
     //             headers: {
     //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(producto)
+    //             }
     //         });
 
+    //         if (response.status === 404) {
+    //             throw new Error('Producto no encontrado.');
+    //         }
+
     //         if (!response.ok) {
-    //             throw new Error(`Error al actualizar el producto: ${response.statusText}`);
+    //             throw new Error(`Error al obtener el producto: ${response.statusText}`);
     //         }
 
     //         const data = await response.json();
@@ -148,7 +63,7 @@ export class ProductoService extends Service{
     //         if (data.isSuccess && data.status === 200) {
     //             return { success: true, producto: data.producto };
     //         } else {
-    //             console.log('Error al actualizar el producto.');
+    //             console.log('Producto no encontrado.');
     //             return { success: false, status: data.status };
     //         }
     //     } catch (error) {
@@ -160,48 +75,22 @@ export class ProductoService extends Service{
     //     }
     // }
 
+    async create(producto){
+        const url="productos";
+        const dataName="producto";
+        return super.create(url,producto,dataName)
+    }
+
+    async update(id, producto){
+        const url=`productos/${id}`;
+        const dataName="producto"
+        return super.update(url,producto,dataName)
+    }
+
     async delete(id){
         const url=`productos/${id}`;
         const dataName="Producto"
         return super.delete(url,dataName)
     }
-    // async delete(id) {
-    //     if (!id) {
-    //         throw new Error('ID del producto no proporcionado.');
-    //     }
-    
-    //     try {
-    //         const response = await fetch(`${this.apiUrl}productos/${id}`, {
-    //             method: 'DELETE',
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             }
-    //         });
-    
-    //         if (response.status === 404) {
-    //             throw new Error('Producto no encontrado.');
-    //         }
-    
-    //         if (!response.ok) {
-    //             const errorData = await response.json();
-    //             throw new Error(`Error al eliminar el producto: ${errorData.message || response.statusText}`);
-    //         }
-    
-    //         const data = await response.json();
-    
-    //         if (data.isSuccess && data.status === 200) {
-    //             return { success: true, message: data.message };
-    //         } else {
-    //             console.log('Error al eliminar el producto.');
-    //             return { success: false, status: data.status };
-    //         }
-    //     } catch (error) {
-    //         if (error.message.includes('Failed to fetch')) {
-    //             throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
-    //         } else {
-    //             throw new Error(error.message);
-    //         }
-    //     }
-    // }
-    
+   
 }
