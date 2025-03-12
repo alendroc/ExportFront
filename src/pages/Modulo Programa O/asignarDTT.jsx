@@ -26,7 +26,6 @@ export function AsignarDDT() {
   const [widthNpdy, setWidthNpdy] = useState(700);  
   const [selectedIndex, setSelectedIndex] = useState(null);  
   const [departamentoLabor, setDepartamentoLabor] = useState([]);  
-  //const [ddtList, setDdtList] = useState([]);  
   const [isAddEnabled, setIsAddEnabled] = useState(false);  
   const [selectedRow, setSelectedRow] = useState(null); 
   const [ddtValue, setDdtValue] = useState('');
@@ -79,6 +78,8 @@ export function AsignarDDT() {
     setSelectedIndex(`${departamento}-${index}`);  
     setDepartamentoLabor([departamento, labor]);  
     setIsAddEnabled(true);  
+    setDdtData([]); // Reset DDT data when a new labor is selected
+    setSelectedRow(null); // Reset selected row when a new labor is selected
   };  
 
   useEffect(() => {  
@@ -320,6 +321,7 @@ const deleteDdt = (ddtRow) => {
                 <MaterialTable  
                   onRowClick={(event, rowData) => {
                     setSelectedRow(rowData); 
+                    setDdtData([]); // Reset DDT data when a new labor is selected
                     console.log("Fila seleccionada:", rowData); 
                   }}
                     size="small"  
@@ -343,7 +345,10 @@ const deleteDdt = (ddtRow) => {
                         fontSize: "14px",  
                         width: "120px",  
                         padding: "0",  
-                      },  
+                      },
+                      rowStyle: rowData => ({
+                        backgroundColor: (selectedRow && selectedRow.tableData.id === rowData.tableData.id) ? '#EDF4FB' : '#FFF'
+                      })
                     }}  
                     style={{ width: widthNpdy, maxWidth: "1000px" }}
                     components={{  
@@ -374,17 +379,36 @@ const deleteDdt = (ddtRow) => {
             </div>
 
             {/*PAreja 2*/}
-            <div  >  
+            <div>  
                     <h3>Ingrese el DDT:</h3>   
-                    <input  
-                    type="text"  
-                    value={ddtValue}  
-                    onChange={(e) => setDdtValue(e.target.value)}  
-                    />  
-                    <button onClick={addDdt} disabled={!selectedRow}>Agregar DDT</button>  
-        
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <input  
+                            type="text"  
+                            value={ddtValue}  
+                            onChange={(e) => setDdtValue(e.target.value)}  
+                            onFocus={() => {
+                                if (!selectedRow) {
+                                    showToast('warning', 'Debe seleccionar una labor antes de ingresar un DDT', '#d89b00');
+                                }
+                            }}  
+                            
+                        />  
+                        <button 
+                            onClick={addDdt} 
+                            disabled={!selectedRow}
+                            style={{
+                                backgroundColor: selectedRow ? '#50ad53' : '#d3d3d3',
+                                color: 'white',
+                                border: 'none',
+                                padding: '10px 20px',
+                                borderRadius: '5px',
+                                cursor: selectedRow ? 'pointer' : 'not-allowed'
+                            }}
+                        >
+                            Agregar
+                        </button>  
+                    </div>
                     <MaterialTable
-                       
                         data={ddtData}
                         //key={ddtData.length}
                         columns={columnsDDT}
