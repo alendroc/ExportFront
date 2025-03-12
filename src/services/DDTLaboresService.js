@@ -55,6 +55,32 @@ export class DDTLaboresService extends Service {
             throw new Error(error.message.includes('Failed to fetch') ? 'No se pudo conectar al servidor. Verifica si el backend está corriendo.' : error.message);
         }
     }
+
+
+    async getByTemporadaLaborDepartRiego(temporada,labor) {
+        try {
+            const response = await fetch(`${super.getApiUrl()}DDTLabores/${temporada}/${labor}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if (!response.ok) {
+                throw new Error(`Error al obtener el registro: ${response.statusText}`);
+            }
+ 
+            const data = await response.json();
+    
+            if (data.isSuccess && data.status === 200) {
+                return { success: true, ddtLabores: data.ddtLabores };
+            } else {
+                return { success: false, status: data.status };
+            }
+        } catch (error) {
+            if (error.message.includes('Failed to fetch')) {
+                throw new Error('No se pudo conectar al servidor. Verifica si el backend está corriendo.');
+            } else {
+                throw new Error(error.message, error);
+            }}
+    }
     
 
     async getByDepartamentoLaborAlias(departamento, labor, aliasLabor) {  
