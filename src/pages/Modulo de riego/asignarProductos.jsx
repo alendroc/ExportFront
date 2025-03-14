@@ -18,7 +18,9 @@ var ddtLaboresService= new DDTLaboresService();
 export function AsignarProducto() {
     const [data, setData] = useState([]);
     const [dataCopy, setDataCopy] = useState([]);
+    const [maxBodyHeight, setMaxBodyHeight] = useState(300);
     const [dataProductos, setDataProductos] = useState([]);
+    const [dataProductosAsignados, setDataProductosAsignados] = useState([]);
     const [labores, setLabores] = useState([]);
     const [selectedLabor, setSelectedLabor] = useState([]);
     const [selectedSiembra, setSelectedSiembra] = useState([]);
@@ -60,25 +62,45 @@ console.log("disparador")
         }
       }, [selectedSiembra]);
 
+      const getFontSize = () => {
+        if (window.devicePixelRatio >= 2) {
+          return '10px';
+        }
+        return '13px';
+      };
 
+      const handleResize = () => {
+        if (window.innerWidth < 1300) {
+          setMaxBodyHeight(470);
+          
+        } else if (window.innerWidth < 2000) {
+          setMaxBodyHeight(580);
+        
+        } else {
+          setMaxBodyHeight(480);
+        
+        }
+      };
     const CustomToolbar = (props) => (
         <div style={{ backgroundColor: '#408730', padding: '0' }}>
             <MTableToolbar style={{padding:'0', height: '20px'}} {...props} />
         </div>
     );
     return (
-        <Container>
-            <div style={{width: "25rem", maxWidth: "600px"}}>
-            <div className="flex justify-between bg-white  p-2 rounded-md gap-7 text-xs shadow-sm mb-3">
-              <h3>
-                <p>Temporada:</p>
-                <p>{sessionStorage.getItem("temporadaActiva") ?? "No hay temporada activa"}</p></h3>
-              <h3>
-                <p>Departamento:</p>
-                <p>RIEGO Y DRENAJE</p>
-              </h3>
-            </div>
-            <div className="flex  rounded-sm gap-7 text-sm mb-3">
+   <Container>
+  <div >
+  <div className="mb-3">
+    <div style={{width: "25rem", maxWidth: "600px"}}>
+    <div className="flex justify-between bg-white  p-2 rounded-md gap-7 text-xs shadow-sm mb-3">
+      <h3>
+        <p>Temporada:</p>
+        <p>{sessionStorage.getItem("temporadaActiva") ?? "No hay temporada activa"}</p></h3>
+      <h3>
+        <p>Departamento:</p>
+        <p>RIEGO Y DRENAJE</p>
+      </h3>
+    </div>
+    <div className="flex  rounded-sm gap-7 text-sm mb-3">
       
       <Select
       placeholder="Seleccione un labor"
@@ -126,8 +148,8 @@ console.log("disparador")
       <Option value="2">Segunda</Option>
 
     </Select>
-       </div>
-       <MaterialTable
+    </div>
+    <MaterialTable
      data={data || []}
      columns={columns}
      style={{ 
@@ -141,10 +163,13 @@ console.log("disparador")
         paging: false,
         toolbar: false,
         search: false,
-        headerStyle: { position: 'sticky', top: 0,fontSize: '12px', backgroundColor: '#408730', color: 'white' },
+        cellStyle: {fontSize: getFontSize(), padding: '4px 0 4px 9px' },
+        headerStyle: { position: 'sticky', top: 0,fontSize: getFontSize(), backgroundColor: '#408730', color: 'white' },
     }}/>
     </div>
-    <section>
+   
+  </div >
+    <section  className="mb-3">
     <MaterialTable
      data={dataProductos || []}
      title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
@@ -155,13 +180,13 @@ console.log("disparador")
         // rowStyle: rowData => ({
         //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
         //   }),
-        maxBodyHeight: '12rem',
+        maxBodyHeight: maxBodyHeight,
         actionsColumnIndex: -1,
         paging: false,
         toolbar: true,
         search: true,
-        headerStyle: { position: 'sticky', top: 0, fontSize: '12px', backgroundColor: '#ffffff'},
-        cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' }
+        headerStyle: { position: 'sticky', top: 0, fontSize: getFontSize(), backgroundColor: '#ffffff'},
+        cellStyle: {fontSize: getFontSize(), padding: '4px 0 4px 9px' }
     }}
     style={{ width: "25rem", maxWidth: "600px" }}
     components={{
@@ -171,7 +196,7 @@ console.log("disparador")
     <div className="flex gap-3 bg-white p-2 rounded-md w-min shadow-sm items-end">
   {['Horas Agua', 'Horas Inyeccion', 'Horas Lavado'].map((label, index) => (
     <div key={index} className="flex flex-col items-start">
-      <label htmlFor={`input-${index}`} className="text-[12px] font-medium mb-1">
+      <label htmlFor={`input-${index}`} className="text-[11px] font-medium mb-1">
         {label}
       </label>
       <Input
@@ -180,7 +205,7 @@ console.log("disparador")
         defaultValue={0}
         sx={{
           fontSize: '14px',
-          width: 120,
+          width: 90,
           height: 12,
         }}
         slotProps={{
@@ -198,12 +223,46 @@ console.log("disparador")
         Asignar Producto
       </Button>
 </div>
+</div>
+<div>
+    <MaterialTable
+     data={dataProductosAsignados || []}
+     title={<div style={{ fontSize: '12px', color: 'white' }}> Productos asignados</div>}
+     columns={[{title: 'Nombre del producto', field: 'NombreDescriptivo', headerStyle: {width:"30%"}},
+     {title: 'Dosis/Ha', field: 'DosisHa', },
+     {title: 'Horas Agua', field: 'HorasAgua' },
+     {title: 'Horas Inyeccion', field: 'HorasInyeccion' },
+     {title: 'Horas Lavado', field: 'HorasLavado' }]}
+     options={{
+        // rowStyle: rowData => ({
+        //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
+        //   }),
+        maxBodyHeight: maxBodyHeight,
+        actionsColumnIndex: -1,
+        paging: false,
+        toolbar: true,
+        search: true,
+        headerStyle: {
+          position: 'sticky',
+          padding: '0 0 0 5px',
+          top: 0,
+          fontSize: getFontSize(),
+          backgroundColor: '#ffffff',
+        },
+        cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' }
+    }}
+  
+    components={{
+        Toolbar:CustomToolbar,
+    }}/>
+    </div>
     </Container>
+    
     );
  }
  const Container = styled.div`
  display: flex;
- flex-direction: column;
+
  gap: 20px;
  .css-ig9rso-MuiToolbar-root{
     padding: 10px;

@@ -30,6 +30,28 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollX > 0) {
+        setIsActive(false);
+      }
+    };
+  
+    const handleZoom = () => {
+      if (window.devicePixelRatio >= 1.75) {
+        setIsActive(false);
+      }
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleZoom);
+  
+    // Cleanup event listeners on component unmount
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleZoom);
+    };
+  }, [setIsActive]);
+  useEffect(() => {
    if(!Utils.getTempActive()){
      Utils.fetchData(temporadaService.getActual(), null, "temporadaActual")
             .then(temp => {

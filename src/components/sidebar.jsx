@@ -26,6 +26,7 @@ export function Sidebar({theme, setTheme, sidebarOpen, usuario, setSidebarOpen, 
     }
 }, []);
 
+
 /*mensajes*/
 const [passwordActual, setPasswordActual] = useState('');
 const [nuevaPassword, setNuevaPassword] = useState('');
@@ -71,9 +72,12 @@ const cambiarContraseña = (e) => {
       console.log(`Error de red: ${error.message}`);
   });
 };
-  const CambiarSidebar = () => {
+const CambiarSidebar = () => {
+  if (window.devicePixelRatio < 1.75) {
     setSidebarOpen(!sidebarOpen);
-  };
+  }
+};
+
   const handleThemeChange = () => {
     setTheme(prevTheme => prevTheme === "dark" ? "light" : "dark");
   };
@@ -104,7 +108,7 @@ const cambiarContraseña = (e) => {
       <h2 className={`font-medium whitespace-nowrap overflow-hidden opacity-1 transition-opacity duration-300 `}>ExporPack</h2>}
     </div>
     
-    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-base text-[14px] scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
+    <div className=" overflow-y-auto max-h-[calc(100vh-150px)] 2xl:text-sm text-[12px] scrollbar-thumb-rounded-full  scrollbar-track-gray-100 ">
      
     {arreglo_Filtrado_Por_Rol.map(({ icon, label, to, submenu}) =>(
       <div className=" " key={label}>
