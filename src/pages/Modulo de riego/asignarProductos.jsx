@@ -11,9 +11,11 @@ import { Utils } from "../../models/Utils";
 import Button from '@mui/joy/Button';
 import { ProductoService } from "../../services/ProductoService";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
+import { TemporadasService } from "../../services/TemporadasService";
 
 var productoService= new ProductoService();
 var ddtLaboresService= new DDTLaboresService();
+var temporadaService= new TemporadasService();
 
 export function AsignarProducto() {
     const [data, setData] = useState([]);
@@ -25,6 +27,8 @@ export function AsignarProducto() {
     const [selectedLabor, setSelectedLabor] = useState([]);
     const [selectedSiembra, setSelectedSiembra] = useState([]);
     const [desactivarSiembra, setDesactivarSiembra] = useState(true);
+    const [selectedDdt, setSelectedDdt] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState([]);
 
     const inputRef = React.useRef(null);
       const columns = [
@@ -33,9 +37,24 @@ export function AsignarProducto() {
     ]
 
     useEffect(() => {
-       Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
-
-       Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(Utils.getTempActive() ?? ""), setLabores, "ddtLabores")
+      const tempGuardada = Utils.getTempActive()
+          if (tempGuardada) {
+            Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
+            Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(tempGuardada), setLabores, "ddtLabores")
+          } else {
+              Utils.fetchData(temporadaService.getActual(), null, "temporadaActual")
+              .then(temp => {
+                 if (temp && temp.length > 0) {
+                    const nuevaTemporada = temp[0]?.temporada??null;
+                    Utils.setTempActive(nuevaTemporada)
+                
+                    nuevaTemporada?Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos"):null
+                    return Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(nuevaTemporada), setLabores, "ddtLabores");
+                 }
+                //  Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
+                //  Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(Utils.getTempActive() ?? ""), setLabores, "ddtLabores")
+              })
+            }
       }, []);
 
 
