@@ -11,9 +11,11 @@ import { Utils } from "../../models/Utils";
 import Button from '@mui/joy/Button';
 import { ProductoService } from "../../services/ProductoService";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
+import { TemporadasService } from "../../services/TemporadasService";
 
 var productoService= new ProductoService();
 var ddtLaboresService= new DDTLaboresService();
+var temporadaService= new TemporadasService();
 
 export function AsignarProducto() {
     const [data, setData] = useState([]);
@@ -25,6 +27,8 @@ export function AsignarProducto() {
     const [selectedLabor, setSelectedLabor] = useState([]);
     const [selectedSiembra, setSelectedSiembra] = useState([]);
     const [desactivarSiembra, setDesactivarSiembra] = useState(true);
+    const [selectedDdt, setSelectedDdt] = useState([]);
+    const [selectedProduct, setSelectedProduct] = useState([]);
 
     const inputRef = React.useRef(null);
       const columns = [
@@ -33,9 +37,24 @@ export function AsignarProducto() {
     ]
 
     useEffect(() => {
-       Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
-
-       Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(Utils.getTempActive() ?? ""), setLabores, "ddtLabores")
+      const tempGuardada = Utils.getTempActive()
+          if (tempGuardada) {
+            Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
+            Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(tempGuardada), setLabores, "ddtLabores")
+          } else {
+              Utils.fetchData(temporadaService.getActual(), null, "temporadaActual")
+              .then(temp => {
+                 if (temp && temp.length > 0) {
+                    const nuevaTemporada = temp[0]?.temporada??null;
+                    Utils.setTempActive(nuevaTemporada)
+                
+                    nuevaTemporada?Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos"):null
+                    return Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(nuevaTemporada), setLabores, "ddtLabores");
+                 }
+                //  Utils.fetchData(productoService.getIdNameType(), setDataProductos, "productos")
+                //  Utils.fetchData(ddtLaboresService.getLaboresByDepartamento(Utils.getTempActive() ?? ""), setLabores, "ddtLabores")
+              })
+            }
       }, []);
 
 
@@ -48,17 +67,22 @@ console.log("disparador")
               setDataCopy(resp)
               setDesactivarSiembra(false);});
               setSelectedSiembra("");
+              setSelectedDdt(null);
         }else{
           setSelectedSiembra("");
+          setSelectedDdt(null);
           setDesactivarSiembra(true);}
       }, [selectedLabor]);
 
       useEffect(() => {
         if(selectedSiembra === ""){
-          setData(dataCopy);}
+          setData(dataCopy);
+          setSelectedDdt(null);
+        }
         else{
           const dataFiltered= dataCopy?.filter(d=>d.siembraNumero==selectedSiembra);
           setData(dataFiltered);
+          setSelectedDdt(null);
         }
       }, [selectedSiembra]);
 
@@ -149,15 +173,30 @@ console.log("disparador")
 
     </Select>
     </div>
+
     <MaterialTable
      data={data || []}
      columns={columns}
      style={{ 
       }}
      options={{
-        // rowStyle: rowData => ({
-        //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
-        //   }),
+      selection:true,
+      showSelectAllCheckbox: false,
+      showTextRowsSelected: false,
+      rowStyle: rowData => ({
+        backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero) ? '#3f842f41' : '#FFF'
+      }),
+
+      selectionProps: (rowData) => ({
+        onChange: () => {
+          
+          setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : {ddt: rowData.ddt,siembraNumero: rowData.siembraNumero }));
+
+              // console.log("selectedRow",selectedDdt)
+        },
+        style: { display: 'none' }
+      }),
+
         maxBodyHeight: '12rem',
         actionsColumnIndex: -1,
         paging: false,
@@ -165,7 +204,23 @@ console.log("disparador")
         search: false,
         cellStyle: {fontSize: getFontSize(), padding: '4px 0 4px 9px' },
         headerStyle: { position: 'sticky', top: 0,fontSize: getFontSize(), backgroundColor: '#408730', color: 'white' },
-    }}/>
+    }}
+    
+    onRowClick={(event, rowData) => {
+      setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : {ddt: rowData.ddt,siembraNumero: rowData.siembraNumero })); 
+      console.log("selectedRow",selectedDdt)}}
+
+    // onSelectionChange={(rows) => {
+    //   if (rows.length > 0) {
+    //     setSelectedDdt(rows[0] ? { ddt: rows[0].ddt, siembraNumero: rows[0].siembraNumero } : null);
+    //     console.log("Fila seleccionada por checkbox:", rows[0]);
+    //     console.log("selectedRow",selectedRow)
+    //   } else {
+    //     setSelectedDdt(null);
+    //   }
+    // }}
+    
+    />
     </div>
    
   </div >
