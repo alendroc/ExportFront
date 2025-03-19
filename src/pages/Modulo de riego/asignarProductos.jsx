@@ -6,12 +6,13 @@ import Option from '@mui/joy/Option';
 import { BsCaretDownFill } from "react-icons/bs";
 import { BsCaretRightFill } from "react-icons/bs";
 import MaterialTable,  { MTableToolbar } from "@material-table/core";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Utils } from "../../models/Utils";
 import Button from '@mui/joy/Button';
 import { ProductoService } from "../../services/ProductoService";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { TemporadasService } from "../../services/TemporadasService";
+import { showToast } from "../../components/helpers";
 
 var productoService= new ProductoService();
 var ddtLaboresService= new DDTLaboresService();
@@ -30,7 +31,11 @@ export function AsignarProducto() {
     const [selectedDdt, setSelectedDdt] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState([]);
 
-    const inputRef = React.useRef(null);
+
+    const horasAguaRef = useRef(null);
+    const horasInyeccionRef = useRef(null);
+    const horasLavadoRef = useRef(null);
+
       const columns = [
          { title: 'DDTS', field: 'ddt', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' } },
          { title: 'N° Siembra', field: 'siembraNumero', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px'  }},
@@ -209,16 +214,6 @@ console.log("disparador")
     onRowClick={(event, rowData) => {
       setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : {ddt: rowData.ddt,siembraNumero: rowData.siembraNumero })); 
       console.log("selectedRow",selectedDdt)}}
-
-    // onSelectionChange={(rows) => {
-    //   if (rows.length > 0) {
-    //     setSelectedDdt(rows[0] ? { ddt: rows[0].ddt, siembraNumero: rows[0].siembraNumero } : null);
-    //     console.log("Fila seleccionada por checkbox:", rows[0]);
-    //     console.log("selectedRow",selectedRow)
-    //   } else {
-    //     setSelectedDdt(null);
-    //   }
-    // }}
     
     />
     </div>
@@ -232,9 +227,23 @@ console.log("disparador")
      {title: 'Producto', field: 'nombreDescriptivo' },
      {title: 'Tipo', field: 'tipoUso' }]}
      options={{
-        // rowStyle: rowData => ({
-        //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
-        //   }),
+      selection:true,
+      showSelectAllCheckbox: false,
+      showTextRowsSelected: false,
+      rowStyle: rowData => ({
+        backgroundColor: (selectedProduct?.idProducto === rowData.idProducto) ? '#3f842f41' : '#FFF'
+      }),
+
+      selectionProps: (rowData) => ({
+        onChange: () => {
+          
+          setSelectedProduct((prevRow) => (prevRow?.idProducto === rowData.idProducto? null : {idProducto: rowData.idProducto, nombreDescriptivo: rowData.nombreDescriptivo, tipoUso: rowData.tipoUso }));
+
+              // console.log("selectedRow",selectedDdt)
+        },
+        style: { display: 'none' }
+      }),
+
         maxBodyHeight: maxBodyHeight,
         actionsColumnIndex: -1,
         paging: false,
@@ -243,6 +252,11 @@ console.log("disparador")
         headerStyle: { position: 'sticky', top: 0, fontSize: getFontSize(), backgroundColor: '#ffffff'},
         cellStyle: {fontSize: getFontSize(), padding: '4px 0 4px 9px' }
     }}
+
+    onRowClick={(event, rowData) => {
+      setSelectedProduct((prevRow) => (prevRow?.idProducto === rowData.idProducto ? null : {idProducto: rowData.idProducto, nombreDescriptivo: rowData.nombreDescriptivo, tipoUso: rowData.tipoUso })); 
+      console.log("selectedRow",selectedProduct)}}
+
     style={{ width: "25rem", maxWidth: "600px" }}
     components={{
         Toolbar:CustomToolbar,
@@ -265,7 +279,7 @@ console.log("disparador")
         }}
         slotProps={{
           input: {
-            ref: inputRef,
+            ref: index === 0 ? horasAguaRef : index === 1 ? horasInyeccionRef : horasLavadoRef,
             min: 0,
             step: 0.5,
           },
@@ -274,7 +288,16 @@ console.log("disparador")
     </div>
   ))}
    <Button endDecorator={<BsCaretRightFill/>} color="success"
-   sx={{fontSize: '12px', padding: '20px 10px', height: '2rem'}}>
+   sx={{fontSize: '12px', padding: '20px 10px', height: '2rem'}} onClick={()=>{
+
+    if(selectedDdt && selectedProduct){
+      console.log("selectedDdt",selectedDdt)
+    }else{
+      showToast('error', 'Debe seleccionar ambas tablas', '#9c1010')
+    }
+
+  }}
+   >
         Asignar Producto
       </Button>
 </div>
@@ -289,9 +312,6 @@ console.log("disparador")
      {title: 'Horas Inyeccion', field: 'HorasInyeccion' },
      {title: 'Horas Lavado', field: 'HorasLavado' }]}
      options={{
-        // rowStyle: rowData => ({
-        //     backgroundColor: (selectedRow === rowData.tableData.id) ? '#EEE' : '#FFF'
-        //   }),
         maxBodyHeight: maxBodyHeight,
         actionsColumnIndex: -1,
         paging: false,
