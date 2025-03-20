@@ -12,11 +12,13 @@ import Button from '@mui/joy/Button';
 import { ProductoService } from "../../services/ProductoService";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { TemporadasService } from "../../services/TemporadasService";
+import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
 import { showToast } from "../../components/helpers";
 
 var productoService= new ProductoService();
 var ddtLaboresService= new DDTLaboresService();
 var temporadaService= new TemporadasService();
+var productoLaborPo = new ProductosLaborPoService();
 
 export function AsignarProducto() {
     const [data, setData] = useState([]);
@@ -30,16 +32,25 @@ export function AsignarProducto() {
     const [desactivarSiembra, setDesactivarSiembra] = useState(true);
     const [selectedDdt, setSelectedDdt] = useState([]);
     const [selectedProduct, setSelectedProduct] = useState([]);
+    const [productoAsignado, setProductoAsignado] = useState(false);
 
 
     const horasAguaRef = useRef(null);
     const horasInyeccionRef = useRef(null);
     const horasLavadoRef = useRef(null);
 
+ 
+
       const columns = [
          { title: 'DDTS', field: 'ddt', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' } },
          { title: 'N° Siembra', field: 'siembraNumero', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px'  }},
     ]
+
+    const clearInputs = () => {
+      horasAguaRef.current.value =0
+      horasInyeccionRef.current.value=0
+      horasLavadoRef.current.value=0
+    }
 
     useEffect(() => {
       const tempGuardada = Utils.getTempActive()
@@ -65,8 +76,6 @@ export function AsignarProducto() {
 
       useEffect(() => {
         if((selectedLabor ?? []).length > 0){
-console.log("disparador")
-
             Utils.fetchData(ddtLaboresService.getByTemporadaLaborDepartRiego(Utils.getTempActive() ?? "",selectedLabor),
              setData, "ddtLabores").then((resp)=>{
               setDataCopy(resp)
@@ -90,6 +99,25 @@ console.log("disparador")
           setSelectedDdt(null);
         }
       }, [selectedSiembra]);
+
+      useEffect(() => {
+        clearInputs();
+        setDataProductosAsignados([]);
+        if(selectedDdt && selectedDdt.siembraNumero){
+
+          productoLaborPo.getByTempSiembraNumDepLabAliasDdt(
+          selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
+          selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then(response => {
+            if (response.success) {
+              setDataProductosAsignados(response.poProductosLabor);
+            }
+          })
+
+
+        }
+
+      }, [selectedDdt, productoAsignado]);
+
 
       const getFontSize = () => {
         if (window.devicePixelRatio >= 2) {
@@ -115,6 +143,60 @@ console.log("disparador")
             <MTableToolbar style={{padding:'0', height: '20px'}} {...props} />
         </div>
     );
+
+    const handleAsignarProducto = () => {
+      if (!selectedLabor) {
+        showToast('error', 'Debe seleccionar un labor', '#9c1010');
+        return;
+      }
+      
+      if (!selectedDdt || (Array.isArray(selectedDdt) && !selectedDdt.some(item => item))) {
+        showToast('error', 'Debe seleccionar un DDT', '#9c1010');
+        return;
+      }
+    
+      if (!selectedProduct || (Array.isArray(selectedProduct) && !selectedProduct.some(item => item))) {
+        showToast('error', 'Debe seleccionar un producto', '#9c1010');
+        return;
+      }
+    
+      // Creación del objeto
+      const newProductoAsignado = {
+        Temporada: selectedDdt.temporada ?? Utils.getTempActive(),
+        SiembraNumero: selectedDdt.siembraNumero,
+        Departamento: selectedDdt.departamento ?? "RIEGO Y DRENAJE",
+        Labor: selectedLabor,
+        AliasLabor: selectedDdt.aliasLabor,
+        Ddt: selectedDdt.ddt,
+        idProducto: selectedProduct.idProducto,
+        NombreDescriptivo: selectedProduct.nombreDescriptivo,
+        DosisHa: 0,
+        HorasAgua: horasAguaRef.current?.value ?? 0,
+        HorasInyeccion: horasInyeccionRef.current?.value ?? 0,
+        HorasLavado: horasLavadoRef.current?.value ?? 0,
+      };
+    
+      console.log("Producto a asignar:", newProductoAsignado);
+    
+      // Llamada al servicio para asignar el producto
+      productoLaborPo.create(newProductoAsignado)
+        .then(response => {
+          if (response.success) {
+            setDataProductosAsignados(prevData => [...prevData, { ...newProductoAsignado }]);
+            setSelectedProduct(null);
+            showToast('success', 'Producto asignado', '#2d800e');
+            setProductoAsignado(prev => !prev);
+          } else {
+            showToast('error', 'No se pudo asignar el producto', '#9c1010');
+          }
+        })
+        .catch(error => {
+          showToast('error', `Error al asignar el producto: ${error.message}`, '#9c1010');
+        });
+    };
+    
+
+
     return (
    <Container>
   <div >
@@ -194,10 +276,11 @@ console.log("disparador")
 
       selectionProps: (rowData) => ({
         onChange: () => {
-          
-          setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : {ddt: rowData.ddt,siembraNumero: rowData.siembraNumero }));
+          console.log("rowData",rowData)
+          setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
+            {temporada:rowData.temporada, departamento:rowData.departamento,labor:rowData.labor, aliasLabor:rowData.aliasLabor, ddt: rowData.ddt,siembraNumero: rowData.siembraNumero })); 
 
-              // console.log("selectedRow",selectedDdt)
+          // console.log("selectedRow",selectedDdt)
         },
         style: { display: 'none' }
       }),
@@ -212,7 +295,8 @@ console.log("disparador")
     }}
     
     onRowClick={(event, rowData) => {
-      setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : {ddt: rowData.ddt,siembraNumero: rowData.siembraNumero })); 
+      setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
+        {temporada:rowData.temporada, departamento:rowData.departamento,labor:rowData.labor, aliasLabor:rowData.aliasLabor, ddt: rowData.ddt,siembraNumero: rowData.siembraNumero })); 
       console.log("selectedRow",selectedDdt)}}
     
     />
@@ -288,15 +372,7 @@ console.log("disparador")
     </div>
   ))}
    <Button endDecorator={<BsCaretRightFill/>} color="success"
-   sx={{fontSize: '12px', padding: '20px 10px', height: '2rem'}} onClick={()=>{
-
-    if(selectedDdt && selectedProduct){
-      console.log("selectedDdt",selectedDdt)
-    }else{
-      showToast('error', 'Debe seleccionar ambas tablas', '#9c1010')
-    }
-
-  }}
+   sx={{fontSize: '12px', padding: '20px 10px', height: '2rem'}} onClick={handleAsignarProducto}
    >
         Asignar Producto
       </Button>
@@ -306,11 +382,11 @@ console.log("disparador")
     <MaterialTable
      data={dataProductosAsignados || []}
      title={<div style={{ fontSize: '12px', color: 'white' }}> Productos asignados</div>}
-     columns={[{title: 'Nombre del producto', field: 'NombreDescriptivo', headerStyle: {width:"30%"}},
-     {title: 'Dosis/Ha', field: 'DosisHa', },
-     {title: 'Horas Agua', field: 'HorasAgua' },
-     {title: 'Horas Inyeccion', field: 'HorasInyeccion' },
-     {title: 'Horas Lavado', field: 'HorasLavado' }]}
+     columns={[{title: 'Nombre del producto', field: 'nombreDescriptivo', headerStyle: {width:"30%"}},
+     {title: 'Dosis/Ha', field: 'dosisHa', },
+     {title: 'Horas Agua', field: 'horasAgua' },
+     {title: 'Horas Inyeccion', field: 'horasInyeccion' },
+     {title: 'Horas Lavado', field: 'horasLavado' }]}
      options={{
         maxBodyHeight: maxBodyHeight,
         actionsColumnIndex: -1,
@@ -329,7 +405,17 @@ console.log("disparador")
   
     components={{
         Toolbar:CustomToolbar,
-    }}/>
+    }}
+
+     editable={{
+                    onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+                    onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+                    onRowUpdate: (newData, oldData) => {},
+                    onRowDelete: (oldData) => {}
+                }}
+    
+    
+    />
     </div>
     </Container>
     
