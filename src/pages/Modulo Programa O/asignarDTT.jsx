@@ -145,7 +145,8 @@ export function AsignarDDT() {
 
       // Cambia la forma en que manejas las DDT  
       ddtLaboresService.create(newDdt)
-        .then(response => {
+      .then(response => {
+        if (response.isSuccess) {
           console.log("DDT agregado correctamente", response);
           const newDdtRow = { ddt: response.ddt || ddtValue };
 
@@ -156,16 +157,23 @@ export function AsignarDDT() {
           });
           setDdtValue("");
           showToast('success', 'DDT agregado correctamente', '#107c10');
-        })
-        .catch(error => {
-          console.error("Error al agregar el DDT", error);
-          showToast('error', 'Error al agregar el DDT', '#d32f2f');
-        });
-    } else {
-      console.warn("Faltan datos: selectedRow o ddtValue está vacío");
-      showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');
-    }
-  };
+        } else {
+          if (response.status === 400 && response.message === "El DDT ya existe.") {
+            showToast('error', 'El DDT ya existe.', '#d32f2f');
+          } else {
+            showToast('error', 'Error al agregar el DDT', '#d32f2f');
+          }
+        }
+      })
+      .catch(error => {
+        console.error("Error al agregar el DDT", error);
+        showToast('error',`Error al agregar el DDT: ${error.message}`, '#9c1010');
+      });
+  } else {
+    console.warn("Faltan datos: selectedRow o ddtValue está vacío");
+    showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');
+  }
+};
 
 
 
@@ -250,39 +258,39 @@ export function AsignarDDT() {
       field: 'temporada',
       initialEditValue: tempActiva[0]?.temporada,
       editable: 'never',
-      headerStyle: { minWidth: '100px', maxWidth: '100px' },
-      cellStyle: { minWidth: '100px', maxWidth: '100px' }
+      headerStyle: { minWidth: '6vw', maxWidth: '6vw' }, 
+      cellStyle: { minWidth: '6vw', maxWidth: '6vw' }
     },
     {
       title: 'N° Siembra',
       field: 'siembraNumero',
       type: "numeric",
       editable: 'never',
-      headerStyle: { minWidth: '100px', maxWidth: '150px' },
-      cellStyle: { minWidth: '100px', maxWidth: '150px', backgroundColor: '#725353' }
+      headerStyle: { minWidth: '6vw', maxWidth: '6vw' }, 
+      cellStyle: { minWidth: '6vw', maxWidth: '6vw' }
     },
     {
       title: 'Departamento',
       field: 'departamento',
       initialEditValue: departamentoLabor[0],
       editable: 'never',
-      headerStyle: { minWidth: '100px', maxWidth: '100px' },
-      cellStyle: { minWidth: '100px', maxWidth: '150px', backgroundColor: '#5fa55f' }
+      headerStyle: { minWidth: '8vw', maxWidth: '8vw' }, 
+      cellStyle: { minWidth: '8vw', maxWidth: '8vw' }
     },
     {
       title: 'Labor',
       field: 'labor',
       initialEditValue: departamentoLabor[1],
       editable: 'never',
-      headerStyle: { minWidth: '250px', maxWidth: '300px' },
-      cellStyle: { minWidth: '250px', maxWidth: '300px', backgroundColor: '#769476' }
+      headerStyle: { minWidth: '20vw', maxWidth: '20vw' }, 
+      cellStyle: { minWidth: '20vw', maxWidth: '20vw'}
     },
     {
       title: 'Alias Labor',
       field: 'aliasLabor',
       editable: 'never',
-      headerStyle: { minWidth: '250px', maxWidth: '300px' },
-      cellStyle: { minWidth: '250px', maxWidth: '300px' }
+      headerStyle: { minWidth: '20vw', maxWidth: '20vw' }, 
+      cellStyle: { minWidth: '20vw', maxWidth: '20vw' }
     }
   ];
 
@@ -352,7 +360,7 @@ export function AsignarDDT() {
             <MaterialTable
               onRowClick={(event, rowData) => {
                 setSelectedRow(rowData);
-                setDdtData([]); // Reset DDT data when a new labor is selected
+                setDdtData([]); 
                 console.log("Fila seleccionada:", rowData);
               }}
               size="small"
@@ -384,7 +392,7 @@ export function AsignarDDT() {
                   backgroundColor: (selectedRow && selectedRow.tableData.id === rowData.tableData.id) ? '#EDF4FB' : '#FFF'
                 })
               }}
-              style={{ maxWidth: "1000px" }}
+              style={{ maxWidth: "100%", width: "100%" }} 
               components={{
                 Toolbar: (props) => (
                   <div style={{
@@ -415,9 +423,9 @@ export function AsignarDDT() {
           {/*PAreja 2*/}
           <div className="box-3  xl:w-auto order-2 xl:order-3 relative top-[-30px]">
             <h3>Ingrese el DDT:</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}> 
               <input
-                type="numeric"
+                type="number"
                 value={ddtValue}
                 onChange={(e) => setDdtValue(e.target.value)}
                 onFocus={() => {
@@ -425,6 +433,7 @@ export function AsignarDDT() {
                     showToast('warning', 'Debe seleccionar una labor antes de ingresar un DDT', '#d89b00');
                   }
                 }}
+                style={{ paddingLeft: '20px', width: '100px', height: '30px', borderRadius: '5px', border: '1px solid #d3d3d3' }} 
 
               />
               <button
@@ -436,7 +445,11 @@ export function AsignarDDT() {
                   border: 'none',
                   padding: '10px 20px',
                   borderRadius: '5px',
-                  cursor: selectedRow ? 'pointer' : 'not-allowed'
+                  cursor: selectedRow ? 'pointer' : 'not-allowed',
+                  boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                  transition: 'background-color 0.3s ease', 
+                  fontSize: '14px', 
+                  fontWeight: 'bold', 
                 }}
               >
                 Agregar
