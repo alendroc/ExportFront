@@ -5,6 +5,7 @@ import Stack from '@mui/joy/Stack';
 import Option from '@mui/joy/Option';
 import { BsCaretDownFill } from "react-icons/bs";
 import { BsCaretRightFill } from "react-icons/bs";
+import { Delete, Edit, AddBox, Search as SearchIcon } from '@mui/icons-material';
 import MaterialTable,  { MTableToolbar } from "@material-table/core";
 import React, { useState, useEffect, useRef } from "react";
 import { Utils } from "../../models/Utils";
@@ -382,11 +383,11 @@ export function AsignarProducto() {
     <MaterialTable
      data={dataProductosAsignados || []}
      title={<div style={{ fontSize: '12px', color: 'white' }}> Productos asignados</div>}
-     columns={[{title: 'Nombre del producto', field: 'nombreDescriptivo', headerStyle: {width:"30%"}},
-     {title: 'Dosis/Ha', field: 'dosisHa', },
-     {title: 'Horas Agua', field: 'horasAgua' },
-     {title: 'Horas Inyeccion', field: 'horasInyeccion' },
-     {title: 'Horas Lavado', field: 'horasLavado' }]}
+     columns={[{title: 'Nombre del producto', field: 'nombreDescriptivo', editable:"onAdd", headerStyle: {width:"30%"}},
+     {title: 'Dosis/Ha', field: 'dosisHa', type:"numeric"},
+     {title: 'Horas Agua', field: 'horasAgua',type:"numeric" },
+     {title: 'Horas Inyeccion', field: 'horasInyeccion',type:"numeric" },
+     {title: 'Horas Lavado', field: 'horasLavado', type:"numeric"}]}
      options={{
         maxBodyHeight: maxBodyHeight,
         actionsColumnIndex: -1,
@@ -402,16 +403,102 @@ export function AsignarProducto() {
         },
         cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' }
     }}
+
+     icons={{
+        Edit: () => <Edit style={{ fontSize: "18px" }} />,
+        Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />, 
+      }}
   
     components={{
         Toolbar:CustomToolbar,
     }}
 
+    localization={{
+      body: {
+        emptyDataSourceMessage: 'No se encontraron productos asignados',
+        editRow: {
+          deleteText: '¿Estás seguro de que deseas eliminar este producto del labor?', // Cambia el mensaje de confirmación
+          cancelTooltip: 'Cancelar', // Texto del botón de cancelar
+          saveTooltip: 'Confirmar',  // Texto del botón de confirmar
+        },
+        editTooltip: 'Editar',  
+        deleteTooltip: 'Eliminar',
+        addTooltip: 'Agregar'
+      },
+      header: {
+        actions: 'Acciones' // Cambia el encabezado de la columna de acciones
+      },
+      toolbar: {
+        searchTooltip: 'Buscar',
+        searchPlaceholder: 'Buscar',
+      },
+    }}
+
      editable={{
-                    onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
-                    onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
-                    onRowUpdate: (newData, oldData) => {},
-                    onRowDelete: (oldData) => {}
+        onRowAddCancelled: (rowData) => console.log("Row adding cancelled"),
+        onRowUpdateCancelled: (rowData) => console.log("Row editing cancelled"),
+        onRowUpdate: (newData, oldData) => {
+          
+          return new Promise((resolve, reject) => {
+            const index = dataProductosAsignados.findIndex(item => item.temporada === oldData.temporada && 
+              item.siembraNumero === oldData.siembraNumero && item.departamento===oldData.departamento
+              && item.labor === oldData.labor && item.aliasLabor === oldData.aliasLabor && 
+              item.ddt === oldData.ddt && item.idProducto === oldData.idProducto);
+              const updatedDataProductPo = [...dataProductosAsignados];
+              const newDataWithId = {...newData,}
+
+              console.log("datos a actualizar",newDataWithId)
+
+           updatedDataProductPo[index] = newDataWithId;
+           console.log("test")
+           console.log("newDataWithId",newDataWithId)
+           console.log("oldData",oldData)
+                      
+           productoLaborPo.update(oldData.temporada,oldData.siembraNumero, oldData.departamento, oldData.labor, 
+            oldData.aliasLabor, oldData.ddt, oldData.idProducto, newDataWithId)
+           .then(response => {
+                   console.log("test")
+                     if (response.success) {
+                         setDataProductosAsignados(updatedDataProductPo);
+                         showToast('success', 'Producto actualizado', '#2d800e');
+                         resolve();
+                     } else {
+                         reject(`Error al actualizar el producto: ${response.message}`);
+                         showToast('error', '`Error al actualizar el producto', '#9c1010');
+                     }
+                 })
+                 .catch(error => {
+                     reject(`Error de red: ${error.message}`);
+                 });
+                                                       })
+                    },
+                    onRowDelete: (oldData) => {
+                     
+                         return new Promise((resolve, reject) => {
+
+                           productoLaborPo.delete(oldData.temporada, oldData.siembraNumero,oldData.departamento, oldData.labor, 
+                            oldData.aliasLabor, oldData.ddt, oldData.idProducto)
+                           .then(response => {
+                               if (response.success) {
+                                setProductoAsignado(false)
+                                const dataDelete = dataProductosAsignados.filter((p) =>
+                                  !(p.temporada === oldData.temporada && p.siembraNumero === oldData.siembraNumero &&
+                                    p.departamento === oldData.departamento && p.labor === oldData.labor && 
+                                    p.aliasLabor ===oldData.aliasLabor && p.ddt === oldData.ddt && p.idProducto === oldData.idProducto));
+                                     setDataProductosAsignados(dataDelete);
+                                   showToast('success', 'Producto eliminado del Programa Operativo', '#2d800e');
+                                   resolve();
+                               } else {
+                                
+                                 showToast('error', '`Error al eliminar el producto del Programa Operativo', '#9c1010');
+                                   reject('No se pudo eliminar el producto.');
+                               }
+                           })
+                           .catch(error => {
+                               reject(`Error al eliminar: ${error.message}`);
+                              });
+                            });
+                    }
                 }}
     
     
