@@ -131,7 +131,6 @@ export function AsignarDDT() {
     console.log("Añadiendo DDT:", ddtValue);
 
     if (selectedRow && ddtValue.trim()) {
-
       const newDdt = {
         Ddt: ddtValue,
         Temporada: selectedRow.temporada,
@@ -145,35 +144,35 @@ export function AsignarDDT() {
 
       // Cambia la forma en que manejas las DDT  
       ddtLaboresService.create(newDdt)
-      .then(response => {
-        if (response.isSuccess) {
-          console.log("DDT agregado correctamente", response);
-          const newDdtRow = { ddt: response.ddt || ddtValue };
+        .then(response => {
+          if (response.success) {
+            console.log("DDT agregado correctamente", response);
+            const newDdtRow = { ddt: response.ddt || ddtValue };
 
-          setDdtData(prevData => {
-            const updatedData = [newDdtRow, ...prevData];
-            console.log("data actualizada", updatedData);
-            return updatedData;
-          });
-          setDdtValue("");
-          showToast('success', 'DDT agregado correctamente', '#107c10');
-        } else {
-          if (response.status === 400 && response.message === "El DDT ya existe.") {
-            showToast('error', 'El DDT ya existe.', '#d32f2f');
+            setDdtData(prevData => {
+              const updatedData = [newDdtRow, ...prevData];
+              console.log("data actualizada", updatedData);
+              return updatedData;
+            });
+            setDdtValue("");
+            showToast('success', 'DDT agregado correctamente', '#107c10');
           } else {
-            showToast('error', 'Error al agregar el DDT', '#d32f2f');
+            if (response.status === 400 && response.message === "El DDT ya existe.") {
+              showToast('error', 'El DDT ya existe.', '#d32f2f');
+            } else {
+              showToast('error', `Error al agregar el DDT: ${response.message}`, '#d32f2f');
+            }
           }
-        }
-      })
-      .catch(error => {
-        console.error("Error al agregar el DDT", error);
-        showToast('error',`Error al agregar el DDT: ${error.message}`, '#9c1010');
-      });
-  } else {
-    console.warn("Faltan datos: selectedRow o ddtValue está vacío");
-    showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');
-  }
-};
+        })
+        .catch(error => {
+          console.error("Error al agregar el DDT", error);
+          showToast('error', `Error al agregar el DDT: ${error.message}`, '#9c1010');
+        });
+    } else {
+      console.warn("Faltan datos: selectedRow o ddtValue está vacío");
+      showToast('warning', 'Por favor, seleccione una fila e ingrese un DDT', '#d89b00');
+    }
+  };
 
 
 
@@ -258,7 +257,7 @@ export function AsignarDDT() {
       field: 'temporada',
       initialEditValue: tempActiva[0]?.temporada,
       editable: 'never',
-      headerStyle: { minWidth: '6vw', maxWidth: '6vw' }, 
+      headerStyle: { minWidth: '6vw', maxWidth: '6vw' },
       cellStyle: { minWidth: '6vw', maxWidth: '6vw' }
     },
     {
@@ -266,7 +265,7 @@ export function AsignarDDT() {
       field: 'siembraNumero',
       type: "numeric",
       editable: 'never',
-      headerStyle: { minWidth: '6vw', maxWidth: '6vw' }, 
+      headerStyle: { minWidth: '6vw', maxWidth: '6vw' },
       cellStyle: { minWidth: '6vw', maxWidth: '6vw' }
     },
     {
@@ -274,7 +273,7 @@ export function AsignarDDT() {
       field: 'departamento',
       initialEditValue: departamentoLabor[0],
       editable: 'never',
-      headerStyle: { minWidth: '8vw', maxWidth: '8vw' }, 
+      headerStyle: { minWidth: '8vw', maxWidth: '8vw' },
       cellStyle: { minWidth: '8vw', maxWidth: '8vw' }
     },
     {
@@ -282,14 +281,14 @@ export function AsignarDDT() {
       field: 'labor',
       initialEditValue: departamentoLabor[1],
       editable: 'never',
-      headerStyle: { minWidth: '20vw', maxWidth: '20vw' }, 
-      cellStyle: { minWidth: '20vw', maxWidth: '20vw'}
+      headerStyle: { minWidth: '20vw', maxWidth: '20vw' },
+      cellStyle: { minWidth: '20vw', maxWidth: '20vw' }
     },
     {
       title: 'Alias Labor',
       field: 'aliasLabor',
       editable: 'never',
-      headerStyle: { minWidth: '20vw', maxWidth: '20vw' }, 
+      headerStyle: { minWidth: '20vw', maxWidth: '20vw' },
       cellStyle: { minWidth: '20vw', maxWidth: '20vw' }
     }
   ];
@@ -360,7 +359,7 @@ export function AsignarDDT() {
             <MaterialTable
               onRowClick={(event, rowData) => {
                 setSelectedRow(rowData);
-                setDdtData([]); 
+                setDdtData([]);
                 console.log("Fila seleccionada:", rowData);
               }}
               size="small"
@@ -392,7 +391,7 @@ export function AsignarDDT() {
                   backgroundColor: (selectedRow && selectedRow.tableData.id === rowData.tableData.id) ? '#EDF4FB' : '#FFF'
                 })
               }}
-              style={{ maxWidth: "100%", width: "100%" }} 
+              style={{ maxWidth: "100%", width: "100%" }}
               components={{
                 Toolbar: (props) => (
                   <div style={{
@@ -423,7 +422,7 @@ export function AsignarDDT() {
           {/*PAreja 2*/}
           <div className="box-3  xl:w-auto order-2 xl:order-3 relative top-[-30px]">
             <h3>Ingrese el DDT:</h3>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}> 
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
               <input
                 type="number"
                 value={ddtValue}
@@ -433,7 +432,7 @@ export function AsignarDDT() {
                     showToast('warning', 'Debe seleccionar una labor antes de ingresar un DDT', '#d89b00');
                   }
                 }}
-                style={{ paddingLeft: '20px', width: '100px', height: '30px', borderRadius: '5px', border: '1px solid #d3d3d3' }} 
+                style={{ paddingLeft: '20px', width: '100px', height: '30px', borderRadius: '5px', border: '1px solid #d3d3d3' }}
 
               />
               <button
@@ -447,9 +446,9 @@ export function AsignarDDT() {
                   borderRadius: '5px',
                   cursor: selectedRow ? 'pointer' : 'not-allowed',
                   boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
-                  transition: 'background-color 0.3s ease', 
-                  fontSize: '14px', 
-                  fontWeight: 'bold', 
+                  transition: 'background-color 0.3s ease',
+                  fontSize: '14px',
+                  fontWeight: 'bold',
                 }}
               >
                 Agregar
@@ -459,7 +458,7 @@ export function AsignarDDT() {
               data={ddtData}
               //key={ddtData.length}
               columns={columnsDDT}
-              style={{ width: widthNpdy, maxWidth: "200px"}}
+              style={{ width: widthNpdy, maxWidth: "200px" }}
               localization={{
                 body: { emptyDataSourceMessage: 'No posee DDTs' },
                 header: { actions: '' },
