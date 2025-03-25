@@ -267,7 +267,9 @@ function navbar(location,arreglos){
 }
 export default function WrappedApp(){
   return (
-    <BrowserRouter>
+    <BrowserRouter  future={{
+      v7_startTransition: true,
+    }}>
       <App />
     </BrowserRouter>
   );

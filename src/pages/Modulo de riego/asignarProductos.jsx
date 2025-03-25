@@ -510,7 +510,6 @@ export function AsignarProducto() {
  }
  const Container = styled.div`
  display: flex;
-
  gap: 20px;
  .css-ig9rso-MuiToolbar-root{
     padding: 10px;
