@@ -43,7 +43,7 @@ export function AsignarProducto() {
  
 
       const columns = [
-         { title: 'DDTS', field: 'ddt', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' } },
+         { title: 'DDT', field: 'ddt', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px' } },
          { title: 'N° Siembra', field: 'siembraNumero', cellStyle: {fontSize: '12px', padding: '4px 0 4px 9px'  }},
     ]
 
@@ -77,7 +77,7 @@ export function AsignarProducto() {
 
       useEffect(() => {
         if((selectedLabor ?? []).length > 0){
-            Utils.fetchData(ddtLaboresService.getByTemporadaLaborDepartRiego(Utils.getTempActive() ?? "",selectedLabor),
+            Utils.fetchData(ddtLaboresService.getByTemporadaAliasLabor(Utils.getTempActive() ?? "",selectedLabor),
              setData, "ddtLabores").then((resp)=>{
               setDataCopy(resp)
               setDesactivarSiembra(false);});
@@ -87,6 +87,8 @@ export function AsignarProducto() {
           setSelectedSiembra("");
           setSelectedDdt(null);
           setDesactivarSiembra(true);}
+
+          console.log("selectedLabor", selectedLabor)
       }, [selectedLabor]);
 
       useEffect(() => {
@@ -231,8 +233,8 @@ export function AsignarProducto() {
     >
      
        {labores?.map((labor,index) => (
-              <Option key={index} value={labor.labor}>
-                {labor.labor}
+              <Option key={index} value={labor.aliasLabor}>
+                {labor.aliasLabor}
               </Option>
             ))}
     </Select>
@@ -294,6 +296,12 @@ export function AsignarProducto() {
         cellStyle: {fontSize: getFontSize(), padding: '4px 0 4px 9px' },
         headerStyle: { position: 'sticky', top: 0,fontSize: getFontSize(), backgroundColor: '#408730', color: 'white' },
     }}
+
+    localization={{
+      body: {
+        emptyDataSourceMessage: 'No se encontraron DDT',
+      }
+    }}
     
     onRowClick={(event, rowData) => {
       setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
@@ -345,7 +353,19 @@ export function AsignarProducto() {
     style={{ width: "25rem", maxWidth: "600px" }}
     components={{
         Toolbar:CustomToolbar,
-    }}/>
+    }}
+
+    localization={{
+      body: {
+        emptyDataSourceMessage: 'No se encontraron productos',
+      },
+      toolbar: {
+        searchTooltip: 'Buscar',
+        searchPlaceholder: 'Buscar',
+      },
+    }}
+    
+    />
     </section>
     <div className="flex gap-3 bg-white p-2 rounded-md w-min shadow-sm items-end">
   {['Horas Agua', 'Horas Inyeccion', 'Horas Lavado'].map((label, index) => (
@@ -509,11 +529,19 @@ export function AsignarProducto() {
     );
  }
  const Container = styled.div`
- display: flex;
+ gap: 10px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
 
  gap: 20px;
  .css-ig9rso-MuiToolbar-root{
     padding: 10px;
     min-height: 0;
  }
+
+ @media (max-width: 1200px) {  
+    /* flex-direction: column; */
+    flex-wrap: wrap;
+    }
  `;
