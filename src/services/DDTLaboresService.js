@@ -57,9 +57,9 @@ export class DDTLaboresService extends Service {
     }
 
 
-    async getByTemporadaLaborDepartRiego(temporada,labor) {
+    async getByTemporadaAliasLabor(temporada,alias) {
         try {
-            const response = await fetch(`${super.getApiUrl()}DDTLabores/${temporada}/${labor}`, {
+            const response = await fetch(`${super.getApiUrl()}DDTLabores/${temporada}/${alias}`, {
                 method: 'GET',
                 headers: { 'Content-Type': 'application/json' }
             });
