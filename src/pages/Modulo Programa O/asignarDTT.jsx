@@ -227,26 +227,23 @@ export function AsignarDDT() {
     }
 
     const { temporada, departamento, siembraNumero, labor, aliasLabor } = selectedRow;
+    ddtLaboresService.delete(temporada, departamento, siembraNumero, labor, aliasLabor, ddtRow.ddt)
+      .then((response) => {
+        console.log("Respuesta de eliminación:", response);
 
-    if (window.confirm("¿Estás seguro de que deseas eliminar este DDT?")) {
-      ddtLaboresService.delete(temporada, departamento, siembraNumero, labor, aliasLabor, ddtRow.ddt)
-        .then((response) => {
-          console.log("Respuesta de eliminación:", response);
-
-          if (response.success) {
-            setDdtData(prevList => prevList.filter(item => item.ddt !== ddtRow.ddt));
-            console.log("DDT eliminado correctamente");
-            showToast('success', 'DDT eliminado correctamente', '#107c10');
-          } else {
-            console.warn("No se pudo eliminar el DDT:", response.message);
-            showToast('warning', 'No se pudo eliminar el DDT', '#d89b00');
-          }
-        })
-        .catch(error => {
-          console.error("Error al eliminar DDT:", error);
-          showToast('error', 'Error al eliminar el DDT', '#9c1010');
-        });
-    }
+        if (response.success) {
+          setDdtData(prevList => prevList.filter(item => item.ddt !== ddtRow.ddt));
+          console.log("DDT eliminado correctamente");
+          showToast('success', 'DDT eliminado correctamente', '#107c10');
+        } else {
+          console.warn("No se pudo eliminar el DDT:", response.message);
+          showToast('warning', 'No se pudo eliminar el DDT', '#d89b00');
+        }
+      })
+      .catch(error => {
+        console.error("Error al eliminar DDT:", error);
+        showToast('error', 'Error al eliminar el DDT', '#9c1010');
+      });
   };
 
 
@@ -458,11 +455,8 @@ export function AsignarDDT() {
               data={ddtData}
               //key={ddtData.length}
               columns={columnsDDT}
-              style={{ width: widthNpdy, maxWidth: "200px" }}
-              localization={{
-                body: { emptyDataSourceMessage: 'No posee DDTs' },
-                header: { actions: '' },
-              }}
+              style={{ width: widthNpdy, maxWidth: "220px" }}
+              
               components={{
                 Toolbar: (props) => (
                   <div style={{
@@ -503,13 +497,30 @@ export function AsignarDDT() {
                   });
                 }
               }}
-              actions={[
-                {
-                  icon: () => <Delete style={{ fontSize: "18px", color: "red" }} />,
-                  tooltip: 'Eliminar DDT',
-                  onClick: (event, rowData) => deleteDdt(rowData)
-                }
-              ]} />
+              icons={{ Delete: () => <Delete style={{ fontSize: "18px", color: "red" }} />,}}
+              editable={{
+                onRowDelete: (oldData) =>
+                  new Promise((resolve, reject) => {
+                    deleteDdt(oldData);
+                    resolve();
+                  }),
+              }}
+              localization={{
+                body: {
+                  emptyDataSourceMessage: 'No posee DDTs',
+                  editRow: {
+                    deleteText: (
+                      <span className="custom-delete-text">
+                        ¿Desea Eliminarlo?
+                      </span>
+                    ),
+                    cancelTooltip: 'Cancelar',
+                    saveTooltip: 'Confirmar',
+                  },
+                },
+                header: { actions: '' },
+              }}
+            />
           </div>
         </div>
       </div>
@@ -583,4 +594,10 @@ const Container = styled.div`
       font-size: 16px !important;  
     }  
   }  
+
+  .custom-delete-text {
+    font-family: 'Arial', sans-serif; 
+    font-size: 14px; 
+    color: red; 
+  }
 `;
