@@ -530,10 +530,7 @@ export function AsignarProducto() {
     );
  }
  const Container = styled.div`
- gap: 10px;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
+ display: flex;
 
  gap: 20px;
  .css-ig9rso-MuiToolbar-root{

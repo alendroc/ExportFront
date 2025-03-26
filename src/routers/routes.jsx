@@ -20,7 +20,7 @@ import { AsignarLote } from "../pages/Modulo Programa O/asignarLote.jsx";
 import { AsignarLabor } from "../pages/Modulo Programa O/asignarLabor.jsx";
 import { Certificaciones } from "../pages/Modulo configuracion/certificaciones.jsx";
 import { AsignarDDT } from "../pages/Modulo Programa O/asignarDTT.jsx";
-
+import { HacerPedido } from "../pages/Modulo de riego/hacerPedido.jsx";
 export const MyRoutes = ({isAuthenticated, usuario}) => {
   return (
     <Routes>
@@ -66,6 +66,7 @@ export const MyRoutes = ({isAuthenticated, usuario}) => {
       ><Riego/></ProtectedRoute>}>
         <Route index element={<Navigate to="asignar-productos" replace />}/>
         <Route path="asignar-productos" element={<AsignarProducto/>}/>
+        <Route path="hacer-pedidos" element={<HacerPedido/>}/>
       </Route>
     </Routes>
   );
