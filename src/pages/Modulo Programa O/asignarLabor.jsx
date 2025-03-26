@@ -317,9 +317,9 @@ export function AsignarLabor() {
                     departamento: departamentoLabor[0],
                     labor: departamentoLabor[1],
                     siembraNumero: newData.siembraNumero || 1,
-                    aliasLabor: newData.aliasLabor|| null,
+                    aliasLabor: newData.aliasLabor?.toUpperCase() || null,
                     aplicarATodo: newData.aplicarATodo || false,
-                    aplicarA: newData.aplicarA || null,
+                    aplicarA: newData.aplicarA?.toUpperCase() || null,
                   
                   }
                   console.log("newDataWithId: ",newDataWithId);
