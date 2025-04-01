@@ -39,7 +39,7 @@ export function NavbarP({ menu }){
                     className={classNames(
                       location.pathname === item.href ? 'text-lime-600 scale-110 ' : 'text-slate-500 dark:hover:text-lime-400 hover:text-lime-600',
                      
-                      'rounded-md mb-2 flex w-auto mr-1 transform  font-medium py-2 px-2 2xl:text-xs text-xs  items-center hover:-translate-y-1 hover:scale-110 transition delay-75')}
+                      'rounded-md mb-2 flex w-auto mr-1 transform  font-medium py-2 px-2 text-[10px] 2xl:text-xs  items-center hover:-translate-y-1 hover:scale-110 transition delay-75')}
                       style={{width: item.width}}
                   >
                     {item.name}
