@@ -163,12 +163,13 @@ export function AsignarProducto() {
         return;
       }
     
+      console.log("selectedDdt",selectedDdt)
       // Creación del objeto
       const newProductoAsignado = {
         Temporada: selectedDdt.temporada ?? Utils.getTempActive(),
         SiembraNumero: selectedDdt.siembraNumero,
         Departamento: selectedDdt.departamento ?? "RIEGO Y DRENAJE",
-        Labor: selectedLabor,
+        Labor: selectedDdt.labor,
         AliasLabor: selectedDdt.aliasLabor,
         Ddt: selectedDdt.ddt,
         idProducto: selectedProduct.idProducto,
