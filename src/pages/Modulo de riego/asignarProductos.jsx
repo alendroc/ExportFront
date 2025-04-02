@@ -39,6 +39,7 @@ export function AsignarProducto() {
     const horasAguaRef = useRef(null);
     const horasInyeccionRef = useRef(null);
     const horasLavadoRef = useRef(null);
+    const dosisHa = useRef(null);
 
  
 
@@ -51,6 +52,7 @@ export function AsignarProducto() {
       horasAguaRef.current.value =0
       horasInyeccionRef.current.value=0
       horasLavadoRef.current.value=0
+      dosisHa.current.value=0
     }
 
     useEffect(() => {
@@ -174,7 +176,8 @@ export function AsignarProducto() {
         Ddt: selectedDdt.ddt,
         idProducto: selectedProduct.idProducto,
         NombreDescriptivo: selectedProduct.nombreDescriptivo,
-        DosisHa: 0,
+        //DosisHa: 0,
+        DosisHa: dosisHa.current?.value ?? 0,
         HorasAgua: horasAguaRef.current?.value ?? 0,
         HorasInyeccion: horasInyeccionRef.current?.value ?? 0,
         HorasLavado: horasLavadoRef.current?.value ?? 0,
@@ -368,9 +371,9 @@ export function AsignarProducto() {
     
     />
     </section>
-    <div className="flex gap-3 bg-white p-2 rounded-md w-min shadow-sm items-end">
-  {['Horas Agua', 'Horas Inyeccion', 'Horas Lavado'].map((label, index) => (
-    <div key={index} className="flex flex-col items-start">
+    <div className="flex flex-wrap gap-3  bg-white p-2 rounded-md shadow-sm items-end" style={{ width: "75%"}}>
+  {['DosisHa','Horas Agua', 'Horas Inyeccion', 'Horas Lavado'].map((label, index) => (
+    <div key={index} className="flex flex-col items-start" >
       <label htmlFor={`input-${index}`} className="text-[11px] font-medium mb-1">
         {label}
       </label>
@@ -385,7 +388,13 @@ export function AsignarProducto() {
         }}
         slotProps={{
           input: {
-            ref: index === 0 ? horasAguaRef : index === 1 ? horasInyeccionRef : horasLavadoRef,
+            ref: index === 0 
+  ? dosisHa 
+  : index === 1 
+  ? horasAguaRef 
+  : index === 2 
+  ? horasInyeccionRef 
+  : horasLavadoRef,
             min: 0,
             step: 0.5,
           },
