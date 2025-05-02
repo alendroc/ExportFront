@@ -5,224 +5,274 @@ import Button from '@mui/joy/Button';
 import IconButton from '@mui/joy/IconButton';
 import { Height } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
-import { BiSearchAlt, BiInfoCircle,BiSolidDetail, BiChevronsRight, BiChevronRight   } from "react-icons/bi";
-import MaterialTable,  { MTableToolbar } from "@material-table/core";
-import React , { useEffect, useState } from "react";
+import { BiSearchAlt, BiInfoCircle, BiSolidDetail, BiChevronsRight, BiChevronRight } from "react-icons/bi";
+import MaterialTable, { MTableToolbar } from "@material-table/core";
+import React, { use, useEffect, useState } from "react";
+
+import { DDTLaboresService } from "../../services/DDTLaboresService";
+import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
+import { LotePOService } from "../../services/LotesPOService";
+
+var ddtLaboresService = new DDTLaboresService();
+var productoLaborPo = new ProductosLaborPoService();
+var lotePoService = new LotePOService;
+
 export function HacerPedido() {
-     const [data, setData] = useState([]);
 
-        const CustomToolbar = (props) => (
-            <div style={{ backgroundColor: '#408730', padding: '0' }}>
-                <MTableToolbar style={{padding:'0', height: '20px'}} {...props} />
-            </div>
-        );
-        const isSmallScreen = useMediaQuery("(max-width:1200px)");
-   
-    return (
-        <Container>
-            <div className="bg-[#79a96f] h-10 items-center flex pl-2 text-white mb-3">
-                <div className="ContenedorFecha gap-4 flex items-center">
-                <div className="flex items-center gap-2">
-                 <p className="2xl:text-sm text-[12px]">Fecha Inicio</p>
-                 <input type="date" className="text-black text-[10px] lg:text-xs px-2 h-7 focus:outline-2 shadow-md rounded-md"/>
-                </div>
+  const [data, setData] = useState([]);
+  const [fechaActual, setFechaActual] = useState(
+    new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
+  );
+  const [fechaInicio, setFechaIncio] = useState('');
+  const [fechaFinal, setFechaFinal] = useState('');
 
-                <div className="flex items-center gap-2">
-                 <p className="2xl:text-sm text-[12px]">Fecha Inicio</p>
-                 <input type="date" className="text-black text-[10px] 2xl:text-xs px-2 h-7 focus:outline-2 shadow-md rounded-md"/>
-                </div>
-                <Button endDecorator={<BiSearchAlt />} variant="soft"
-                 sx={{height: "30px",minHeight: "0",fontSize: "13px", padding: "0 10px",fontWeight: "500",}} >Buscar</Button>
-                <Button endDecorator={<BiInfoCircle />} variant="soft"
-                 sx={{height: "30px",minHeight: "0",fontSize: "13px", padding: "0 10px",fontWeight: "500",}} >Sugerir</Button>
-                 <Button endDecorator={<BiSolidDetail />} variant="soft"
-                 sx={{height: "30px",minHeight: "0",fontSize: "13px", padding: "0 10px",fontWeight: "500",}} >Ver boleta</Button>
-                </div>
-            </div>
-            <div className="p-3 flex place-content-between max-w-[1500px] mb-3">
-            <div>
-                    <MaterialTable
-                     data={data || []}
-                     title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
-                     columns={[{title: 'Departamento', field: 'idProducto' },
-                     {title: 'Cultivo', field: 'nombreDescriptivo' },
-                     {title: 'Labor', field: 'tipoUso' },
-                     {title: 'Lote', field: 'tipoUso' },
-                     {title: 'Area', field: 'tipoUso' },
-                     {title: 'Fecha Baase', field: 'tipoUso' },
-                     {title: 'Dias DT/DS/DC', field: 'tipoUso' }]}
-                     options={{
-                      selection:true,
-                      showSelectAllCheckbox: false,
-                      showTextRowsSelected: false,
-                        actionsColumnIndex: -1,
-                        paging: false,
-                        toolbar: false,
-                        search: true,
-                        headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-                        cellStyle: {padding: '4px 0 4px 9px' }
-                    }}
-            
-                    style={{ width: "51vw" , maxWidth: "800px", height: "", maxHeight: "50vh"}}
-                    components={{
-                        Toolbar:CustomToolbar,
-                    }}
-                
-                    localization={{
-                      body: {
-                        emptyDataSourceMessage: 'No se encontraron productos',
-                      },
-                      toolbar: {
-                        searchTooltip: 'Buscar',
-                        searchPlaceholder: 'Buscar',
-                      },
-                    }}
-                    
-                    />
-            </div>
-            <div>
-            <div >
-                <p className="mb-3" style={{ fontSize: isSmallScreen ? "12px" : "14px" }}>Ingrese el Codigo del empleado que aprueva</p>
-                <Input placeholder="Codigo" type="number" variant="outlined" sx={{width: isSmallScreen ? "100px" :"140px", marginBottom:"10px", fontSize: "14px"}}/>
-                <div className="mb-3 gap-3 flex items-center" >
-                    
-                    <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Aprobar</Button>
-                    <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
-                    <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Guardar</Button>
-                </div>
-                
-            </div>
-            <MaterialTable
-                     data={data || []}
-                     title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
-                     columns={[{title: 'Codigo', field: 'idProducto' },
-                     {title: 'Existencia', field: 'nombreDescriptivo' }]}
-                     options={{
-                      selection:true,
-                      showSelectAllCheckbox: false,
-                      showTextRowsSelected: false,
-                        
-                        paging: false,
-                        toolbar: false,
-                        search: true,
-                        headerStyle: { position: 'sticky', top: 0, backgroundColor: '#e58356', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-                        cellStyle: {padding: '4px 0 4px 9px' }
-                    }}
-            
-                    style={{  height: "", maxHeight: "50vh"}}
-                    components={{
-                        Toolbar:CustomToolbar,
-                    }}
-                
-                    localization={{
-                      body: {
-                        emptyDataSourceMessage: 'No se encontraron productos',
-                      },
-                      toolbar: {
-                        searchTooltip: 'Buscar',
-                        searchPlaceholder: 'Buscar',
-                      },
-                    }}
-                    
-                    />
-            </div>
-            </div>
-            <div className="p-3 flex place-content-between max-w-[1500px]">
-            <MaterialTable
-                     data={data || []}
-                     title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
-                     columns={[
-                        { title: "Codigo", field: "idProducto", width: "15%" },
-                        { title: "Producto", field: "nombreDescriptivo", width: "60%" }, // Más grande
-                        { title: "Dosis Teorica(L)", field: "tipoUso", width: "15%" },
-                        { title: "Unidad", field: "tipoUso", width: "15%" },
-                        { title: "Dosis Real(L)", field: "tipoUso", width: "15%" },]}
-                     options={{
-                      selection:true,
-                      showSelectAllCheckbox: false,
-                      showTextRowsSelected: false,
+  useEffect(() => {
+    console.log("Fecha actual:", fechaActual);
+  }, []);
 
-                        paging: false,
-                        toolbar: false,
-                        search: true,
-                        headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-                        cellStyle: {padding: '4px 0 4px 9px' }
-                    }}
-            
-                    style={{ width: "45vw" , maxWidth: "800px", height: "", maxHeight: "50vh"}}
-                    components={{
-                        Toolbar:CustomToolbar,
-                    }}
-                
-                    localization={{
-                      body: {
-                        emptyDataSourceMessage: 'No se encontraron productos',
-                      },
-                      toolbar: {
-                        searchTooltip: 'Buscar',
-                        searchPlaceholder: 'Buscar',
-                      },
-                    }}  />
-                    <div className="Botones flex flex-col p-3 gap-2 justify-center">
-                        <IconButton className="boton-animado shadow-lg"
-                        sx={{ fontSize: "13px", padding: "0 10px", fontWeight: "500", background: "#e58356", color: "white", 
-                            "&:hover": {
-                                background: "#dc7342",
-                                color: "white",
+  useEffect(() => {
+    setFechaFinal('');
+  }, [fechaInicio]);
 
-                              }
-                         }}>
-                            <BiChevronsRight className="icono-animado text-lg"/></IconButton>
-                            <IconButton className="boton-animado shadow-lg"
-                        sx={{ fontSize: "13px", padding: "0 10px", fontWeight: "500", background: "#e58356", color: "white", 
-                            "&:hover": {
-                                background: "#dc7342",
-                                color: "white"
-                              }
-                         }}>
-                            <BiChevronRight className="icono-animado text-lg"/></IconButton >
-                    </div>
+  const getData = async () => {
+    
+  }
 
-                    <MaterialTable
-                     data={data || []}
-                     title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
-                     columns={[
-                        { title: "Codigo", field: "idProducto", },
-                        { title: "Producto", field: "nombreDescriptivo", }, // Más grande
-                        { title: "Dosis Teorica(L)", field: "tipoUso",  },
-                        { title: "Unidad", field: "tipoUso"},
-                        { title: "Dosis Real(L)", field: "tipoUso" },]}
-                     options={{
-                      selection:true,
-                      showSelectAllCheckbox: false,
-                      showTextRowsSelected: false,
+  const CustomToolbar = (props) => (
+    <div style={{ backgroundColor: '#408730', padding: '0' }}>
+      <MTableToolbar style={{ padding: '0', height: '20px' }} {...props} />
+    </div>
+  );
+  const isSmallScreen = useMediaQuery("(max-width:1200px)");
 
-                        paging: false,
-                        toolbar: false,
-                        search: true,
-                        headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-                        cellStyle: {padding: '4px 0 4px 9px' }
-                    }}
-            
-                    style={{ height: "", maxHeight: "50vh"}}
-                    components={{
-                        Toolbar:CustomToolbar,
-                    }}
-                
-                    localization={{
-                      body: {
-                        emptyDataSourceMessage: 'No se encontraron productos',
-                      },
-                      toolbar: {
-                        searchTooltip: 'Buscar',
-                        searchPlaceholder: 'Buscar',
-                      },
-                    }}  />
+  return (
+    <Container>
+      <div className="bg-[#79a96f] h-10 items-center flex pl-2 text-white mb-3">
+        <div className="ContenedorFecha gap-4 flex items-center">
+          <div className="flex items-center gap-2">
+            <p className="2xl:text-sm text-[12px]">Fecha Inicio</p>
+            <input
+              type="date"
+              className="text-black text-[10px] lg:text-xs px-2 h-7 focus:outline-2 shadow-md rounded-md"
+              value={fechaInicio}
+              min={fechaActual}
+              onChange={(e) => {
+                setFechaIncio(e.target.value);
+                console.log("Fecha inicio:", e.target.value);
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-2">
+            <p className="2xl:text-sm text-[12px]">Fecha Final</p>
+            <input
+              type="date"
+              className="text-black text-[10px] 2xl:text-xs px-2 h-7 focus:outline-2 shadow-md rounded-md"
+              value={fechaFinal}
+              min={fechaInicio || fechaActual}
+              disabled={!fechaInicio}
+              onChange={(e) => {
+                setFechaFinal(e.target.value);
+                console.log("Fecha final:", e.target.value);
+              }}
+            />
+          </div>
+          <Button endDecorator={<BiSearchAlt />} variant="soft"
+            sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} 
+            disabled={!fechaInicio || !fechaFinal}
+            >Buscar</Button>
+          <Button endDecorator={<BiInfoCircle />} variant="soft"
+            sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Sugerir</Button>
+          <Button endDecorator={<BiSolidDetail />} variant="soft"
+            sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Ver boleta</Button>
+        </div>
+      </div>
+      <div className="p-3 flex place-content-between max-w-[1500px] mb-3">
+        <div>
+          <MaterialTable
+            data={data || []}
+            title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
+            columns={[{ title: 'Departamento', field: 'idProducto' },
+            { title: 'Cultivo', field: 'nombreDescriptivo' },
+            { title: 'Labor', field: 'tipoUso' },
+            { title: 'Lote', field: 'tipoUso' },
+            { title: 'Área', field: 'tipoUso' },
+            { title: 'Fecha Base', field: 'tipoUso' },
+            { title: 'Días DT/DS/DC', field: 'tipoUso' }]}
+            options={{
+              selection: true,
+              showSelectAllCheckbox: false,
+              showTextRowsSelected: false,
+              actionsColumnIndex: -1,
+              paging: false,
+              toolbar: false,
+              search: true,
+              headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
+              cellStyle: { padding: '4px 0 4px 9px' }
+            }}
+
+            style={{ width: "51vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
+            components={{
+              Toolbar: CustomToolbar,
+            }}
+
+            localization={{
+              body: {
+                emptyDataSourceMessage: 'No se encontraron productos',
+              },
+              toolbar: {
+                searchTooltip: 'Buscar',
+                searchPlaceholder: 'Buscar',
+              },
+            }}
+
+          />
+        </div>
+        <div>
+          <div >
+            <p className="mb-3" style={{ fontSize: isSmallScreen ? "12px" : "14px" }}>Ingrese el Código del empleado que aprueba</p>
+            <Input placeholder="Codigo" type="number" variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
+            <div className="mb-3 gap-3 flex items-center" >
+
+              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Aprobar</Button>
+              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
+              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Guardar</Button>
             </div>
-        </Container>
-    )
+
+          </div>
+          <MaterialTable
+            data={data || []}
+            title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
+            columns={[{ title: 'Codigo', field: 'idProducto' },
+            { title: 'Existencia', field: 'nombreDescriptivo' }]}
+            options={{
+              selection: true,
+              showSelectAllCheckbox: false,
+              showTextRowsSelected: false,
+
+              paging: false,
+              toolbar: false,
+              search: true,
+              headerStyle: { position: 'sticky', top: 0, backgroundColor: '#e58356', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
+              cellStyle: { padding: '4px 0 4px 9px' }
+            }}
+
+            style={{ height: "", maxHeight: "50vh" }}
+            components={{
+              Toolbar: CustomToolbar,
+            }}
+
+            localization={{
+              body: {
+                emptyDataSourceMessage: 'No se encontraron productos',
+              },
+              toolbar: {
+                searchTooltip: 'Buscar',
+                searchPlaceholder: 'Buscar',
+              },
+            }}
+
+          />
+        </div>
+      </div>
+      <div className="p-3 flex place-content-between max-w-[1500px]">
+        <MaterialTable
+          data={data || []}
+          title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
+          columns={[
+            { title: "Código", field: "idProducto", width: "15%" },
+            { title: "Producto", field: "nombreDescriptivo", width: "60%" }, // Más grande
+            { title: "Dosis Teorica(L)", field: "tipoUso", width: "15%" },
+            { title: "Unidad", field: "tipoUso", width: "15%" },
+            { title: "Dosis Real(L)", field: "tipoUso", width: "15%" },]}
+          options={{
+            selection: true,
+            showSelectAllCheckbox: false,
+            showTextRowsSelected: false,
+
+            paging: false,
+            toolbar: false,
+            search: true,
+            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
+            cellStyle: { padding: '4px 0 4px 9px' }
+          }}
+
+          style={{ width: "45vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
+          components={{
+            Toolbar: CustomToolbar,
+          }}
+
+          localization={{
+            body: {
+              emptyDataSourceMessage: 'No se encontraron productos',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }} />
+        <div className="Botones flex flex-col p-3 gap-2 justify-center">
+          <IconButton className="boton-animado shadow-lg"
+            sx={{
+              fontSize: "13px", padding: "0 10px", fontWeight: "500", background: "#e58356", color: "white",
+              "&:hover": {
+                background: "#dc7342",
+                color: "white",
+
+              }
+            }}>
+            <BiChevronsRight className="icono-animado text-lg" /></IconButton>
+          <IconButton className="boton-animado shadow-lg"
+            sx={{
+              fontSize: "13px", padding: "0 10px", fontWeight: "500", background: "#e58356", color: "white",
+              "&:hover": {
+                background: "#dc7342",
+                color: "white"
+              }
+            }}>
+            <BiChevronRight className="icono-animado text-lg" /></IconButton >
+        </div>
+
+        <MaterialTable
+          data={data || []}
+          title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
+          columns={[
+            { title: "Código", field: "idProducto", },
+            { title: "Producto", field: "nombreDescriptivo", }, // Más grande
+            { title: "Dosis Teórica(L)", field: "tipoUso", },
+            { title: "Unidad", field: "tipoUso" },
+            { title: "Dosis Real(L)", field: "tipoUso" },]}
+          options={{
+            selection: true,
+            showSelectAllCheckbox: false,
+            showTextRowsSelected: false,
+
+            paging: false,
+            toolbar: false,
+            search: true,
+            headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
+            cellStyle: { padding: '4px 0 4px 9px' }
+          }}
+
+          style={{ height: "", maxHeight: "50vh" }}
+          components={{
+            Toolbar: CustomToolbar,
+          }}
+
+          localization={{
+            body: {
+              emptyDataSourceMessage: 'No se encontraron productos',
+            },
+            toolbar: {
+              searchTooltip: 'Buscar',
+              searchPlaceholder: 'Buscar',
+            },
+          }} />
+      </div>
+    </Container>
+  )
 }
-const  Container = styled.div`
+const Container = styled.div`
 .css-1g1pyhz-MuiTableCell-root {
     font-size: 0.875rem;
 }
