@@ -231,5 +231,30 @@ export class DDTLaboresService extends Service {
                 : error.message);
         }
     }
+
+    async filterDdtAndLote(temporada, fechaInicio, fechaFinal) {
+        try {
+            const response = await fetch(`${this.apiUrl}DDTLabores/${temporada}/${fechaInicio}/${fechaFinal}`, {
+                method: 'GET',
+                headers: { 'Content-Type': 'application/json' }
+            });
+    
+            if (response.status === 204) {
+                throw new Error('No existen datos dentro del rango de fechas.');
+            }
+            if (!response.ok) {
+                throw new Error(`Error al traer los datos: ${response.statusText}`);
+            }
+    
+            const data = await response.json();
+            return data.isSuccess && data.status === 200 
+                ? { success: true, data: data } 
+                : { success: false, status: data.status };
+        } catch (error) {
+            throw new Error(error.message.includes('Failed to fetch') 
+                ? 'No se pudo conectar al servidor. Verifica si el backend está corriendo.' 
+                : error.message);
+        }
+    }
    
 }

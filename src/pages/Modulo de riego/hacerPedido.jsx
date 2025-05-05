@@ -19,23 +19,54 @@ var lotePoService = new LotePOService;
 
 export function HacerPedido() {
 
-  const [data, setData] = useState([]);
+  const [dataFiltro, setDataFiltro] = useState([]);
+  const [dataProductos, setDataProductos] = useState([]);
+  const [dataProductosAprobados, setDataProductosAprobados] = useState([]);
+  const [dataEmpleado, setDataEmpleado] = useState([]);
+  const [selectedDdt, setSelectedDdt] = useState(null);
+  
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
   );
   const [fechaInicio, setFechaIncio] = useState('');
   const [fechaFinal, setFechaFinal] = useState('');
+  const [temporada, setTemporada] = useState('');
+  const [ddtFlag, setDdtFlag] = useState(false);
+  const [productoDdtFlag, setProductoDdtFlag] = useState(false);
 
   useEffect(() => {
     console.log("Fecha actual:", fechaActual);
+    setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [ddtFlag]);
+
+  useEffect(() => {
+    console.log("Selected DDT:", selectedDdt);
+    productoLaborPo.getByTempSiembraNumDepLabAliasDdt(
+      selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
+      selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then((res) => {
+      console.log("Respuesta de la API PO:", res);
+      setDataProductos(res.poProductosLabor);
+      setProductoDdtFlag(false);
+    }).catch((error) => {
+      console.error("Error al obtener los datos:", error);
+    })
+  }, [productoDdtFlag]);
 
   useEffect(() => {
     setFechaFinal('');
   }, [fechaInicio]);
 
   const getData = async () => {
-    
+    ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
+      console.log("Respuesta de la API:", res.data);
+      setDataFiltro(res.data.data);
+    }).catch((error) => {
+      console.error("Error al obtener los datos:", error);
+    })
   }
 
   const CustomToolbar = (props) => (
@@ -80,6 +111,13 @@ export function HacerPedido() {
           <Button endDecorator={<BiSearchAlt />} variant="soft"
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} 
             disabled={!fechaInicio || !fechaFinal}
+            onClick={() => {
+              if (fechaInicio && fechaFinal) {
+                setDdtFlag(true);
+              } else {
+                alert("Por favor, seleccione ambas fechas.");
+              }
+            }}
             >Buscar</Button>
           <Button endDecorator={<BiInfoCircle />} variant="soft"
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Sugerir</Button>
@@ -90,15 +128,15 @@ export function HacerPedido() {
       <div className="p-3 flex place-content-between max-w-[1500px] mb-3">
         <div>
           <MaterialTable
-            data={data || []}
+            data={dataFiltro || []}
             title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
-            columns={[{ title: 'Departamento', field: 'idProducto' },
-            { title: 'Cultivo', field: 'nombreDescriptivo' },
-            { title: 'Labor', field: 'tipoUso' },
-            { title: 'Lote', field: 'tipoUso' },
-            { title: 'Área', field: 'tipoUso' },
-            { title: 'Fecha Base', field: 'tipoUso' },
-            { title: 'Días DT/DS/DC', field: 'tipoUso' }]}
+            columns={[{ title: 'Departamento', field: 'departamento' },
+            { title: 'Cultivo', field: 'nombreDescriptivo', render: rowData => rowData.nombreDescriptivo ?? 'MELÓN' },
+            { title: 'Labor', field: 'aliasLabor' },
+            { title: 'Lote', field: 'aliasLote' },
+            { title: 'Área', field: 'area' },
+            { title: 'Fecha Base', field: 'fechaTrasplante' },
+            { title: 'Días DT/DS/DC', field: 'ddt' }]}
             options={{
               selection: true,
               showSelectAllCheckbox: false,
@@ -108,7 +146,27 @@ export function HacerPedido() {
               toolbar: false,
               search: true,
               headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-              cellStyle: { padding: '4px 0 4px 9px' }
+              cellStyle: { padding: '4px 0 4px 9px' },
+              rowStyle: rowData => ({
+                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero) ? '#3f842f41' : '#FFF'
+              }),
+
+              selectionProps: (rowData) => ({
+                onChange: () => {
+                  console.log("rowData",rowData)
+                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
+                    rowData)); 
+                },
+                style: { display: 'none' }
+              }),
+            }}
+
+            
+            onRowClick={(event, rowData) => {
+              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
+                rowData)); 
+              console.log("selectedDdt",selectedDdt)
+              setProductoDdtFlag(true);
             }}
 
             style={{ width: "51vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
@@ -118,7 +176,7 @@ export function HacerPedido() {
 
             localization={{
               body: {
-                emptyDataSourceMessage: 'No se encontraron productos',
+                emptyDataSourceMessage: 'No se encontraron Labores',
               },
               toolbar: {
                 searchTooltip: 'Buscar',
@@ -141,7 +199,7 @@ export function HacerPedido() {
 
           </div>
           <MaterialTable
-            data={data || []}
+            data={dataEmpleado || []}
             title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
             columns={[{ title: 'Codigo', field: 'idProducto' },
             { title: 'Existencia', field: 'nombreDescriptivo' }]}
@@ -177,14 +235,14 @@ export function HacerPedido() {
       </div>
       <div className="p-3 flex place-content-between max-w-[1500px]">
         <MaterialTable
-          data={data || []}
+          data={dataProductos || []}
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
             { title: "Código", field: "idProducto", width: "15%" },
-            { title: "Producto", field: "nombreDescriptivo", width: "60%" }, // Más grande
-            { title: "Dosis Teorica(L)", field: "tipoUso", width: "15%" },
-            { title: "Unidad", field: "tipoUso", width: "15%" },
-            { title: "Dosis Real(L)", field: "tipoUso", width: "15%" },]}
+            { title: "Producto", field: "nombreDescriptivo", width: "60%" },
+            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%" },
+            { title: "Unidad", field: "unidadMedida", width: "15%" },
+            { title: "Dosis Real(L)", field: "dosisHa", width: "15%" },]}
           options={{
             selection: true,
             showSelectAllCheckbox: false,
@@ -220,7 +278,12 @@ export function HacerPedido() {
                 color: "white",
 
               }
-            }}>
+            }}
+            onClick={() => {
+              console.log("dataProductos", dataProductos);
+              setDataProductosAprobados(dataProductos);
+            }}
+            >
             <BiChevronsRight className="icono-animado text-lg" /></IconButton>
           <IconButton className="boton-animado shadow-lg"
             sx={{
@@ -234,14 +297,13 @@ export function HacerPedido() {
         </div>
 
         <MaterialTable
-          data={data || []}
+          data={dataProductosAprobados || []}
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
-            { title: "Código", field: "idProducto", },
             { title: "Producto", field: "nombreDescriptivo", }, // Más grande
-            { title: "Dosis Teórica(L)", field: "tipoUso", },
-            { title: "Unidad", field: "tipoUso" },
-            { title: "Dosis Real(L)", field: "tipoUso" },]}
+            { title: "Dosis Lote", field: "dosisHa", },
+            { title: "Número de boleta", field: "tipoUso" },
+            { title: "Aprueba", field: "tipoUso" },]}
           options={{
             selection: true,
             showSelectAllCheckbox: false,
