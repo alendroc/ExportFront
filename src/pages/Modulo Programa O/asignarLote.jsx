@@ -288,11 +288,17 @@ export function AsignarLote() {
                   validate: rowData => {
                     if (!rowData.area) return true;
 
+
                     const totalArea = dataPo
-                    .filter((item) => item.nombreLote === rowData.nombreLote && item.siembraNum === rowData.siembraNum)
-                    .reduce((sum, item) => sum + item.area, 0) + rowData.area;
+                    .filter((item) => item.nombreLote === rowData.nombreLote && item.siembraNum === rowData.siembraNum
+                    && !(item.aliasLote === rowData.aliasLote && item.siembraNum === rowData.siembraNum && item.area === rowData.area)
+                  )
                     
-                    console.log(selectedRow)
+                    
+                    .reduce((sum, item) => sum + item.area, 0) + rowData.area;
+
+                    console.log("total area",totalArea)
+                  
                   
                   // const esValido = selectedRow?.area || data.find((lote)=>lote.nombreLote===rowData.nombreLote).area >= totalArea;
                   const loteEncontrado = data.find((lote) => lote.nombreLote === rowData.nombreLote);
