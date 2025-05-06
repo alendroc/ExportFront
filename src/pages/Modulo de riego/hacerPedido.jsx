@@ -64,6 +64,7 @@ export function HacerPedido() {
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
       console.log("Respuesta de la API:", res.data);
       setDataFiltro(res.data.data);
+
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
     })
@@ -112,8 +113,13 @@ export function HacerPedido() {
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} 
             disabled={!fechaInicio || !fechaFinal}
             onClick={() => {
+              // if (fechaInicio && fechaFinal) {
+              //   setDdtFlag(true);
+              // } else {
+              //   alert("Por favor, seleccione ambas fechas.");
+              // }
               if (fechaInicio && fechaFinal) {
-                setDdtFlag(true);
+                getData();
               } else {
                 alert("Por favor, seleccione ambas fechas.");
               }
@@ -145,17 +151,19 @@ export function HacerPedido() {
               paging: false,
               toolbar: false,
               search: true,
+              maxBodyHeight: '20rem',
               headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
               cellStyle: { padding: '4px 0 4px 9px' },
               rowStyle: rowData => ({
-                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero) ? '#3f842f41' : '#FFF'
+                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero && 
+                  selectedDdt?.aliasLabor === rowData.aliasLabor && selectedDdt?.aliasLote === rowData.aliasLote) ? '#3f842f41' : '#FFF'
               }),
 
               selectionProps: (rowData) => ({
                 onChange: () => {
                   console.log("rowData",rowData)
-                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
-                    rowData)); 
+                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
+                    prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
                 },
                 style: { display: 'none' }
               }),
@@ -163,8 +171,8 @@ export function HacerPedido() {
 
             
             onRowClick={(event, rowData) => {
-              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
-                rowData)); 
+              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
+                prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
               console.log("selectedDdt",selectedDdt)
               setProductoDdtFlag(true);
             }}
@@ -207,7 +215,7 @@ export function HacerPedido() {
               selection: true,
               showSelectAllCheckbox: false,
               showTextRowsSelected: false,
-
+              maxBodyHeight: '14rem',
               paging: false,
               toolbar: false,
               search: true,
@@ -247,7 +255,7 @@ export function HacerPedido() {
             selection: true,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
-
+            maxBodyHeight: '14rem',
             paging: false,
             toolbar: false,
             search: true,
@@ -308,7 +316,7 @@ export function HacerPedido() {
             selection: true,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
-
+            maxBodyHeight: '14rem',
             paging: false,
             toolbar: false,
             search: true,
