@@ -23,7 +23,8 @@ export function HacerPedido() {
   const [dataProductos, setDataProductos] = useState([]);
   const [dataProductosAprobados, setDataProductosAprobados] = useState([]);
   const [dataEmpleado, setDataEmpleado] = useState([]);
-  const [selectedDdt, setSelectedDdt] = useState(null);
+  const [selectedDdt, setSelectedDdt] = useState([]);
+  const [selectedProductos, setSelectedProductos] = useState([]);
   
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
@@ -39,28 +40,36 @@ export function HacerPedido() {
     setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
 
-  useEffect(() => {
-    getData();
-  }, [ddtFlag]);
+  // useEffect(() => {
+  //   getData();
+  // }, [ddtFlag]);
 
   useEffect(() => {
     console.log("Selected DDT:", selectedDdt);
+    setSelectedProductos([]);
+    setDataProductos([]);
     productoLaborPo.getByTempSiembraNumDepLabAliasDdt(
       selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
       selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then((res) => {
       console.log("Respuesta de la API PO:", res);
-      setDataProductos(res.poProductosLabor);
+      //setDataProductos(res.poProductosLabor);
+      setDataProductos(res.poProductosLabor.map(item => ({
+        ...item,
+        dosisReal: item.dosisHa // o 0, o el valor que tenga sentido por defecto
+      })));
       setProductoDdtFlag(false);
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
     })
-  }, [productoDdtFlag]);
+  }, [selectedDdt]);
 
   useEffect(() => {
     setFechaFinal('');
   }, [fechaInicio]);
 
   const getData = async () => {
+    setSelectedProductos(null);
+    setDataProductos(null);
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
       console.log("Respuesta de la API:", res.data);
       setDataFiltro(res.data.data);
@@ -246,22 +255,67 @@ export function HacerPedido() {
           data={dataProductos || []}
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
-            { title: "Código", field: "idProducto", width: "15%" },
-            { title: "Producto", field: "nombreDescriptivo", width: "60%" },
-            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%" },
-            { title: "Unidad", field: "unidadMedida", width: "15%" },
-            { title: "Dosis Real(L)", field: "dosisHa", width: "15%" },]}
+            { title: "Código", field: "idProducto", width: "15%" , editable:'never'},
+            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable:'never' },
+            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable:'never' },
+            { title: "Unidad", field: "unidadMedida", width: "10%" , editable:'never'},
+            { title: "Dosis Real(L)", field: "dosisReal", width: "15%", type:"numeric", editable:true,}
+            ,]}
           options={{
-            selection: true,
+            selection: false,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
-            maxBodyHeight: '14rem',
+            actionsColumnIndex: -1,
             paging: false,
             toolbar: false,
             search: true,
             headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-            cellStyle: { padding: '4px 0 4px 9px' }
+            cellStyle: { padding: '4px 5 4px 9px' },
+            rowStyle: rowData => ({
+              backgroundColor: selectedProductos.some(item => item.idProducto === rowData.idProducto)
+                ? '#3f842f41'
+                : '#FFF'
+            }),
+  
+            // selectionProps: rowData => ({
+            //   style: { display: 'none' }
+            // }),
+            
           }}
+
+          onRowClick={(evt, rowData) => {
+            setSelectedProductos(prev => {
+              const isSelected = prev.some(p => p.idProducto === rowData.idProducto);
+              if (isSelected) {
+                return prev.filter(p => p.idProducto !== rowData.idProducto); // lo deselecciona
+              } else {
+                return [...prev, rowData]; // lo selecciona
+              }
+            });
+            console.log("selectedProductos", selectedProductos);
+          }}
+          
+
+           cellEditable={{
+                          onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+                            return new Promise((resolve, reject) => {
+                              if (columnDef.field === "dosisReal") {
+                                // Solo actualizar 'dosisReal' en el estado local
+                                const updatedData = dataProductos.map((producto) => {
+                                  if (producto.idProducto === rowData.idProducto) {
+                                    return { ...producto, dosisReal: newValue };  // Actualizamos solo dosisReal
+                                  }
+                                  return producto;
+                                });
+                                console.log("updateData", updatedData);
+                                setDataProductos(updatedData);  // Actualizamos el estado
+                      
+                                resolve();  // Aceptamos la edición
+                              } else {
+                                reject();  // No permitir editar las otras celdas
+                              }
+                          })}
+                        }}
 
           style={{ width: "45vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
           components={{
@@ -300,7 +354,12 @@ export function HacerPedido() {
                 background: "#dc7342",
                 color: "white"
               }
-            }}>
+            }}
+            onClick={() => {
+              console.log("dataProductos", dataProductos);
+              setDataProductosAprobados(selectedProductos);
+            }}
+            >
             <BiChevronRight className="icono-animado text-lg" /></IconButton >
         </div>
 
@@ -309,7 +368,7 @@ export function HacerPedido() {
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
             { title: "Producto", field: "nombreDescriptivo", }, // Más grande
-            { title: "Dosis Lote", field: "dosisHa", },
+            { title: "Dosis Lote", field: "dosisReal", },
             { title: "Número de boleta", field: "tipoUso" },
             { title: "Aprueba", field: "tipoUso" },]}
           options={{
