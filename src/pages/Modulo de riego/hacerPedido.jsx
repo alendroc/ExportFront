@@ -197,14 +197,14 @@ export function HacerPedido() {
         if (data.area === null) {
           data.area = 0;
         }
-        const response = await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", 
+        await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", 
           data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, data.area
         ).then((res) => {
           console.log("Respuesta de la API:", res);
-          setDataProductosAprobados(res.PoPedidoProductos)
-          console.log("dataProductosAprobados", res.PoPedidoProductos);
+          setDataProductosAprobados(res.poPedidoProductos)
+          console.log("dataProductosAprobados", res.poPedidoProductos);
+          console.log("setDataProductosAprobados", dataProductosAprobados);
         })
-        console.log("Respuesta de la API:", response);
       }
       catch (error) {
         console.error("Error al obtener los datos:", error);
@@ -231,7 +231,7 @@ export function HacerPedido() {
         idProducto: data.idProducto,
         numBoleta: nuevaBoleta,
         temporada: data.temporada,
-        siembraNumero: data.siembraNumero,
+        siembraNum: data.siembraNumero,
         departamento: data.departamento,
         cultivo: "MELÓN",
         aliasLabor: data.aliasLabor,
