@@ -32,6 +32,7 @@ export function HacerPedido() {
   const [selectedAprueba, setSelectedAprueba] = useState([]);
   const [selectedProductos, setSelectedProductos] = useState([]);
   const [codigoEmpleado, setCodigoEmpleado] = useState('');
+  //const [lastBoleta, setLastBoleta]= useState('');
 
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
@@ -98,13 +99,24 @@ export function HacerPedido() {
     setSelectedProductos(null);
     setDataProductos(null);
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
-      console.log("Respuesta de la API:", res.data);
-      setDataFiltro(res.data.data);
+    console.log("Respuesta de la API:", res.data);
+    setDataFiltro(res.data.data);
 
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
     })
   }
+
+  const getLastBoleta = async () => {
+    try {
+      const res = await pedidoProductosPoService.getLastBoleta();
+      return res?.ultimaBoleta?.numBoleta ?? 0; // Devuelve directamente el número
+    } catch (error) {
+      console.error("Error al obtener la última boleta:", error);
+      return 0;
+    }
+  };
+  
 
   const handleAprobar = () => {
     if (!dataProductosAprobados.length || !selectedAprueba.length) {
@@ -201,7 +213,10 @@ export function HacerPedido() {
     fetchData();
   };
 
+
+
   const savePedido = (data) => {
+    
     
     if (!data.aprueba) {
       console.error("Error: El campo 'aprueba' es obligatorio.");
@@ -209,20 +224,24 @@ export function HacerPedido() {
       return; // Detiene la ejecución
     }
     const fetchData = async () => {
-
+      const lastBoletaRaw = await getLastBoleta();
+      const nuevaBoleta = lastBoletaRaw + 1;
 
       const newData = {
         idProducto: data.idProducto,
-        nombreDescriptivo: data.nombreDescriptivo,
+        numBoleta: nuevaBoleta,
         temporada: data.temporada,
         siembraNumero: data.siembraNumero,
         departamento: data.departamento,
         cultivo: "MELÓN",
         aliasLabor: data.aliasLabor,
         aliasLote: selectedDdt.aliasLote,
-        fechaBase: data.fechaTrasplante,
+        fechaBase: selectedDdt.fechaTrasplante,
         ddt: data.ddt,
-        areaSiembra: data.area,
+        areaSiembra: selectedDdt.area,
+        unidadesPorLote: data.dosisReal,
+        nombreDescriptivo: data.nombreDescriptivo,
+        fechaPedido: fechaActual,
         aprueba: data.aprueba,
       }
       console.log("newData", newData);
