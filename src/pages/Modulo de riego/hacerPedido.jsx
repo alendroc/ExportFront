@@ -26,9 +26,10 @@ export function HacerPedido() {
   const [dataProductosAprobados, setDataProductosAprobados] = useState([]);
   const [dataEmpleado, setDataEmpleado] = useState([]);
   const [selectedDdt, setSelectedDdt] = useState([]);
+  const [selectedAprueba, setSelectedAprueba] = useState([]);
   const [selectedProductos, setSelectedProductos] = useState([]);
   const [codigoEmpleado, setCodigoEmpleado] = useState('');
-  
+
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
   );
@@ -60,7 +61,7 @@ export function HacerPedido() {
       console.log("Selected DDT:", selectedDdt);
       setSelectedProductos([]);
       setDataProductos([]);
-  
+
       productoLaborPoService
         .getByTempSiembraNumDepLabAliasDdt(
           selectedDdt.temporada,
@@ -105,28 +106,35 @@ export function HacerPedido() {
   const handleAprobar = () => {
     const fetchData = async () => {
       try {
-          const response = await usuarioService.getById(codigoEmpleado)
-          var usuarioAprueba= response.usuario[0];
-          console.log("usuario", response.usuario);
-          console.log("usuarioAprueba", usuarioAprueba);
-          if (response.success) {
-            console.log("dataProductosAprobados", dataProductosAprobados);
-            setDataProductosAprobados(dataProductosAprobados.map(item => ({
-              ...item,
-              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
-            })));
-            console.log("dataProductosAprobados actualizados", dataProductosAprobados);
-              // setData(response.lotes); 
-          } else {
-              console.log("No se pudo obtener el usuario.");
-          }
+        const response = await usuarioService.getById(codigoEmpleado)
+        var usuarioAprueba = response.usuario[0];
+        console.log("usuario", response.usuario);
+        console.log("usuarioAprueba", usuarioAprueba);
+        if (response.success) {
+          // Creamos un Set para acceso más rápido a los IDs seleccionados
+          const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
+  
+          const nuevosDatos = dataProductosAprobados.map(item => {
+            if (selectedIds.has(item.idProducto)) {
+              return {
+                ...item,
+                aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+              };
+            }
+            return item; // No se modifica si no está seleccionado
+          });
+  
+          setDataProductosAprobados(nuevosDatos);
+        } else {
+          console.log("No se pudo obtener el usuario.");
+        }
       } catch (error) {
-          console.error("Error al obtener el usuario:", error);
+        console.error("Error al obtener el usuario:", error);
       }
-  };
-  fetchData();
-  // showToast('success', 'Lote eliminado', '#2d800e');
-  // showToast('error', error, '#9c1010')
+    };
+    fetchData();
+    // showToast('success', 'Lote eliminado', '#2d800e');
+    // showToast('error', error, '#9c1010')
     console.log("Código ingresado:", codigoEmpleado);
   };
 
@@ -170,7 +178,7 @@ export function HacerPedido() {
             />
           </div>
           <Button endDecorator={<BiSearchAlt />} variant="soft"
-            sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} 
+            sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }}
             disabled={!fechaInicio || !fechaFinal}
             onClick={() => {
               // if (fechaInicio && fechaFinal) {
@@ -184,7 +192,7 @@ export function HacerPedido() {
                 alert("Por favor, seleccione ambas fechas.");
               }
             }}
-            >Buscar</Button>
+          >Buscar</Button>
           <Button endDecorator={<BiInfoCircle />} variant="soft"
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Sugerir</Button>
           <Button endDecorator={<BiSolidDetail />} variant="soft"
@@ -202,7 +210,7 @@ export function HacerPedido() {
             { title: 'Lote', field: 'aliasLote' },
             { title: 'Área', field: 'area' },
             { title: 'Fecha Base', field: 'fechaTrasplante' },
-            { title: 'Días DT/DS/DC', field: 'ddt',}]}
+            { title: 'Días DT/DS/DC', field: 'ddt', }]}
             options={{
               selection: true,
               showSelectAllCheckbox: false,
@@ -213,27 +221,27 @@ export function HacerPedido() {
               search: true,
               maxBodyHeight: '50vh',
               headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-              cellStyle: { padding: '4px 0 4px 9px'},
+              cellStyle: { padding: '4px 0 4px 9px' },
               rowStyle: rowData => ({
-                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero && 
+                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero &&
                   selectedDdt?.aliasLabor === rowData.aliasLabor && selectedDdt?.aliasLote === rowData.aliasLote) ? '#3f842f41' : '#FFF'
               }),
 
               selectionProps: (rowData) => ({
                 onChange: () => {
-                  console.log("rowData",rowData)
-                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
-                    prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
+                  console.log("rowData", rowData)
+                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
+                    prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
                 },
                 style: { display: 'none' }
               }),
             }}
 
-            
+
             onRowClick={(event, rowData) => {
-              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
-                prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
-              console.log("selectedDdt",selectedDdt)
+              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
+                prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
+              console.log("selectedDdt", selectedDdt)
               setProductoDdtFlag(true);
             }}
 
@@ -257,16 +265,16 @@ export function HacerPedido() {
         <div>
           <div >
             <p className="mb-3" style={{ fontSize: isSmallScreen ? "12px" : "14px" }}>Ingrese el Código del empleado que aprueba</p>
-            <Input placeholder="Código" 
-            //type="number" 
-            value={codigoEmpleado} 
-            onChange={(e) => setCodigoEmpleado(e.target.value)}
-            variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
+            <Input placeholder="Código"
+              //type="number" 
+              value={codigoEmpleado}
+              onChange={(e) => setCodigoEmpleado(e.target.value)}
+              variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
             <div className="mb-3 gap-3 flex items-center" >
 
-              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} 
-              className="shadow-md hover:-translate-y-1 transition-all"
-              onClick={handleAprobar}
+              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }}
+                className="shadow-md hover:-translate-y-1 transition-all"
+                onClick={handleAprobar}
               > Aprobar
               </Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
@@ -315,10 +323,10 @@ export function HacerPedido() {
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
             { title: "Código", field: "idProducto", width: "15%", editable: 'never' },
-            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable: 'never'  },
-            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable: 'never'  },
-            { title: "Unidad", field: "unidadMedida", width: "10%", editable: 'never'  },
-            { title: "Dosis Real(L)", field: "dosisReal", headerStyle: { paddingRight: '20px', fontSize: '12px' } , width: "15%", type:"numeric",editable:true}
+            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable: 'never' },
+            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable: 'never' },
+            { title: "Unidad", field: "unidadMedida", width: "10%", editable: 'never' },
+            { title: "Dosis Real(L)", field: "dosisReal", headerStyle: { paddingRight: '20px', fontSize: '12px' }, width: "15%", type: "numeric", editable: true }
             ,]}
           options={{
             selection: false,
@@ -336,11 +344,11 @@ export function HacerPedido() {
                 ? '#3f842f41'
                 : '#FFF'
             }),
-  
+
             // selectionProps: rowData => ({
             //   style: { display: 'none' }
             // }),
-            
+
           }}
 
           onRowClick={(evt, rowData) => {
@@ -354,28 +362,29 @@ export function HacerPedido() {
             });
             console.log("selectedProductos", selectedProductos);
           }}
-          
 
-           cellEditable={{
-                          onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
-                            return new Promise((resolve, reject) => {
-                              if (columnDef.field === "dosisReal") {
-                                // Solo actualizar 'dosisReal' en el estado local
-                                const updatedData = dataProductos.map((producto) => {
-                                  if (producto.idProducto === rowData.idProducto) {
-                                    return { ...producto, dosisReal: newValue };  // Actualizamos solo dosisReal
-                                  }
-                                  return producto;
-                                });
-                                console.log("updateData", updatedData);
-                                setDataProductos(updatedData);  // Actualizamos el estado
-                      
-                                resolve();  // Aceptamos la edición
-                              } else {
-                                reject();  // No permitir editar las otras celdas
-                              }
-                          })}
-                        }}
+
+          cellEditable={{
+            onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+              return new Promise((resolve, reject) => {
+                if (columnDef.field === "dosisReal") {
+                  // Solo actualizar 'dosisReal' en el estado local
+                  const updatedData = dataProductos.map((producto) => {
+                    if (producto.idProducto === rowData.idProducto) {
+                      return { ...producto, dosisReal: newValue };  // Actualizamos solo dosisReal
+                    }
+                    return producto;
+                  });
+                  console.log("updateData", updatedData);
+                  setDataProductos(updatedData);  // Actualizamos el estado
+
+                  resolve();  // Aceptamos la edición
+                } else {
+                  reject();  // No permitir editar las otras celdas
+                }
+              })
+            }
+          }}
 
           style={{ width: "45vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
           components={{
@@ -405,7 +414,7 @@ export function HacerPedido() {
               console.log("dataProductos", dataProductos);
               setDataProductosAprobados(dataProductos);
             }}
-            >
+          >
             <BiChevronsRight className="icono-animado text-lg" /></IconButton>
           <IconButton className="boton-animado shadow-lg"
             sx={{
@@ -419,7 +428,7 @@ export function HacerPedido() {
               console.log("dataProductos", dataProductos);
               setDataProductosAprobados(selectedProductos);
             }}
-            >
+          >
             <BiChevronRight className="icono-animado text-lg" /></IconButton >
         </div>
 
@@ -432,7 +441,7 @@ export function HacerPedido() {
             { title: "Número de boleta", field: "numBoleta" },
             { title: "Aprueba", field: "aprueba" },]}
           options={{
-            selection: true,
+            selection: false,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
             maxBodyHeight: '14rem',
@@ -440,10 +449,35 @@ export function HacerPedido() {
             toolbar: false,
             search: true,
             headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-            cellStyle: { padding: '4px 0 4px 9px' }
+            cellStyle: { padding: '4px 0 4px 9px' },
+
+            rowStyle: rowData => ({
+              backgroundColor: selectedAprueba.some(r => r.idProducto === rowData.idProducto) ? '#3f842f41' : '#FFF'
+            }),
+
+            selectionProps: (rowData) => ({
+              onChange: () => {
+                console.log("rowData", rowData)
+                setSelectedAprueba((prevRow) => (prevRow?.idProducto === rowData.idProducto ? null : rowData));
+              },
+              style: { display: 'none' }
+            }),
           }}
 
-          style={{ height: ""}}
+          onRowClick={(event, rowData) => {
+            setSelectedAprueba(prevSelected => {
+              const exists = prevSelected.find(row => row.idProducto === rowData.idProducto);
+              if (exists) {
+                // Si ya existe, quitarlo del arreglo
+                return prevSelected.filter(row => row.idProducto !== rowData.idProducto);
+              } else {
+                // Si no existe, agregarlo
+                return [...prevSelected, rowData];
+              }
+            });
+          }}
+
+          style={{ height: "" }}
           components={{
             Toolbar: CustomToolbar,
           }}
