@@ -12,9 +12,11 @@ import React, { use, useEffect, useState } from "react";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
 import { LotePOService } from "../../services/LotesPOService";
+import { UsuarioService } from "../../services/UsuarioService";
 
 var ddtLaboresService = new DDTLaboresService();
-var productoLaborPo = new ProductosLaborPoService();
+var productoLaborPoService = new ProductosLaborPoService();
+var usuarioService = new UsuarioService();
 var lotePoService = new LotePOService;
 
 export function HacerPedido() {
@@ -23,7 +25,9 @@ export function HacerPedido() {
   const [dataProductos, setDataProductos] = useState([]);
   const [dataProductosAprobados, setDataProductosAprobados] = useState([]);
   const [dataEmpleado, setDataEmpleado] = useState([]);
-  const [selectedDdt, setSelectedDdt] = useState(null);
+  const [selectedDdt, setSelectedDdt] = useState([]);
+  const [selectedProductos, setSelectedProductos] = useState([]);
+  const [codigoEmpleado, setCodigoEmpleado] = useState('');
   
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
@@ -39,35 +43,73 @@ export function HacerPedido() {
     setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
 
-  useEffect(() => {
-    getData();
-  }, [ddtFlag]);
+
+  // useEffect(() => {
+  //   getData();
+  // }, [ddtFlag]);
 
   useEffect(() => {
     console.log("Selected DDT:", selectedDdt);
-    productoLaborPo.getByTempSiembraNumDepLabAliasDdt(
+    setSelectedProductos([]);
+    setDataProductos([]);
+    productoLaborPoService.getByTempSiembraNumDepLabAliasDdt(
       selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
       selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then((res) => {
       console.log("Respuesta de la API PO:", res);
-      setDataProductos(res.poProductosLabor);
+      //setDataProductos(res.poProductosLabor);
+      setDataProductos(res.poProductosLabor.map(item => ({
+        ...item,
+        dosisReal: item.dosisHa // o 0, o el valor que tenga sentido por defecto
+      })));
       setProductoDdtFlag(false);
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
     })
-  }, [productoDdtFlag]);
+  }, [selectedDdt]);
 
   useEffect(() => {
     setFechaFinal('');
   }, [fechaInicio]);
 
   const getData = async () => {
+    setSelectedProductos(null);
+    setDataProductos(null);
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
       console.log("Respuesta de la API:", res.data);
       setDataFiltro(res.data.data);
+
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
     })
   }
+
+  const handleAprobar = () => {
+    const fetchData = async () => {
+      try {
+          const response = await usuarioService.getById(codigoEmpleado)
+          var usuarioAprueba= response.usuario[0];
+          console.log("usuario", response.usuario);
+          console.log("usuarioAprueba", usuarioAprueba);
+          if (response.success) {
+            console.log("dataProductosAprobados", dataProductosAprobados);
+            setDataProductosAprobados(dataProductosAprobados.map(item => ({
+              ...item,
+              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+            })));
+            console.log("dataProductosAprobados actualizados", dataProductosAprobados);
+              // setData(response.lotes); 
+          } else {
+              console.log("No se pudo obtener el usuario.");
+          }
+      } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+      }
+  };
+  fetchData();
+  // showToast('success', 'Lote eliminado', '#2d800e');
+  // showToast('error', error, '#9c1010')
+    console.log("Código ingresado:", codigoEmpleado);
+  };
 
   const CustomToolbar = (props) => (
     <div style={{ backgroundColor: '#408730', padding: '0' }}>
@@ -112,8 +154,13 @@ export function HacerPedido() {
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} 
             disabled={!fechaInicio || !fechaFinal}
             onClick={() => {
+              // if (fechaInicio && fechaFinal) {
+              //   setDdtFlag(true);
+              // } else {
+              //   alert("Por favor, seleccione ambas fechas.");
+              // }
               if (fechaInicio && fechaFinal) {
-                setDdtFlag(true);
+                getData();
               } else {
                 alert("Por favor, seleccione ambas fechas.");
               }
@@ -145,17 +192,19 @@ export function HacerPedido() {
               paging: false,
               toolbar: false,
               search: true,
+              maxBodyHeight: '20rem',
               headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
               cellStyle: { padding: '4px 0 4px 9px' },
               rowStyle: rowData => ({
-                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero) ? '#3f842f41' : '#FFF'
+                backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero && 
+                  selectedDdt?.aliasLabor === rowData.aliasLabor && selectedDdt?.aliasLote === rowData.aliasLote) ? '#3f842f41' : '#FFF'
               }),
 
               selectionProps: (rowData) => ({
                 onChange: () => {
                   console.log("rowData",rowData)
-                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
-                    rowData)); 
+                  setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
+                    prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
                 },
                 style: { display: 'none' }
               }),
@@ -163,8 +212,8 @@ export function HacerPedido() {
 
             
             onRowClick={(event, rowData) => {
-              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero? null : 
-                rowData)); 
+              setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero && 
+                prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote? null : rowData)); 
               console.log("selectedDdt",selectedDdt)
               setProductoDdtFlag(true);
             }}
@@ -189,10 +238,18 @@ export function HacerPedido() {
         <div>
           <div >
             <p className="mb-3" style={{ fontSize: isSmallScreen ? "12px" : "14px" }}>Ingrese el Código del empleado que aprueba</p>
-            <Input placeholder="Codigo" type="number" variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
+            <Input placeholder="Código" 
+            //type="number" 
+            value={codigoEmpleado} 
+            onChange={(e) => setCodigoEmpleado(e.target.value)}
+            variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
             <div className="mb-3 gap-3 flex items-center" >
 
-              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Aprobar</Button>
+              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} 
+              className="shadow-md hover:-translate-y-1 transition-all"
+              onClick={handleAprobar}
+              > Aprobar
+              </Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Guardar</Button>
             </div>
@@ -207,7 +264,7 @@ export function HacerPedido() {
               selection: true,
               showSelectAllCheckbox: false,
               showTextRowsSelected: false,
-
+              maxBodyHeight: '14rem',
               paging: false,
               toolbar: false,
               search: true,
@@ -238,22 +295,67 @@ export function HacerPedido() {
           data={dataProductos || []}
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
-            { title: "Código", field: "idProducto", width: "15%" },
-            { title: "Producto", field: "nombreDescriptivo", width: "60%" },
-            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%" },
-            { title: "Unidad", field: "unidadMedida", width: "15%" },
-            { title: "Dosis Real(L)", field: "dosisHa", width: "15%" },]}
+            { title: "Código", field: "idProducto", width: "15%" , editable:'never'},
+            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable:'never' },
+            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable:'never' },
+            { title: "Unidad", field: "unidadMedida", width: "10%" , editable:'never'},
+            { title: "Dosis Real(L)", field: "dosisReal", width: "15%", type:"numeric", editable:true,}
+            ,]}
           options={{
-            selection: true,
+            selection: false,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
-
+            actionsColumnIndex: -1,
             paging: false,
             toolbar: false,
             search: true,
             headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-            cellStyle: { padding: '4px 0 4px 9px' }
+            cellStyle: { padding: '4px 5 4px 9px' },
+            rowStyle: rowData => ({
+              backgroundColor: selectedProductos.some(item => item.idProducto === rowData.idProducto)
+                ? '#3f842f41'
+                : '#FFF'
+            }),
+  
+            // selectionProps: rowData => ({
+            //   style: { display: 'none' }
+            // }),
+            
           }}
+
+          onRowClick={(evt, rowData) => {
+            setSelectedProductos(prev => {
+              const isSelected = prev.some(p => p.idProducto === rowData.idProducto);
+              if (isSelected) {
+                return prev.filter(p => p.idProducto !== rowData.idProducto); // lo deselecciona
+              } else {
+                return [...prev, rowData]; // lo selecciona
+              }
+            });
+            console.log("selectedProductos", selectedProductos);
+          }}
+          
+
+           cellEditable={{
+                          onCellEditApproved: (newValue, oldValue, rowData, columnDef) => {
+                            return new Promise((resolve, reject) => {
+                              if (columnDef.field === "dosisReal") {
+                                // Solo actualizar 'dosisReal' en el estado local
+                                const updatedData = dataProductos.map((producto) => {
+                                  if (producto.idProducto === rowData.idProducto) {
+                                    return { ...producto, dosisReal: newValue };  // Actualizamos solo dosisReal
+                                  }
+                                  return producto;
+                                });
+                                console.log("updateData", updatedData);
+                                setDataProductos(updatedData);  // Actualizamos el estado
+                      
+                                resolve();  // Aceptamos la edición
+                              } else {
+                                reject();  // No permitir editar las otras celdas
+                              }
+                          })}
+                        }}
 
           style={{ width: "45vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
           components={{
@@ -292,7 +394,12 @@ export function HacerPedido() {
                 background: "#dc7342",
                 color: "white"
               }
-            }}>
+            }}
+            onClick={() => {
+              console.log("dataProductos", dataProductos);
+              setDataProductosAprobados(selectedProductos);
+            }}
+            >
             <BiChevronRight className="icono-animado text-lg" /></IconButton >
         </div>
 
@@ -301,14 +408,14 @@ export function HacerPedido() {
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
             { title: "Producto", field: "nombreDescriptivo", }, // Más grande
-            { title: "Dosis Lote", field: "dosisHa", },
-            { title: "Número de boleta", field: "tipoUso" },
-            { title: "Aprueba", field: "tipoUso" },]}
+            { title: "Dosis Lote", field: "dosisReal", },
+            { title: "Número de boleta", field: "numBoleta" },
+            { title: "Aprueba", field: "aprueba" },]}
           options={{
             selection: true,
             showSelectAllCheckbox: false,
             showTextRowsSelected: false,
-
+            maxBodyHeight: '14rem',
             paging: false,
             toolbar: false,
             search: true,
