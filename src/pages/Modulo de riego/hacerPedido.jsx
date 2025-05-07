@@ -12,9 +12,11 @@ import React, { use, useEffect, useState } from "react";
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
 import { LotePOService } from "../../services/LotesPOService";
+import { UsuarioService } from "../../services/UsuarioService";
 
 var ddtLaboresService = new DDTLaboresService();
-var productoLaborPo = new ProductosLaborPoService();
+var productoLaborPoService = new ProductosLaborPoService();
+var usuarioService = new UsuarioService();
 var lotePoService = new LotePOService;
 
 export function HacerPedido() {
@@ -25,6 +27,7 @@ export function HacerPedido() {
   const [dataEmpleado, setDataEmpleado] = useState([]);
   const [selectedDdt, setSelectedDdt] = useState([]);
   const [selectedProductos, setSelectedProductos] = useState([]);
+  const [codigoEmpleado, setCodigoEmpleado] = useState('');
   
   const [fechaActual, setFechaActual] = useState(
     new Date().toLocaleDateString('en-CA', { timeZone: 'America/Costa_Rica' })
@@ -40,6 +43,7 @@ export function HacerPedido() {
     setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
 
+
   // useEffect(() => {
   //   getData();
   // }, [ddtFlag]);
@@ -48,7 +52,7 @@ export function HacerPedido() {
     console.log("Selected DDT:", selectedDdt);
     setSelectedProductos([]);
     setDataProductos([]);
-    productoLaborPo.getByTempSiembraNumDepLabAliasDdt(
+    productoLaborPoService.getByTempSiembraNumDepLabAliasDdt(
       selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
       selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then((res) => {
       console.log("Respuesta de la API PO:", res);
@@ -78,6 +82,34 @@ export function HacerPedido() {
       console.error("Error al obtener los datos:", error);
     })
   }
+
+  const handleAprobar = () => {
+    const fetchData = async () => {
+      try {
+          const response = await usuarioService.getById(codigoEmpleado)
+          var usuarioAprueba= response.usuario[0];
+          console.log("usuario", response.usuario);
+          console.log("usuarioAprueba", usuarioAprueba);
+          if (response.success) {
+            console.log("dataProductosAprobados", dataProductosAprobados);
+            setDataProductosAprobados(dataProductosAprobados.map(item => ({
+              ...item,
+              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+            })));
+            console.log("dataProductosAprobados actualizados", dataProductosAprobados);
+              // setData(response.lotes); 
+          } else {
+              console.log("No se pudo obtener el usuario.");
+          }
+      } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+      }
+  };
+  fetchData();
+  // showToast('success', 'Lote eliminado', '#2d800e');
+  // showToast('error', error, '#9c1010')
+    console.log("Código ingresado:", codigoEmpleado);
+  };
 
   const CustomToolbar = (props) => (
     <div style={{ backgroundColor: '#408730', padding: '0' }}>
@@ -206,10 +238,18 @@ export function HacerPedido() {
         <div>
           <div >
             <p className="mb-3" style={{ fontSize: isSmallScreen ? "12px" : "14px" }}>Ingrese el Código del empleado que aprueba</p>
-            <Input placeholder="Codigo" type="number" variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
+            <Input placeholder="Código" 
+            //type="number" 
+            value={codigoEmpleado} 
+            onChange={(e) => setCodigoEmpleado(e.target.value)}
+            variant="outlined" sx={{ width: isSmallScreen ? "100px" : "140px", marginBottom: "10px", fontSize: "14px" }} />
             <div className="mb-3 gap-3 flex items-center" >
 
-              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Aprobar</Button>
+              <Button color="success" sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} 
+              className="shadow-md hover:-translate-y-1 transition-all"
+              onClick={handleAprobar}
+              > Aprobar
+              </Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Guardar</Button>
             </div>
@@ -369,8 +409,8 @@ export function HacerPedido() {
           columns={[
             { title: "Producto", field: "nombreDescriptivo", }, // Más grande
             { title: "Dosis Lote", field: "dosisReal", },
-            { title: "Número de boleta", field: "tipoUso" },
-            { title: "Aprueba", field: "tipoUso" },]}
+            { title: "Número de boleta", field: "numBoleta" },
+            { title: "Aprueba", field: "aprueba" },]}
           options={{
             selection: true,
             showSelectAllCheckbox: false,
