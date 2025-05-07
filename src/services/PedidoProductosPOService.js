@@ -13,6 +13,14 @@ export class PedidoProductosPOService extends Service {
         return super.getAll(url, dataName, data);
     }
 
+    async getLastBoleta() {
+        const url = "PoPedidoProductos/lastBoleta";
+        const dataName = "ultimaBoleta";
+        const data = "ultimaBoleta";
+
+        return super.getAll(url, dataName, data);
+    }
+
     async show(idPedido, idProducto, numBoleta) {
         const url = `PoPedidoProductos/${encodeURIComponent(idPedido)}/${encodeURIComponent(idProducto)}/${encodeURIComponent(numBoleta)}`;
         const dataName = "poPedidoProductos";

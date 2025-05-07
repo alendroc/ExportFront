@@ -107,6 +107,11 @@ export function HacerPedido() {
   }
 
   const handleAprobar = () => {
+    if (!dataProductosAprobados.length || !selectedAprueba.length) {
+      console.error("Error: Debe seleccionar productos para aprobar");
+      showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
+      return; // Detiene la ejecución
+    }
     const fetchData = async () => {
       try {
         const response = await usuarioService.getById(codigoEmpleado)
@@ -144,6 +149,11 @@ export function HacerPedido() {
   };
 
   const handleAprobarTodos = () => {
+    if (!dataProductosAprobados.length) {
+      console.error("Error: Deben existir productos para aprobar");
+      showToast('error', 'Deben existir productos para aprobar', '#9c1010');
+      return; // Detiene la ejecución
+    }
     const fetchData = async () => {
       try {
           const response = await usuarioService.getById(codigoEmpleado)
@@ -192,13 +202,14 @@ export function HacerPedido() {
   };
 
   const savePedido = (data) => {
+    
+    if (!data.aprueba) {
+      console.error("Error: El campo 'aprueba' es obligatorio.");
+      showToast('error', 'Los productos deben ser aprobados para continuar', '#9c1010');
+      return; // Detiene la ejecución
+    }
     const fetchData = async () => {
 
-      if (!data.aprueba) {
-        console.error("Error: El campo 'aprueba' es obligatorio.");
-        showToast('error', 'Debe seleccionar quién aprueba el pedido antes de continuar', '#9c1010');
-        return; // Detiene la ejecución
-      }
 
       const newData = {
         idProducto: data.idProducto,
