@@ -49,22 +49,41 @@ export function HacerPedido() {
   // }, [ddtFlag]);
 
   useEffect(() => {
-    console.log("Selected DDT:", selectedDdt);
-    setSelectedProductos([]);
-    setDataProductos([]);
-    productoLaborPoService.getByTempSiembraNumDepLabAliasDdt(
-      selectedDdt?.temporada, selectedDdt?.siembraNumero, selectedDdt?.departamento, 
-      selectedDdt?.labor, selectedDdt?.aliasLabor, selectedDdt?.ddt).then((res) => {
-      console.log("Respuesta de la API PO:", res);
-      //setDataProductos(res.poProductosLabor);
-      setDataProductos(res.poProductosLabor.map(item => ({
-        ...item,
-        dosisReal: item.dosisHa // o 0, o el valor que tenga sentido por defecto
-      })));
-      setProductoDdtFlag(false);
-    }).catch((error) => {
-      console.error("Error al obtener los datos:", error);
-    })
+    if (
+      selectedDdt?.temporada &&
+      selectedDdt?.siembraNumero &&
+      selectedDdt?.departamento &&
+      selectedDdt?.labor &&
+      selectedDdt?.aliasLabor &&
+      selectedDdt?.ddt
+    ) {
+      console.log("Selected DDT:", selectedDdt);
+      setSelectedProductos([]);
+      setDataProductos([]);
+  
+      productoLaborPoService
+        .getByTempSiembraNumDepLabAliasDdt(
+          selectedDdt.temporada,
+          selectedDdt.siembraNumero,
+          selectedDdt.departamento,
+          selectedDdt.labor,
+          selectedDdt.aliasLabor,
+          selectedDdt.ddt
+        )
+        .then((res) => {
+          console.log("Respuesta de la API PO:", res);
+          setDataProductos(
+            res.poProductosLabor.map((item) => ({
+              ...item,
+              dosisReal: item.dosisHa,
+            }))
+          );
+          setProductoDdtFlag(false);
+        })
+        .catch((error) => {
+          console.error("Error al obtener los datos:", error);
+        });
+    }
   }, [selectedDdt]);
 
   useEffect(() => {
@@ -183,7 +202,7 @@ export function HacerPedido() {
             { title: 'Lote', field: 'aliasLote' },
             { title: 'Área', field: 'area' },
             { title: 'Fecha Base', field: 'fechaTrasplante' },
-            { title: 'Días DT/DS/DC', field: 'ddt' }]}
+            { title: 'Días DT/DS/DC', field: 'ddt',}]}
             options={{
               selection: true,
               showSelectAllCheckbox: false,
@@ -192,9 +211,9 @@ export function HacerPedido() {
               paging: false,
               toolbar: false,
               search: true,
-              maxBodyHeight: '20rem',
+              maxBodyHeight: '50vh',
               headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
-              cellStyle: { padding: '4px 0 4px 9px' },
+              cellStyle: { padding: '4px 0 4px 9px'},
               rowStyle: rowData => ({
                 backgroundColor: (selectedDdt?.ddt === rowData.ddt && selectedDdt?.siembraNumero === rowData.siembraNumero && 
                   selectedDdt?.aliasLabor === rowData.aliasLabor && selectedDdt?.aliasLote === rowData.aliasLote) ? '#3f842f41' : '#FFF'
@@ -264,7 +283,7 @@ export function HacerPedido() {
               selection: true,
               showSelectAllCheckbox: false,
               showTextRowsSelected: false,
-              maxBodyHeight: '14rem',
+              maxBodyHeight: '50vh',
               paging: false,
               toolbar: false,
               search: true,
@@ -295,11 +314,11 @@ export function HacerPedido() {
           data={dataProductos || []}
           title={<div style={{ fontSize: '12px', color: 'white' }}>Productos</div>}
           columns={[
-            { title: "Código", field: "idProducto", width: "15%" , editable:'never'},
-            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable:'never' },
-            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable:'never' },
-            { title: "Unidad", field: "unidadMedida", width: "10%" , editable:'never'},
-            { title: "Dosis Real(L)", field: "dosisReal", width: "15%", type:"numeric", editable:true,}
+            { title: "Código", field: "idProducto", width: "15%", editable: 'never' },
+            { title: "Producto", field: "nombreDescriptivo", width: "20%", editable: 'never'  },
+            { title: "Dosis Teorica(L)", field: "dosisHa", width: "15%", editable: 'never'  },
+            { title: "Unidad", field: "unidadMedida", width: "10%", editable: 'never'  },
+            { title: "Dosis Real(L)", field: "dosisReal", headerStyle: { paddingRight: '20px', fontSize: '12px' } , width: "15%", type:"numeric",editable:true}
             ,]}
           options={{
             selection: false,
@@ -309,6 +328,7 @@ export function HacerPedido() {
             paging: false,
             toolbar: false,
             search: true,
+            maxBodyHeight: '50vh',
             headerStyle: { position: 'sticky', top: 0, backgroundColor: '#408730', color: 'white', fontWeight: '500', padding: '4px 0 0px 4px' },
             cellStyle: { padding: '4px 5 4px 9px' },
             rowStyle: rowData => ({
@@ -423,7 +443,7 @@ export function HacerPedido() {
             cellStyle: { padding: '4px 0 4px 9px' }
           }}
 
-          style={{ height: "", maxHeight: "50vh" }}
+          style={{ height: ""}}
           components={{
             Toolbar: CustomToolbar,
           }}
@@ -445,6 +465,9 @@ const Container = styled.div`
 .css-1g1pyhz-MuiTableCell-root {
     font-size: 0.875rem;
 }
+.css-1ex1afd-MuiTableCell-root  {
+            font-size: 14px !important;/* 12px */
+  }
 
 @keyframes moverFlecha {
   0% { transform: translateX(0); }
@@ -462,20 +485,28 @@ const Container = styled.div`
 
 @media (max-width: 1200px) {
     .css-1g1pyhz-MuiTableCell-root  {
-        font-size: 0.625rem;/* 12px */
+        font-size: 0.625rem !important;/* 12px */
+        }
+        .css-1ex1afd-MuiTableCell-root  {
+            font-size: 0.625rem !important;/* 12px */
         }
     }
 
     @media (max-width: 992px) {
         .css-1g1pyhz-MuiTableCell-root  {
-            font-size: 0.625rem;/* 12px */
+            font-size: 0.625rem !important;/* 12px */
         }
+        .css-1ex1afd-MuiTableCell-root  {
+            font-size: 0.625rem !important;/* 12px */
+        }
+      
     }
 
     @media (max-width: 768px) {
         .css-1g1pyhz-MuiTableCell-root  {
             font-size: 0.625rem; /* 10px */
         }
+       
     }
 
 `
