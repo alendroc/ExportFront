@@ -1,4 +1,3 @@
-
 import styled from "styled-components";
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
@@ -14,6 +13,8 @@ import { ProductosLaborPoService } from "../../services/ProductosLaborPOService"
 import { LotePOService } from "../../services/LotesPOService";
 import { UsuarioService } from "../../services/UsuarioService";
 import { PedidoProductosPOService } from "../../services/PedidoProductosPOService";
+
+import { showToast } from "../../components/helpers";
 
 var ddtLaboresService = new DDTLaboresService();
 var productoLaborPoService = new ProductosLaborPoService();
@@ -127,7 +128,9 @@ export function HacerPedido() {
           });
 
           setDataProductosAprobados(nuevosDatos);
+          showToast('success', 'Producto Aprobado', '#2d800e');
         } else {
+          showToast('error', 'No se pudo obtener el usuario', '#9c1010')
           console.log("No se pudo obtener el usuario.");
         }
       } catch (error) {
@@ -140,6 +143,31 @@ export function HacerPedido() {
     console.log("Código ingresado:", codigoEmpleado);
   };
 
+  const handleAprobarTodos = () => {
+    const fetchData = async () => {
+      try {
+          const response = await usuarioService.getById(codigoEmpleado)
+          var usuarioAprueba= response.usuario[0];
+          if (response.success) {
+            console.log("dataProductosAprobados", dataProductosAprobados);
+            setDataProductosAprobados(dataProductosAprobados.map(item => ({
+              ...item,
+              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+            })));
+            showToast('success', 'Productos Aprobados', '#2d800e');
+          } else {
+            showToast('error', 'No se pudo obtener el usuario', '#9c1010')
+            console.log("No se pudo obtener el usuario.");
+          }
+      } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+      }
+  };
+
+  fetchData();
+    console.log("Código ingresado:", codigoEmpleado);
+  };
+
   const getPedidoProductos = (data) => {
     const fetchData = async () => {
       try {
@@ -147,8 +175,8 @@ export function HacerPedido() {
         if (data.area === null) {
           data.area = 0;
         }
-        const response = await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", data.aliasLabor, data.aliasLote, data.fechaTrasplante,
-          data.ddt, data.area
+        const response = await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", 
+          data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, data.area
         ).then((res) => {
           console.log("Respuesta de la API:", res);
           setDataProductosAprobados(res.PoPedidoProductos)
@@ -165,6 +193,13 @@ export function HacerPedido() {
 
   const savePedido = (data) => {
     const fetchData = async () => {
+
+      if (!data.aprueba) {
+        console.error("Error: El campo 'aprueba' es obligatorio.");
+        showToast('error', 'Debe seleccionar quién aprueba el pedido antes de continuar', '#9c1010');
+        return; // Detiene la ejecución
+      }
+
       const newData = {
         idProducto: data.idProducto,
         nombreDescriptivo: data.nombreDescriptivo,
@@ -336,7 +371,10 @@ export function HacerPedido() {
                 onClick={handleAprobar}
               > Aprobar
               </Button>
-              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
+              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} 
+              className="shadow-md hover:-translate-y-1 transition-all" 
+              onClick={handleAprobarTodos}
+              > Aprobar todo los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"
                 onClick={() => {
                   console.log("dataProductosAprobados", dataProductosAprobados);
