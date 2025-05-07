@@ -13,11 +13,13 @@ import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
 import { LotePOService } from "../../services/LotesPOService";
 import { UsuarioService } from "../../services/UsuarioService";
+import { PedidoProductosPOService } from "../../services/PedidoProductosPOService";
 
 var ddtLaboresService = new DDTLaboresService();
 var productoLaborPoService = new ProductosLaborPoService();
 var usuarioService = new UsuarioService();
 var lotePoService = new LotePOService;
+var pedidoProductosPoService = new PedidoProductosPOService();
 
 export function HacerPedido() {
 
@@ -113,7 +115,7 @@ export function HacerPedido() {
         if (response.success) {
           // Creamos un Set para acceso más rápido a los IDs seleccionados
           const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
-  
+
           const nuevosDatos = dataProductosAprobados.map(item => {
             if (selectedIds.has(item.idProducto)) {
               return {
@@ -123,7 +125,7 @@ export function HacerPedido() {
             }
             return item; // No se modifica si no está seleccionado
           });
-  
+
           setDataProductosAprobados(nuevosDatos);
         } else {
           console.log("No se pudo obtener el usuario.");
@@ -137,6 +139,61 @@ export function HacerPedido() {
     // showToast('error', error, '#9c1010')
     console.log("Código ingresado:", codigoEmpleado);
   };
+
+  const getPedidoProductos = (data) => {
+    const fetchData = async () => {
+      try {
+        console.log("data", data);
+        if (data.area === null) {
+          data.area = 0;
+        }
+        const response = await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", data.aliasLabor, data.aliasLote, data.fechaTrasplante,
+          data.ddt, data.area
+        ).then((res) => {
+          console.log("Respuesta de la API:", res);
+          setDataProductosAprobados(res.PoPedidoProductos)
+          console.log("dataProductosAprobados", res.PoPedidoProductos);
+        })
+        console.log("Respuesta de la API:", response);
+      }
+      catch (error) {
+        console.error("Error al obtener los datos:", error);
+      }
+    }
+    fetchData();
+  };
+
+  const savePedido = (data) => {
+    const fetchData = async () => {
+      const newData = {
+        idProducto: data.idProducto,
+        nombreDescriptivo: data.nombreDescriptivo,
+        temporada: data.temporada,
+        siembraNumero: data.siembraNumero,
+        departamento: data.departamento,
+        cultivo: "MELÓN",
+        aliasLabor: data.aliasLabor,
+        aliasLote: selectedDdt.aliasLote,
+        fechaBase: data.fechaTrasplante,
+        ddt: data.ddt,
+        areaSiembra: data.area,
+        aprueba: data.aprueba,
+      }
+      console.log("newData", newData);
+      try {
+        const response = await pedidoProductosPoService.create(newData)
+        console.log("Respuesta de la API:", response);
+        if (response.success) {
+          console.log("Pedido guardado exitosamente.");
+        } else {
+          console.log("Error al guardar el pedido.");
+        }
+      } catch (error) {
+        console.error("Error al guardar el pedido:", error);
+      }
+    };
+    fetchData();
+  }
 
   const CustomToolbar = (props) => (
     <div style={{ backgroundColor: '#408730', padding: '0' }}>
@@ -241,6 +298,8 @@ export function HacerPedido() {
             onRowClick={(event, rowData) => {
               setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
                 prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
+              getPedidoProductos(rowData);
+              console.log("rowData", rowData)
               console.log("selectedDdt", selectedDdt)
               setProductoDdtFlag(true);
             }}
@@ -278,7 +337,14 @@ export function HacerPedido() {
               > Aprobar
               </Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all" > Aprobar todo los pendientes</Button>
-              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"> Guardar</Button>
+              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"
+                onClick={() => {
+                  console.log("dataProductosAprobados", dataProductosAprobados);
+                  dataProductosAprobados.forEach(p => {
+                    savePedido(p);
+                  });
+                }}
+              > Guardar</Button>
             </div>
 
           </div>
