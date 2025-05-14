@@ -90,10 +90,10 @@ export function AsignarLabor() {
     },
     {
       title: 'N° Siembra', field: 'siembraNumero', type: "numeric",editable: 'onAdd',
-      render: (rowData) => (rowData.siembraNumero === 1 ? 'Primera' : 'Segunda'),
+      render: (rowData) => (rowData.siembraNumero === 1 ? '1' : '2'),
       validate: (row) => {
         if (![1, 2].includes(row.siembraNumero)) {
-          return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
+          return { isValid: false, helperText: "Debe seleccionar '1' o '2'" };
         }
         return true;
       },
@@ -103,8 +103,8 @@ export function AsignarLabor() {
           onChange={(e) => props.onChange(Number(e.target.value))}
         >
           <option value="">Seleccione...</option>
-          <option value="1">Primera</option>
-          <option value="2">Segunda</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
         </select>
       ),
 

@@ -227,10 +227,10 @@ export function AsignarLote() {
 
                   },
                 {title: 'N° de siembra ', field: 'siembraNum', type: "numeric", editable:"onAdd", cellStyle: { fontSize: "10px"},
-                render: (rowData) => (rowData.siembraNum === 1 ? 'Primera' : 'Segunda'),
+                render: (rowData) => (rowData.siembraNum === 1 ? '1' : '2'),
 
                 validate:(row)=>{  if (![1, 2].includes(row.siembraNum)) {
-                 return { isValid: false, helperText: "Debe seleccionar 'Primera' o 'Segunda'" };
+                 return { isValid: false, helperText: "Debe seleccionar '1' o '2'" };
                 }
                 return true;},
 
@@ -240,8 +240,8 @@ export function AsignarLote() {
                     onChange={(e) => props.onChange(Number(e.target.value))} 
                   >
                     <option value="">Seleccione...</option>
-                    <option value="1">Primera</option>
-                    <option value="2">Segunda</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
                   </select>
                 ),},
 
