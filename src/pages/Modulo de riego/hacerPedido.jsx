@@ -99,8 +99,8 @@ export function HacerPedido() {
     setSelectedProductos(null);
     setDataProductos(null);
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
-    console.log("Respuesta de la API:", res.data);
-    setDataFiltro(res.data.data);
+      console.log("Respuesta de la API:", res.data);
+      setDataFiltro(res.data.data);
 
     }).catch((error) => {
       console.error("Error al obtener los datos:", error);
@@ -116,7 +116,7 @@ export function HacerPedido() {
       return 0;
     }
   };
-  
+
 
   const handleAprobar = () => {
     if (!dataProductosAprobados.length || !selectedAprueba.length) {
@@ -168,25 +168,25 @@ export function HacerPedido() {
     }
     const fetchData = async () => {
       try {
-          const response = await usuarioService.getById(codigoEmpleado)
-          var usuarioAprueba= response.usuario[0];
-          if (response.success) {
-            console.log("dataProductosAprobados", dataProductosAprobados);
-            setDataProductosAprobados(dataProductosAprobados.map(item => ({
-              ...item,
-              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
-            })));
-            showToast('success', 'Productos Aprobados', '#2d800e');
-          } else {
-            showToast('error', 'No se pudo obtener el usuario', '#9c1010')
-            console.log("No se pudo obtener el usuario.");
-          }
+        const response = await usuarioService.getById(codigoEmpleado)
+        var usuarioAprueba = response.usuario[0];
+        if (response.success) {
+          console.log("dataProductosAprobados", dataProductosAprobados);
+          setDataProductosAprobados(dataProductosAprobados.map(item => ({
+            ...item,
+            aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+          })));
+          showToast('success', 'Productos Aprobados', '#2d800e');
+        } else {
+          showToast('error', 'No se pudo obtener el usuario', '#9c1010')
+          console.log("No se pudo obtener el usuario.");
+        }
       } catch (error) {
-          console.error("Error al obtener el usuario:", error);
+        console.error("Error al obtener el usuario:", error);
       }
-  };
+    };
 
-  fetchData();
+    fetchData();
     console.log("Código ingresado:", codigoEmpleado);
   };
 
@@ -197,7 +197,7 @@ export function HacerPedido() {
         if (data.area === null) {
           data.area = 0;
         }
-        await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN", 
+        await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN",
           data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, data.area
         ).then((res) => {
           console.log("Respuesta de la API:", res);
@@ -216,8 +216,8 @@ export function HacerPedido() {
 
 
   const savePedido = (data) => {
-    
-    
+
+
     if (!data.aprueba) {
       console.error("Error: El campo 'aprueba' es obligatorio.");
       showToast('error', 'Los productos deben ser aprobados para continuar', '#9c1010');
@@ -401,9 +401,9 @@ export function HacerPedido() {
                 onClick={handleAprobar}
               > Aprobar
               </Button>
-              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} 
-              className="shadow-md hover:-translate-y-1 transition-all" 
-              onClick={handleAprobarTodos}
+              <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }}
+                className="shadow-md hover:-translate-y-1 transition-all"
+                onClick={handleAprobarTodos}
               > Aprobar todo los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"
                 onClick={() => {
@@ -411,6 +411,7 @@ export function HacerPedido() {
                   dataProductosAprobados.forEach(p => {
                     savePedido(p);
                   });
+                  console.log("selectedDdt", selectedDdt);
                 }}
               > Guardar</Button>
             </div>
@@ -559,8 +560,16 @@ export function HacerPedido() {
               }
             }}
             onClick={() => {
-              console.log("dataProductos", dataProductos);
-              setDataProductosAprobados(selectedProductos);
+              setDataProductosAprobados(prev => {
+                // filtramos los seleccionados para quedarnos sólo con los que aún no estaban
+                const nuevos = selectedProductos.filter(p =>
+                  !prev.some(q => q.idProducto === p.idProducto)
+                );
+                // devolvemos el array acumulado
+                return [...prev, ...nuevos];
+              });
+              // opcional: limpiar la selección si ya no la necesitas
+              setSelectedProductos([]);
             }}
           >
             <BiChevronRight className="icono-animado text-lg" /></IconButton >
