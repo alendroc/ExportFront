@@ -20,6 +20,8 @@ import { PedidoProductosPOService } from "../../services/PedidoProductosPOServic
 
 import { showToast } from "../../components/helpers";
 
+import { VerBoleta } from "./verBoleta";
+
 var ddtLaboresService = new DDTLaboresService();
 var productoLaborPoService = new ProductosLaborPoService();
 var usuarioService = new UsuarioService();
@@ -362,7 +364,7 @@ export function HacerPedido() {
       </button>
 
       <div style={{ padding: '2rem' }}>
-        <h2>Contenido del diálogo</h2>
+        <VerBoleta data={selectedDdt}/>
       </div>
     </Dialog>
     
