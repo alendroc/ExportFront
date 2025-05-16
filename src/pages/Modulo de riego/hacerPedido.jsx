@@ -1,10 +1,14 @@
 import styled from "styled-components";
+
 import Input from '@mui/joy/Input';
 import Button from '@mui/joy/Button';
 import IconButton from '@mui/joy/IconButton';
+
+import Dialog from '@mui/material/Dialog';
+
 import { Height } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
-import { BiSearchAlt, BiInfoCircle, BiSolidDetail, BiChevronsRight, BiChevronRight } from "react-icons/bi";
+import { BiSearchAlt, BiInfoCircle, BiSolidDetail, BiChevronsRight, BiChevronRight, BiX } from "react-icons/bi";
 import MaterialTable, { MTableToolbar } from "@material-table/core";
 import React, { use, useEffect, useState } from "react";
 
@@ -267,6 +271,17 @@ export function HacerPedido() {
   );
   const isSmallScreen = useMediaQuery("(max-width:1200px)");
 
+  const [open, setOpen] = React.useState(false);
+
+ 
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Container>
       <div className="bg-[#79a96f] h-10 items-center flex pl-2 text-white mb-3">
@@ -317,8 +332,40 @@ export function HacerPedido() {
           >Buscar</Button>
           <Button endDecorator={<BiInfoCircle />} variant="soft"
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Sugerir</Button>
-          <Button endDecorator={<BiSolidDetail />} variant="soft"
+          <Button endDecorator={<BiSolidDetail />} variant="soft" onClick={handleClickOpen}
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Ver boleta</Button>
+
+  {/* <Dialog
+        fullScreen
+        open={open}
+        onClose={handleClose}
+      >
+      <button  onClick={handleClose}>Regresar</button>
+       
+  </Dialog> */}
+
+    <Dialog fullScreen open={open} onClose={handleClose}>
+      <button
+        onClick={handleClose}
+        style={{
+          position: 'absolute',
+          top: '16px',
+          left: '16px',
+          background: 'transparent',
+          border: 'none',
+          fontSize: '1.5rem',
+          cursor: 'pointer',
+        }}
+        aria-label="Cerrar"
+      >
+        {<BiX size={24} />}
+      </button>
+
+      <div style={{ padding: '2rem' }}>
+        <h2>Contenido del diálogo</h2>
+      </div>
+    </Dialog>
+    
         </div>
       </div>
       <div className="p-3 flex place-content-between max-w-[1500px] mb-3">
