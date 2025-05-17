@@ -21,6 +21,7 @@ import { PedidoProductosPOService } from "../../services/PedidoProductosPOServic
 import { showToast } from "../../components/helpers";
 
 import { VerBoleta } from "./verBoleta";
+import { data } from "autoprefixer";
 
 var ddtLaboresService = new DDTLaboresService();
 var productoLaborPoService = new ProductosLaborPoService();
@@ -141,6 +142,10 @@ export function HacerPedido() {
           const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
 
           const nuevosDatos = dataProductosAprobados.map(item => {
+            if (item.numBoleta !== undefined && item.aprueba !== undefined) {
+              // Si ya tiene un número de boleta y un usuario que aprueba, no lo modificamos
+              return item;
+            }
             if (selectedIds.has(item.idProducto)) {
               return {
                 ...item,
@@ -207,7 +212,11 @@ export function HacerPedido() {
           data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, data.area
         ).then((res) => {
           console.log("Respuesta de la API:", res);
-          setDataProductosAprobados(res.poPedidoProductos)
+          //setDataProductosAprobados(res.poPedidoProductos)
+          setDataProductosAprobados(res.poPedidoProductos.map(item => ({
+            ...item,
+            dosisReal: item.unidadesPorLote,
+          })))
           console.log("dataProductosAprobados", res.poPedidoProductos);
           console.log("setDataProductosAprobados", dataProductosAprobados);
         })
@@ -221,50 +230,60 @@ export function HacerPedido() {
 
 
 
-  const savePedido = (data) => {
+  const savePedido = async () => {
+    console.log("dataProductosAprobados", dataProductosAprobados);
+    try {
+      let lastBoletaRaw = await getLastBoleta() + 1; // Obtener solo una vez
+      const updatedProductos = [...dataProductosAprobados]; // Copia del estado para actualizar boletas
 
+      for (let i = 0; i < updatedProductos.length; i++) {
+        const producto = updatedProductos[i];
+        if (!producto.aprueba) continue;
 
-    if (!data.aprueba) {
-      console.error("Error: El campo 'aprueba' es obligatorio.");
-      showToast('error', 'Los productos deben ser aprobados para continuar', '#9c1010');
-      return; // Detiene la ejecución
-    }
-    const fetchData = async () => {
-      const lastBoletaRaw = await getLastBoleta();
-      const nuevaBoleta = lastBoletaRaw + 1;
-
-      const newData = {
-        idProducto: data.idProducto,
-        numBoleta: nuevaBoleta,
-        temporada: data.temporada,
-        siembraNum: data.siembraNumero,
-        departamento: data.departamento,
-        cultivo: "MELÓN",
-        aliasLabor: data.aliasLabor,
-        aliasLote: selectedDdt.aliasLote,
-        fechaBase: selectedDdt.fechaTrasplante,
-        ddt: data.ddt,
-        areaSiembra: selectedDdt.area,
-        unidadesPorLote: data.dosisReal,
-        nombreDescriptivo: data.nombreDescriptivo,
-        fechaPedido: fechaActual,
-        aprueba: data.aprueba,
-      }
-      console.log("newData", newData);
-      try {
-        const response = await pedidoProductosPoService.create(newData)
-        console.log("Respuesta de la API:", response);
-        if (response.success) {
-          console.log("Pedido guardado exitosamente.");
-        } else {
-          console.log("Error al guardar el pedido.");
+        if (producto.numBoleta !== undefined) {
+          lastBoletaRaw = producto.numBoleta; // Mantener el número de boleta existente
+          continue; // Si ya tiene un número de boleta, no lo actualizamos
         }
-      } catch (error) {
-        console.error("Error al guardar el pedido:", error);
+
+        const newData = {
+          idProducto: producto.idProducto,
+          numBoleta: lastBoletaRaw,
+          temporada: producto.temporada,
+          siembraNum: producto.siembraNumero,
+          departamento: producto.departamento,
+          cultivo: "MELÓN",
+          aliasLabor: producto.aliasLabor,
+          aliasLote: selectedDdt.aliasLote,
+          fechaBase: selectedDdt.fechaTrasplante,
+          ddt: producto.ddt,
+          areaSiembra: selectedDdt.area,
+          unidadesPorLote: producto.dosisReal,
+          nombreDescriptivo: producto.nombreDescriptivo,
+          fechaPedido: fechaActual,
+          aprueba: producto.aprueba,
+        };
+
+        // Actualiza el número de boleta en la copia local
+        updatedProductos[i].numBoleta = lastBoletaRaw;
+
+        try {
+          const response = await pedidoProductosPoService.create(newData);
+          if (!response.success) {
+            console.error("Error al guardar el pedido:", producto);
+          }
+        } catch (error) {
+          console.error("Error al guardar el pedido:", error);
+        }
       }
-    };
-    fetchData();
-  }
+
+      // Si quieres actualizar el estado con los nuevos números de boleta:
+      setDataProductosAprobados(updatedProductos);
+    } catch (error) {
+      console.error("Error al obtener el último número de boleta:", error);
+    }
+
+    console.log("selectedDdt", selectedDdt);
+  };
 
   const CustomToolbar = (props) => (
     <div style={{ backgroundColor: '#408730', padding: '0' }}>
@@ -275,7 +294,7 @@ export function HacerPedido() {
 
   const [open, setOpen] = React.useState(false);
 
- 
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -337,7 +356,7 @@ export function HacerPedido() {
           <Button endDecorator={<BiSolidDetail />} variant="soft" onClick={handleClickOpen}
             sx={{ height: "30px", minHeight: "0", fontSize: "13px", padding: "0 10px", fontWeight: "500", }} >Ver boleta</Button>
 
-  {/* <Dialog
+          {/* <Dialog
         fullScreen
         open={open}
         onClose={handleClose}
@@ -346,28 +365,28 @@ export function HacerPedido() {
        
   </Dialog> */}
 
-    <Dialog fullScreen open={open} onClose={handleClose}>
-      <button
-        onClick={handleClose}
-        style={{
-          position: 'absolute',
-          top: '16px',
-          left: '16px',
-          background: 'transparent',
-          border: 'none',
-          fontSize: '1.5rem',
-          cursor: 'pointer',
-        }}
-        aria-label="Cerrar"
-      >
-        {<BiX size={24} />}
-      </button>
+          <Dialog fullScreen open={open} onClose={handleClose}>
+            <button
+              onClick={handleClose}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                left: '16px',
+                background: 'transparent',
+                border: 'none',
+                fontSize: '1.5rem',
+                cursor: 'pointer',
+              }}
+              aria-label="Cerrar"
+            >
+              {<BiX size={24} />}
+            </button>
 
-      <div style={{ padding: '2rem' }}>
-        <VerBoleta data={selectedDdt}/>
-      </div>
-    </Dialog>
-    
+            <div style={{ padding: '2rem' }}>
+              <VerBoleta data={selectedDdt} />
+            </div>
+          </Dialog>
+
         </div>
       </div>
       <div className="p-3 flex place-content-between max-w-[1500px] mb-3">
@@ -455,13 +474,7 @@ export function HacerPedido() {
                 onClick={handleAprobarTodos}
               > Aprobar todo los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"
-                onClick={() => {
-                  console.log("dataProductosAprobados", dataProductosAprobados);
-                  dataProductosAprobados.forEach(p => {
-                    savePedido(p);
-                  });
-                  console.log("selectedDdt", selectedDdt);
-                }}
+                onClick={savePedido}
               > Guardar</Button>
             </div>
 

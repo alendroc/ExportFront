@@ -29,8 +29,8 @@ export function VerBoleta(data) {
     }, []);
 
     useEffect(() => {
-        console.log("ddt.fechaTrasplante", ddt.fechaTrasplante);
-        const fecha = new Date(`${ddt.fechaTrasplante}T00:00:00`);
+        console.log("ddt.fechaTrasplante", products[0]?.fechaBase);
+        const fecha = new Date(`${products[0]?.fechaBase}T00:00:00`);
 
         const opciones = {
             weekday: 'long',
@@ -42,7 +42,7 @@ export function VerBoleta(data) {
 
         const formateada = fecha.toLocaleDateString('en-GB', opciones);
         setFechaFormateada(formateada);
-    }, []);
+    }, [products]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -95,8 +95,8 @@ export function VerBoleta(data) {
                                 Boleta Nº {products[0]?.numBoleta}
                             </div>
                             <div className="mt-2">
-                                <div><strong>Temporada:</strong> {ddt.temporada}</div>
-                                <div><strong>Lote:</strong> {ddt.aliasLote}</div>
+                                <div><strong>Temporada:</strong> {products[0]?.temporada}</div>
+                                <div><strong>Lote:</strong> {products[0]?.aliasLote}</div>
                             </div>
                         </div>
                         <div className="text-center">
@@ -110,13 +110,13 @@ export function VerBoleta(data) {
                     <div className="border border-black p-2 mb-2 text-xs">
                         <div className="flex justify-between">
                             <div><strong>Cultivo:</strong> MELÓN</div>
-                            <div><strong>Área:</strong> {ddt.area}</div>
+                            <div><strong>Área:</strong> {products[0]?.areaSiembra}</div>
                             <div><strong>Fecha de Solicitud:</strong> {fechaActual}</div>
                         </div>
                         <div className="flex justify-between mt-1">
                             <div><strong>Fecha de Aplicación:</strong> {fechaFormateada}</div>
-                            <div><strong>Días dt/dc/s:</strong> {ddt.ddt}</div>
-                            <div><strong>Reales:</strong> {ddt.ddt}</div>
+                            <div><strong>Días dt/dc/s:</strong> {products[0]?.ddt}</div>
+                            <div><strong>Reales:</strong> {products[0]?.ddt}</div>
                         </div>
                     </div>
 
