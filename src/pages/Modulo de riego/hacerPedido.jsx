@@ -61,6 +61,7 @@ export function HacerPedido() {
   // }, [ddtFlag]);
 
   useEffect(() => {
+    getPedidoProductos(selectedDdt);
     if (
       selectedDdt?.temporada &&
       selectedDdt?.siembraNumero &&
@@ -95,6 +96,13 @@ export function HacerPedido() {
         .catch((error) => {
           console.error("Error al obtener los datos:", error);
         });
+    } else {
+      // 🔄 Cuando selectedDdt está vacío, limpia los estados relacionados
+      console.log("Limpiando estados por selectedDdt vacío");
+      setSelectedProductos([]);
+      setDataProductos([]);
+      setDataProductosAprobados([]);
+      setProductoDdtFlag(false); // opcional, si aplica
     }
   }, [selectedDdt]);
 
@@ -431,10 +439,16 @@ export function HacerPedido() {
             onRowClick={(event, rowData) => {
               setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
                 prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
-              getPedidoProductos(rowData);
+              //getPedidoProductos(rowData);
               console.log("rowData", rowData)
               console.log("selectedDdt", selectedDdt)
               setProductoDdtFlag(true);
+            }}
+
+            onSelectionChange={(rows) => {
+              if (rows.length === 0) {
+                setSelectedDdt(null); // o setSelectedDdt("")
+              }
             }}
 
             style={{ width: "51vw", maxWidth: "800px", height: "", maxHeight: "50vh" }}
