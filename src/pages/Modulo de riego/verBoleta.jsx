@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import React, { useRef, useState, useEffect, use } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import { PedidoProductosPOService } from "../../services/PedidoProductosPOService";

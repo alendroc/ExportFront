@@ -44,4 +44,10 @@ export class PedidoProductosPOService extends Service {
         const dataName = "poPedidoProductos";
         return super.create(url, poPedidoProductos, dataName);
     }
+
+    async update(poPedidoProductos) {
+        const url = `PoPedidoProductos`;
+        const dataName = "poPedidoProductos";
+        return super.update(url, poPedidoProductos, dataName);
+    }
 }

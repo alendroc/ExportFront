@@ -6,27 +6,23 @@ import IconButton from '@mui/joy/IconButton';
 
 import Dialog from '@mui/material/Dialog';
 
-import { Height } from "@mui/icons-material";
 import { useMediaQuery } from "@mui/material";
 import { BiSearchAlt, BiInfoCircle, BiSolidDetail, BiChevronsRight, BiChevronRight, BiX } from "react-icons/bi";
 import MaterialTable, { MTableToolbar } from "@material-table/core";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { DDTLaboresService } from "../../services/DDTLaboresService";
 import { ProductosLaborPoService } from "../../services/ProductosLaborPOService";
-import { LotePOService } from "../../services/LotesPOService";
 import { UsuarioService } from "../../services/UsuarioService";
 import { PedidoProductosPOService } from "../../services/PedidoProductosPOService";
 
 import { showToast } from "../../components/helpers";
 
 import { VerBoleta } from "./verBoleta";
-import { data } from "autoprefixer";
 
 var ddtLaboresService = new DDTLaboresService();
 var productoLaborPoService = new ProductosLaborPoService();
 var usuarioService = new UsuarioService();
-var lotePoService = new LotePOService;
 var pedidoProductosPoService = new PedidoProductosPOService();
 
 export function HacerPedido() {
@@ -97,12 +93,12 @@ export function HacerPedido() {
           console.error("Error al obtener los datos:", error);
         });
     } else {
-      // 🔄 Cuando selectedDdt está vacío, limpia los estados relacionados
+      //Cuando selectedDdt está vacío, limpia los estados relacionados
       console.log("Limpiando estados por selectedDdt vacío");
       setSelectedProductos([]);
       setDataProductos([]);
       setDataProductosAprobados([]);
-      setProductoDdtFlag(false); // opcional, si aplica
+      setProductoDdtFlag(false);
     }
   }, [selectedDdt]);
 
@@ -134,49 +130,61 @@ export function HacerPedido() {
 
 
   const handleAprobar = () => {
-    if (!dataProductosAprobados.length || !selectedAprueba.length) {
-      console.error("Error: Debe seleccionar productos para aprobar");
-      showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
-      return; // Detiene la ejecución
-    }
-    const fetchData = async () => {
-      try {
-        const response = await usuarioService.getById(codigoEmpleado)
-        var usuarioAprueba = response.usuario[0];
-        console.log("usuario", response.usuario);
-        console.log("usuarioAprueba", usuarioAprueba);
-        if (response.success) {
-          // Creamos un Set para acceso más rápido a los IDs seleccionados
-          const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
-
-          const nuevosDatos = dataProductosAprobados.map(item => {
-            if (item.numBoleta !== undefined && item.aprueba !== undefined) {
-              // Si ya tiene un número de boleta y un usuario que aprueba, no lo modificamos
-              return item;
-            }
-            if (selectedIds.has(item.idProducto)) {
-              return {
-                ...item,
-                aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
-              };
-            }
-            return item; // No se modifica si no está seleccionado
-          });
-
-          setDataProductosAprobados(nuevosDatos);
-          showToast('success', 'Producto Aprobado', '#2d800e');
-        } else {
-          showToast('error', 'No se pudo obtener el usuario', '#9c1010')
-          console.log("No se pudo obtener el usuario.");
-        }
-      } catch (error) {
-        console.error("Error al obtener el usuario:", error);
+    if (selectedAprueba.numBoleta !== null) {
+      if (!dataProductosAprobados.length || !selectedAprueba.length) {
+        console.error("Error: Debe seleccionar productos para aprobar");
+        showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
+        return; // Detiene la ejecución
       }
-    };
-    fetchData();
-    // showToast('success', 'Lote eliminado', '#2d800e');
-    // showToast('error', error, '#9c1010')
-    console.log("Código ingresado:", codigoEmpleado);
+      const fetchData = async () => {
+        try {
+          const response = await usuarioService.getById(codigoEmpleado)
+          var usuarioAprueba = response.usuario[0];
+          console.log("usuario", response.usuario);
+          console.log("usuarioAprueba", usuarioAprueba);
+          if (response.success) {
+            // Creamos un Set para acceso más rápido a los IDs seleccionados
+            const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
+
+            const nuevosDatosPromises = dataProductosAprobados.map(async item => {
+              if (item.aprueba !== null) {
+                // Si ya tiene un número de boleta y un usuario que aprueba, no lo modificamos
+                return item;
+              }
+              console.log("Producto seleccionado:", item);
+              if (selectedIds.has(item.idProducto)) {
+                console.log("Producto seleccionado:", item);
+
+                const newPoPedido = {
+                  ...item,
+                  aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+                };
+
+                await pedidoProductosPoService.update(newPoPedido);
+
+                return newPoPedido;
+              }
+              return item; // No se modifica si no está seleccionado
+            });
+
+            const nuevosDatos = await Promise.all(nuevosDatosPromises);
+            setDataProductosAprobados(nuevosDatos);
+            showToast('success', 'Producto Aprobado', '#2d800e');
+          } else {
+            showToast('error', 'No se pudo obtener el usuario', '#9c1010')
+            console.log("No se pudo obtener el usuario.");
+          }
+        } catch (error) {
+          console.error("Error al obtener el usuario:", error);
+        }
+      };
+      fetchData();
+      // showToast('success', 'Lote eliminado', '#2d800e');
+      // showToast('error', error, '#9c1010')
+      console.log("Código ingresado:", codigoEmpleado);
+    } else {
+      showToast('error', 'Primero guarde el pedido para generar el número de boleta', '#9c1010')
+    }
   };
 
   const handleAprobarTodos = () => {
@@ -246,7 +254,6 @@ export function HacerPedido() {
 
       for (let i = 0; i < updatedProductos.length; i++) {
         const producto = updatedProductos[i];
-        if (!producto.aprueba) continue;
 
         if (producto.numBoleta !== undefined) {
           lastBoletaRaw = producto.numBoleta; // Mantener el número de boleta existente
