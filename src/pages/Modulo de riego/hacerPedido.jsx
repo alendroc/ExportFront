@@ -130,7 +130,8 @@ export function HacerPedido() {
 
 
   const handleAprobar = () => {
-    if (selectedAprueba.numBoleta !== null) {
+    if (selectedAprueba.numBoleta !== undefined) {
+      console.log("selectedAprueba entra", selectedAprueba);
       if (!dataProductosAprobados.length || !selectedAprueba.length) {
         console.error("Error: Debe seleccionar productos para aprobar");
         showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
@@ -140,10 +141,9 @@ export function HacerPedido() {
         try {
           const response = await usuarioService.getById(codigoEmpleado)
           var usuarioAprueba = response.usuario[0];
-          console.log("usuario", response.usuario);
           console.log("usuarioAprueba", usuarioAprueba);
           if (response.success) {
-            // Creamos un Set para acceso más rápido a los IDs seleccionados
+            const pedidoModificado=false;
             const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
 
             const nuevosDatosPromises = dataProductosAprobados.map(async item => {
@@ -151,7 +151,6 @@ export function HacerPedido() {
                 // Si ya tiene un número de boleta y un usuario que aprueba, no lo modificamos
                 return item;
               }
-              console.log("Producto seleccionado:", item);
               if (selectedIds.has(item.idProducto)) {
                 console.log("Producto seleccionado:", item);
 
@@ -161,6 +160,7 @@ export function HacerPedido() {
                 };
 
                 await pedidoProductosPoService.update(newPoPedido);
+                pedidoModificado=true;
 
                 return newPoPedido;
               }
@@ -169,7 +169,10 @@ export function HacerPedido() {
 
             const nuevosDatos = await Promise.all(nuevosDatosPromises);
             setDataProductosAprobados(nuevosDatos);
-            showToast('success', 'Producto Aprobado', '#2d800e');
+
+            pedidoModificado? showToast('success', 'Producto Aprobado', '#2d800e'): showToast('info', 'No hubo productos nuevos para aprobar', '#2146ed')
+            console.log("nuevosDatos", nuevosDatos);
+            
           } else {
             showToast('error', 'No se pudo obtener el usuario', '#9c1010')
             console.log("No se pudo obtener el usuario.");
@@ -178,11 +181,10 @@ export function HacerPedido() {
           console.error("Error al obtener el usuario:", error);
         }
       };
+
       fetchData();
-      // showToast('success', 'Lote eliminado', '#2d800e');
-      // showToast('error', error, '#9c1010')
-      console.log("Código ingresado:", codigoEmpleado);
     } else {
+      console.log("selectedAprueba",selectedAprueba.numBoleta)
       showToast('error', 'Primero guarde el pedido para generar el número de boleta', '#9c1010')
     }
   };
@@ -256,6 +258,7 @@ export function HacerPedido() {
         const producto = updatedProductos[i];
 
         if (producto.numBoleta !== undefined) {
+           showToast('warning', `El producto con ID ${producto.idProducto} ya tiene número de boleta y no se volverá a guardar.`, '#d17e00');
           lastBoletaRaw = producto.numBoleta; // Mantener el número de boleta existente
           continue; // Si ya tiene un número de boleta, no lo actualizamos
         }
@@ -283,7 +286,12 @@ export function HacerPedido() {
 
         try {
           const response = await pedidoProductosPoService.create(newData);
-          if (!response.success) {
+
+          response.success
+            ? showToast('success', 'Pedido guardado correctamente', '#2d800e')
+            : showToast('error', 'Error al guardar el pedido', '#9c1010');
+          
+            if (!response.success) {
             console.error("Error al guardar el pedido:", producto);
           }
         } catch (error) {
@@ -493,7 +501,7 @@ export function HacerPedido() {
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }}
                 className="shadow-md hover:-translate-y-1 transition-all"
                 onClick={handleAprobarTodos}
-              > Aprobar todo los pendientes</Button>
+              > Aprobar todos los pendientes</Button>
               <Button sx={{ fontSize: isSmallScreen ? "11px" : "13px" }} className="shadow-md hover:-translate-y-1 transition-all"
                 onClick={savePedido}
               > Guardar</Button>
