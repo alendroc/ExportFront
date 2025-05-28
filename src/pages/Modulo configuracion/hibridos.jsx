@@ -156,14 +156,14 @@ const handleChangeVariedad = (event) => {
     </div>
 
   <MaterialTable size="small"
-      title="Gestión de hibridos"
+      title="Gestión de híbridos"
       data={dataFiltrada}
       columns={ [
         { title: "Cultivo", field: "cultivo", editable: () => false, initialEditValue: cultivo},
       
         { title: "Variedad", field: "variedad", editable: () => false, initialEditValue: variedad},
       
-        { title: "Hibrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
+        { title: "Híbrido", field: "hibrido", editable: 'onAdd', validate: (row) => {
           if((row.hibrido || "").length === 0){return false}
           if(row.hibrido?.trim() ===""){
             return {isValid: false,helperText: "No se permite el campo vacío"};} 
@@ -212,9 +212,9 @@ const handleChangeVariedad = (event) => {
     }}
       localization={{
         body: {
-          emptyDataSourceMessage: 'No se encontraron hibridos',
+          emptyDataSourceMessage: 'No se encontraron híbridos',
           editRow: {
-            deleteText: '¿Estás seguro de que deseas eliminar este hibrido?', // Cambia el mensaje de confirmación
+            deleteText: '¿Estás seguro de que deseas eliminar este híbrido?', // Cambia el mensaje de confirmación
             cancelTooltip: 'Cancelar', // Texto del botón de cancelar
             saveTooltip: 'Confirmar',  // Texto del botón de confirmar
           },
@@ -274,21 +274,21 @@ const handleChangeVariedad = (event) => {
 
              console.log("aaaaa")
               if(isDuplicate){
-                showToast('error', 'Ya existe ese hibrido','#9c1010'); 
-                reject(`Error al crear el hibrido: ${response.message}`);
+                showToast('error', 'Ya existe ese híbrido','#9c1010'); 
+                reject(`Error al crear el híbrido: ${response.message}`);
                 return
               }
              
               hibridosService.create(newDataWithId)
               .then(response => {
                   if (response.success) {
-                      console.log("Hibrido creado exitosamente");
+                      console.log("Híbrido creado exitosamente");
                       setData(prevData => [ newDataWithId , ...prevData]);
                       setDataFiltrada(prevData => [...prevData, newDataWithId]);
-                      showToast('success', 'Hibrido creado', '#2d800e');
+                      showToast('success', 'Híbrido creado', '#2d800e');
                       resolve();
                   } else {
-                      reject(`Error al crear el hibrido: ${response.message}`);
+                      reject(`Error al crear el híbrido: ${response.message}`);
                   }
               })
               .catch(error => {
@@ -322,11 +322,11 @@ const handleChangeVariedad = (event) => {
                           setDataFiltrada(prevFiltrada => prevFiltrada.map(item => 
                             item.cultivo === oldData.cultivo && item.hibrido === oldData.hibrido && item.variedad === oldData.variedad? newDataWithId : item
                         ));
-                          showToast('success', 'hibrido actualizado', '#2d800e');
+                          showToast('success', 'híbrido actualizado', '#2d800e');
                           resolve();
                       } else {
-                          reject(`Error al actualizar el hibrido: ${response.message}`);
-                          showToast('error', '`Error al actualizar el hibrido', '#9c1010');
+                          reject(`Error al actualizar el híbrido: ${response.message}`);
+                          showToast('error', '`Error al actualizar el híbrido', '#9c1010');
                       }
                   })
                   .catch(error => {
@@ -349,12 +349,12 @@ const handleChangeVariedad = (event) => {
                       !(item.cultivo === oldData.cultivo && item.variedad === oldData.variedad && item.hibrido === oldData.hibrido)
                   ));
 
-                    showToast('success', 'Hibrido eliminado', '#2d800e');
+                    showToast('success', 'Híbrido eliminado', '#2d800e');
                     resolve();
                 } else {
                  
-                  showToast('error', '`Error al eliminar el hibrido', '#9c1010');
-                    reject('No se pudo eliminar el hibrido.');
+                  showToast('error', '`Error al eliminar el híbrido', '#9c1010');
+                    reject('No se pudo eliminar el híbrido.');
                 }
             })
             .catch(error => {
