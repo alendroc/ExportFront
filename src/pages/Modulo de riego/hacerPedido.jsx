@@ -49,6 +49,7 @@ export function HacerPedido() {
   useEffect(() => {
     //console.log("Fecha actual:", fechaActual);
     setTemporada(sessionStorage.getItem("temporadaActiva"));
+    setSelectedAprueba([]);
   }, []);
 
 
@@ -97,6 +98,7 @@ export function HacerPedido() {
     //  console.log("Limpiando estados por selectedDdt vacío");
       setSelectedProductos([]);
       setDataProductos([]);
+      setSelectedAprueba([]);
       setDataProductosAprobados([]);
       setProductoDdtFlag(false);
     }
@@ -130,20 +132,20 @@ export function HacerPedido() {
 
 
   const handleAprobar = () => {
-    if (selectedAprueba.numBoleta !== null) {
-      console.log("selectedAprueba entra", selectedAprueba);
       if (!dataProductosAprobados.length || !selectedAprueba.length) {
         console.error("Error: Debe seleccionar productos para aprobar");
         showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
         return; // Detiene la ejecución
       }
+      if (selectedAprueba.every(item => item.numBoleta)) {
+      
       const fetchData = async () => {
         try {
           const response = await usuarioService.getById(codigoEmpleado)
           var usuarioAprueba = response.usuario[0];
           console.log("usuarioAprueba", usuarioAprueba);
           if (response.success) {
-            const pedidoModificado=false;
+            let pedidoModificado=false;
             const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
 
             const nuevosDatosPromises = dataProductosAprobados.map(async item => {
@@ -302,6 +304,7 @@ export function HacerPedido() {
 
       // Si quieres actualizar el estado con los nuevos números de boleta:
       setDataProductosAprobados(updatedProductos);
+      setSelectedAprueba([]);
     } catch (error) {
       console.error("Error al obtener el último número de boleta:", error);
     }
@@ -638,7 +641,7 @@ export function HacerPedido() {
               }
             }}
             onClick={() => {
-              //console.log("dataProductos", dataProductos);
+              setSelectedProductos([]);
               setDataProductosAprobados(dataProductos);
             }}
           >
@@ -687,13 +690,13 @@ export function HacerPedido() {
             cellStyle: { padding: '4px 0 4px 9px' },
 
             rowStyle: rowData => ({
-              backgroundColor: selectedAprueba.some(r => r.idProducto === rowData.idProducto) ? '#3f842f41' : '#FFF'
+              backgroundColor: selectedAprueba.some(r => r.idProducto === rowData.idProducto && r.idPedido===rowData.idPedido) ? '#3f842f41' : '#FFF'
             }),
 
             selectionProps: (rowData) => ({
               onChange: () => {
                 //console.log("rowData", rowData)
-                setSelectedAprueba((prevRow) => (prevRow?.idProducto === rowData.idProducto ? null : rowData));
+                setSelectedAprueba((prevRow) => (prevRow?.idProducto === rowData.idProducto &&  prevRow?.idPedido === rowData.idPedido? null : rowData));
               },
               style: { display: 'none' }
             }),
@@ -710,6 +713,7 @@ export function HacerPedido() {
                 return [...prevSelected, rowData];
               }
             });
+            console.log("selectedAprueba",selectedAprueba)
           }}
 
           style={{ height: "" }}
