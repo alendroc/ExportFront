@@ -48,8 +48,9 @@ export function HacerPedido() {
 
   useEffect(() => {
     //console.log("Fecha actual:", fechaActual);
-    setTemporada(sessionStorage.getItem("temporadaActiva"));
+    console.log("selectedAprueba", selectedAprueba);
     setSelectedAprueba([]);
+    setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
 
 
@@ -58,6 +59,8 @@ export function HacerPedido() {
   // }, [ddtFlag]);
 
   useEffect(() => {
+    console.log("selectedAprueba", selectedAprueba);
+     setSelectedAprueba([]);
     getPedidoProductos(selectedDdt);
     if (
       selectedDdt?.temporada &&
@@ -132,64 +135,84 @@ export function HacerPedido() {
 
 
   const handleAprobar = () => {
-      if (!dataProductosAprobados.length || !selectedAprueba.length) {
-        console.error("Error: Debe seleccionar productos para aprobar");
-        showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
-        return; // Detiene la ejecución
-      }
-      if (selectedAprueba.every(item => item.numBoleta)) {
-      
-      const fetchData = async () => {
-        try {
-          const response = await usuarioService.getById(codigoEmpleado)
-          var usuarioAprueba = response.usuario[0];
-          console.log("usuarioAprueba", usuarioAprueba);
-          if (response.success) {
-            let pedidoModificado=false;
-            const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
+  console.log("selectedAprueba para aprobar", selectedAprueba);
 
-            const nuevosDatosPromises = dataProductosAprobados.map(async item => {
-              if (item.aprueba !== null) {
-                // Si ya tiene un número de boleta y un usuario que aprueba, no lo modificamos
-                return item;
-              }
-              if (selectedIds.has(item.idProducto)) {
-                console.log("Producto seleccionado:", item);
+  if (!dataProductosAprobados.length || !selectedAprueba.length) {
+    console.error("Error: Debe seleccionar productos para aprobar");
+    showToast('error', 'Debe seleccionar productos para aprobar', '#9c1010');
+    return;
+  }
 
-                const newPoPedido = {
-                  ...item,
-                  aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
-                };
-
-                await pedidoProductosPoService.update(newPoPedido);
-                pedidoModificado=true;
-
-                return newPoPedido;
-              }
-              return item; // No se modifica si no está seleccionado
-            });
-
-            const nuevosDatos = await Promise.all(nuevosDatosPromises);
-            setDataProductosAprobados(nuevosDatos);
-
-            pedidoModificado? showToast('success', 'Producto Aprobado', '#2d800e'): showToast('info', 'No hubo productos nuevos para aprobar', '#2146ed')
-            console.log("nuevosDatos", nuevosDatos);
-            
-          } else {
-            showToast('error', 'No se pudo obtener el usuario', '#9c1010')
-            console.log("No se pudo obtener el usuario.");
-          }
-        } catch (error) {
-          console.error("Error al obtener el usuario:", error);
+  // Validamos que todos los productos seleccionados ya tengan numBoleta
+  if (selectedAprueba.every(item => item.numBoleta)) {
+    const fetchData = async () => {
+      try {
+        const response = await usuarioService.getById(codigoEmpleado);
+        if (!response.success) {
+          showToast('error', 'No se pudo obtener el usuario', '#9c1010');
+          console.log("No se pudo obtener el usuario.");
+          return;
         }
-      };
 
-      fetchData();
-    } else {
-      console.log("selectedAprueba",selectedAprueba)
-      showToast('error', 'Primero guarde el pedido para generar el número de boleta', '#9c1010')
-    }
-  };
+        const usuarioAprueba = response.usuario[0];
+        const selectedIds = new Set(selectedAprueba.map(item => item.idProducto));
+        const nuevosDatos = [];
+        let huboModificaciones = false;
+
+        for (const item of dataProductosAprobados) {
+          console.log("item", item);
+          if (item.aprueba) {
+            // Ya aprobado, no se modifica
+            nuevosDatos.push(item);
+            continue;
+          }
+
+          if (selectedIds.has(item.idProducto)) {
+            const newPoPedido = {
+              ...item,
+              aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
+            };
+
+            try {
+              console.log("Aprobando producto:", newPoPedido);
+              await pedidoProductosPoService.update(newPoPedido);
+              nuevosDatos.push(newPoPedido);
+              huboModificaciones = true;
+            } catch (error) {
+              console.error("Error al actualizar producto:", error.response?.data || error.message);
+              showToast('error', 'Error al aprobar producto', '#9c1010');
+              // Mantener el item original para no perder datos
+              nuevosDatos.push(item);
+            }
+          } else {
+            // No seleccionado, lo dejamos igual
+            nuevosDatos.push(item);
+          }
+        }
+
+        setDataProductosAprobados(nuevosDatos);
+
+        if (huboModificaciones) {
+          showToast('success', 'Producto(s) aprobado(s)', '#2d800e');
+        } else {
+          showToast('info', 'No hubo productos nuevos para aprobar', '#2146ed');
+        }
+
+        console.log("nuevosDatos", nuevosDatos);
+
+      } catch (error) {
+        console.error("Error al obtener el usuario:", error);
+        showToast('error', 'Error al obtener el usuario', '#9c1010');
+      }
+    };
+
+    fetchData();
+
+  } else {
+    console.log("selectedAprueba", selectedAprueba);
+    showToast('error', 'Primero guarde el pedido para generar el número de boleta', '#9c1010');
+  }
+};
 
   const handleAprobarTodos = () => {
     if (!dataProductosAprobados.length) {
@@ -228,7 +251,7 @@ export function HacerPedido() {
           data.area = 0;
         }
         const areaFloat = parseFloat(data.area);
-        console.log("data", data);
+        //console.log("data", data);
         
         await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN",
           data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, areaFloat
@@ -261,7 +284,7 @@ export function HacerPedido() {
         const producto = updatedProductos[i];
 
         if (producto.numBoleta !== undefined) {
-           showToast('warning', `El producto con ID ${producto.idProducto} ya tiene número de boleta y no se volverá a guardar.`, '#d17e00');
+           showToast('warning', `Los productos ya tienen número de boleta y no se volverán a guardar.`, '#d17e00');
           lastBoletaRaw = producto.numBoleta; // Mantener el número de boleta existente
           continue; // Si ya tiene un número de boleta, no lo actualizamos
         }
@@ -303,7 +326,8 @@ export function HacerPedido() {
       }
 
       // Si quieres actualizar el estado con los nuevos números de boleta:
-      setDataProductosAprobados(updatedProductos);
+      getPedidoProductos(selectedDdt);
+      //setDataProductosAprobados(updatedProductos);
       setSelectedAprueba([]);
     } catch (error) {
       console.error("Error al obtener el último número de boleta:", error);
