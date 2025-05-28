@@ -23,7 +23,7 @@ export class Service{
                 throw new Error(`Error al obtener los ${dataResponse}: ${response.statusText}`);
             }
             const data = await response.json();
-            console.log("Respuesta de la API:", data);  
+            //console.log("Respuesta de la API:", data);  
 
             if (data.isSuccess && data.status === 200) {
                 //console.log('exitooooo.');

@@ -47,7 +47,7 @@ export function HacerPedido() {
   const [productoDdtFlag, setProductoDdtFlag] = useState(false);
 
   useEffect(() => {
-    console.log("Fecha actual:", fechaActual);
+    //console.log("Fecha actual:", fechaActual);
     setTemporada(sessionStorage.getItem("temporadaActiva"));
   }, []);
 
@@ -66,7 +66,7 @@ export function HacerPedido() {
       selectedDdt?.aliasLabor &&
       selectedDdt?.ddt
     ) {
-      console.log("Selected DDT:", selectedDdt);
+     // console.log("Selected DDT:", selectedDdt);
       setSelectedProductos([]);
       setDataProductos([]);
 
@@ -80,7 +80,7 @@ export function HacerPedido() {
           selectedDdt.ddt
         )
         .then((res) => {
-          console.log("Respuesta de la API PO:", res);
+          //console.log("Respuesta de la API PO:", res);
           setDataProductos(
             res.poProductosLabor.map((item) => ({
               ...item,
@@ -90,11 +90,11 @@ export function HacerPedido() {
           setProductoDdtFlag(false);
         })
         .catch((error) => {
-          console.error("Error al obtener los datos:", error);
+          //console.error("Error al obtener los datos:", error);
         });
     } else {
       //Cuando selectedDdt está vacío, limpia los estados relacionados
-      console.log("Limpiando estados por selectedDdt vacío");
+    //  console.log("Limpiando estados por selectedDdt vacío");
       setSelectedProductos([]);
       setDataProductos([]);
       setDataProductosAprobados([]);
@@ -110,7 +110,7 @@ export function HacerPedido() {
     setSelectedProductos(null);
     setDataProductos(null);
     ddtLaboresService.filterDdtAndLote(temporada, fechaInicio, fechaFinal).then((res) => {
-      console.log("Respuesta de la API:", res.data);
+      //console.log("Respuesta de la API:", res.data);
       setDataFiltro(res.data.data);
 
     }).catch((error) => {
@@ -130,7 +130,7 @@ export function HacerPedido() {
 
 
   const handleAprobar = () => {
-    if (selectedAprueba.numBoleta !== undefined) {
+    if (selectedAprueba.numBoleta !== null) {
       console.log("selectedAprueba entra", selectedAprueba);
       if (!dataProductosAprobados.length || !selectedAprueba.length) {
         console.error("Error: Debe seleccionar productos para aprobar");
@@ -184,7 +184,7 @@ export function HacerPedido() {
 
       fetchData();
     } else {
-      console.log("selectedAprueba",selectedAprueba.numBoleta)
+      console.log("selectedAprueba",selectedAprueba)
       showToast('error', 'Primero guarde el pedido para generar el número de boleta', '#9c1010')
     }
   };
@@ -200,7 +200,7 @@ export function HacerPedido() {
         const response = await usuarioService.getById(codigoEmpleado)
         var usuarioAprueba = response.usuario[0];
         if (response.success) {
-          console.log("dataProductosAprobados", dataProductosAprobados);
+          //console.log("dataProductosAprobados", dataProductosAprobados);
           setDataProductosAprobados(dataProductosAprobados.map(item => ({
             ...item,
             aprueba: `${usuarioAprueba.usuario}_${usuarioAprueba.idEmpleado}`
@@ -216,27 +216,28 @@ export function HacerPedido() {
     };
 
     fetchData();
-    console.log("Código ingresado:", codigoEmpleado);
+   // console.log("Código ingresado:", codigoEmpleado);
   };
 
   const getPedidoProductos = (data) => {
     const fetchData = async () => {
       try {
-        console.log("data", data);
         if (data.area === null) {
           data.area = 0;
         }
+        const areaFloat = parseFloat(data.area);
+        console.log("data", data);
+        
         await pedidoProductosPoService.getByDdt(data.temporada, data.siembraNumero, data.departamento, "MELÓN",
-          data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, data.area
+          data.aliasLabor, data.aliasLote, data.fechaTrasplante, data.ddt, areaFloat
         ).then((res) => {
           console.log("Respuesta de la API:", res);
-          //setDataProductosAprobados(res.poPedidoProductos)
           setDataProductosAprobados(res.poPedidoProductos.map(item => ({
             ...item,
             dosisReal: item.unidadesPorLote,
           })))
-          console.log("dataProductosAprobados", res.poPedidoProductos);
-          console.log("setDataProductosAprobados", dataProductosAprobados);
+          // console.log("dataProductosAprobados", res.poPedidoProductos);
+          // console.log("setDataProductosAprobados", dataProductosAprobados);
         })
       }
       catch (error) {
@@ -249,7 +250,7 @@ export function HacerPedido() {
 
 
   const savePedido = async () => {
-    console.log("dataProductosAprobados", dataProductosAprobados);
+    //console.log("dataProductosAprobados", dataProductosAprobados);
     try {
       let lastBoletaRaw = await getLastBoleta() + 1; // Obtener solo una vez
       const updatedProductos = [...dataProductosAprobados]; // Copia del estado para actualizar boletas
@@ -305,7 +306,7 @@ export function HacerPedido() {
       console.error("Error al obtener el último número de boleta:", error);
     }
 
-    console.log("selectedDdt", selectedDdt);
+    //console.log("selectedDdt", selectedDdt);
   };
 
   const CustomToolbar = (props) => (
@@ -339,7 +340,7 @@ export function HacerPedido() {
               min={fechaActual}
               onChange={(e) => {
                 setFechaIncio(e.target.value);
-                console.log("Fecha inicio:", e.target.value);
+                //console.log("Fecha inicio:", e.target.value);
               }}
             />
           </div>
@@ -354,7 +355,7 @@ export function HacerPedido() {
               disabled={!fechaInicio}
               onChange={(e) => {
                 setFechaFinal(e.target.value);
-                console.log("Fecha final:", e.target.value);
+                //console.log("Fecha final:", e.target.value);
               }}
             />
           </div>
@@ -442,7 +443,7 @@ export function HacerPedido() {
 
               selectionProps: (rowData) => ({
                 onChange: () => {
-                  console.log("rowData", rowData)
+                  //console.log("rowData", rowData)
                   setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
                     prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
                 },
@@ -455,8 +456,8 @@ export function HacerPedido() {
               setSelectedDdt((prevRow) => (prevRow?.ddt === rowData.ddt && prevRow?.siembraNumero === rowData.siembraNumero &&
                 prevRow?.aliasLabor === rowData.aliasLabor && prevRow?.aliasLote === rowData.aliasLote ? null : rowData));
               //getPedidoProductos(rowData);
-              console.log("rowData", rowData)
-              console.log("selectedDdt", selectedDdt)
+              // console.log("rowData", rowData)
+              // console.log("selectedDdt", selectedDdt)
               setProductoDdtFlag(true);
             }}
 
@@ -586,7 +587,7 @@ export function HacerPedido() {
                 return [...prev, rowData]; // lo selecciona
               }
             });
-            console.log("selectedProductos", selectedProductos);
+            //console.log("selectedProductos", selectedProductos);
           }}
 
 
@@ -601,7 +602,7 @@ export function HacerPedido() {
                     }
                     return producto;
                   });
-                  console.log("updateData", updatedData);
+                  //console.log("updateData", updatedData);
                   setDataProductos(updatedData);  // Actualizamos el estado
 
                   resolve();  // Aceptamos la edición
@@ -637,7 +638,7 @@ export function HacerPedido() {
               }
             }}
             onClick={() => {
-              console.log("dataProductos", dataProductos);
+              //console.log("dataProductos", dataProductos);
               setDataProductosAprobados(dataProductos);
             }}
           >
@@ -691,7 +692,7 @@ export function HacerPedido() {
 
             selectionProps: (rowData) => ({
               onChange: () => {
-                console.log("rowData", rowData)
+                //console.log("rowData", rowData)
                 setSelectedAprueba((prevRow) => (prevRow?.idProducto === rowData.idProducto ? null : rowData));
               },
               style: { display: 'none' }
