@@ -111,22 +111,22 @@ function App() {
   ];
   const arrayModules = [
     
-    {
-      label: "Caña",
-      icon: <GiSugarCane />,
-      to: "/Cana",
-      submenu: [
-        { name: "Lotes de Caña", href: "/cana/lotes" },
-        { name: "Asignar Labores y DDC/S", href: "/cana/asignar-labores" },
-        { name: "Asignar Productos", href: "/cana/asignar-productos" },
-        { name: "Corta de Caña", href: "/cana/corta" },
-        { name: "Registrar boletas", href: "/cana/registrar-boletas" },
-        { name: "Ajustar miel azúcar", href: "/cana/ajustar-miel" },
-        { name: "Ver registro de boletas", href: "/cana/ver-boletas" },
-        { name: "Ver cosecha por zafra", href: "/cana/ver-zafra" },
-        { name: "Ver cosecha por lote", href: "/cana/ver-lote" },
-      ]
-    },
+    // {
+    //   label: "Caña",
+    //   icon: <GiSugarCane />,
+    //   to: "/Cana",
+    //   submenu: [
+    //     { name: "Lotes de Caña", href: "/cana/lotes" },
+    //     { name: "Asignar Labores y DDC/S", href: "/cana/asignar-labores" },
+    //     { name: "Asignar Productos", href: "/cana/asignar-productos" },
+    //     { name: "Corta de Caña", href: "/cana/corta" },
+    //     { name: "Registrar boletas", href: "/cana/registrar-boletas" },
+    //     { name: "Ajustar miel azúcar", href: "/cana/ajustar-miel" },
+    //     { name: "Ver registro de boletas", href: "/cana/ver-boletas" },
+    //     { name: "Ver cosecha por zafra", href: "/cana/ver-zafra" },
+    //     { name: "Ver cosecha por lote", href: "/cana/ver-lote" },
+    //   ]
+    // },
     {
       label: "Riego",
       icon: <FaDroplet />,
@@ -139,83 +139,85 @@ function App() {
         { name: "Registro de boletas solo agua", href: "/riego/registro-boletas-agua", width: "130px" },
       ]
     },
-    {
-      label: "Fitoprotección",
-      icon: <GiPlantsAndAnimals />,
-      to: "/Fitoproteccion",
-      submenu: [
-        { name: "Asignar", href: "/fitoproteccion/asignar" },
-        { name: "Monitoreo", href: "/fitoproteccion/monitoreo" },
-        { name: "Registro", href: "/fitoproteccion/registro" },
-        { name: "Motivo", href: "/fitoproteccion/motivo" },
-        { name: "Código", href: "/fitoproteccion/codigo" },
-      ]
-    },
-    {
-      label: "Bodega",
-      icon: <FaStore />,
-      to: "/Bodega",
-      submenu: [
-        { name: "Ver pedidos", href: "/bodega/ver-pedidos" },
-        { name: "Buscar boletas", href: "/bodega/buscar-boletas" },
-        { name: "Motivo de aplicación", href: "/bodega/motivo-aplicacion" },
-        { name: "Código trazabilidad", href: "/bodega/codigo-trazabilidad" },
-      ]
-    },
-    {
-      label: "Meteorología",
-      icon: <FaCloudRain />,
-      to: "/Meteorologia",
-      submenu: [
-        { name: "Registro de pluviometros", href: "/meteorologia/registro-pluviometros" },
-        { name: "Registro de Lluvias", href: "/meteorologia/registro-lluvias" },
-        { name: "Consulta de lluvias", href: "/meteorologia/consulta-lluvias" },
-      ]
-    },
-    {
-      label: "Labores Culturales",
-      icon: <FaHandHoldingDroplet />,
-      to: "/LaboresCulturales",
-      submenu: [
-        { name: "Boletas y Programas de riego", href: "/labores/boletas-programas" },
-        { name: "Programa por lote", href: "/labores/programa-lote" },
-        { name: "Buscar boletas", href: "/labores/buscar-boletas" },
-      ]
-    },
-    {
-      label: "Planta",
-      icon: <GiFactory />,
-      to: "/Planta",
-      submenu: [
-        { name: "Labores", href: "/planta/labores" },
-        { name: "Consultas de riego", href: "/planta/consultas-riego" },
-        { name: "Datos", href: "/planta/datos" },
-        { name: "Programas", href: "/planta/programas" },
-        { name: "Productos aplicados", href: "/planta/productos-aplicados" },
-      ]
-    }
+  //   {
+  //     label: "Fitoprotección",
+  //     icon: <GiPlantsAndAnimals />,
+  //     to: "/Fitoproteccion",
+  //     submenu: [
+  //       { name: "Asignar", href: "/fitoproteccion/asignar" },
+  //       { name: "Monitoreo", href: "/fitoproteccion/monitoreo" },
+  //       { name: "Registro", href: "/fitoproteccion/registro" },
+  //       { name: "Motivo", href: "/fitoproteccion/motivo" },
+  //       { name: "Código", href: "/fitoproteccion/codigo" },
+  //     ]
+  //   },
+  //   {
+  //     label: "Bodega",
+  //     icon: <FaStore />,
+  //     to: "/Bodega",
+  //     submenu: [
+  //       { name: "Ver pedidos", href: "/bodega/ver-pedidos" },
+  //       { name: "Buscar boletas", href: "/bodega/buscar-boletas" },
+  //       { name: "Motivo de aplicación", href: "/bodega/motivo-aplicacion" },
+  //       { name: "Código trazabilidad", href: "/bodega/codigo-trazabilidad" },
+  //     ]
+  //   },
+  //   {
+  //     label: "Meteorología",
+  //     icon: <FaCloudRain />,
+  //     to: "/Meteorologia",
+  //     submenu: [
+  //       { name: "Registro de pluviometros", href: "/meteorologia/registro-pluviometros" },
+  //       { name: "Registro de Lluvias", href: "/meteorologia/registro-lluvias" },
+  //       { name: "Consulta de lluvias", href: "/meteorologia/consulta-lluvias" },
+  //     ]
+  //   },
+  //   {
+  //     label: "Labores Culturales",
+  //     icon: <FaHandHoldingDroplet />,
+  //     to: "/LaboresCulturales",
+  //     submenu: [
+  //       { name: "Boletas y Programas de riego", href: "/labores/boletas-programas" },
+  //       { name: "Programa por lote", href: "/labores/programa-lote" },
+  //       { name: "Buscar boletas", href: "/labores/buscar-boletas" },
+  //     ]
+  //   },
+  //   {
+  //     label: "Planta",
+  //     icon: <GiFactory />,
+  //     to: "/Planta",
+  //     submenu: [
+  //       { name: "Labores", href: "/planta/labores" },
+  //       { name: "Consultas de riego", href: "/planta/consultas-riego" },
+  //       { name: "Datos", href: "/planta/datos" },
+  //       { name: "Programas", href: "/planta/programas" },
+  //       { name: "Productos aplicados", href: "/planta/productos-aplicados" },
+  //     ]
+  //   }
+  // 
   ];
   const linksArrayExtras = [
-    {
-      label: "Consultas",
-      icon: <AiOutlineHome />,
-      to: "/Consultas",
-      submenu: [
-        { name: "Navegacion1", href: "/Navegacion1/sub1" },
-        { name: "Navegacion2", href: "/Navegacion1/sub2" },
-        { name: "Navegacion3", href: "/Navegacion1/sub3" },
-        { name: "Navegacion4", href: "/Navegacion1/sub4" },
-      ]
-    },
-    {
-      label: "Reportes",
-      icon: <AiOutlineHome />,
-      to: "/Reportes",
-      submenu: [
-        { name: "Configuracion1", href: "/config/sub1" },
-        { name: "Configuracion2", href: "/config/sub2" }
-      ]
-    },
+  //   {
+  //     label: "Consultas",
+  //     icon: <AiOutlineHome />,
+  //     to: "/Consultas",
+  //     submenu: [
+  //       { name: "Navegacion1", href: "/Navegacion1/sub1" },
+  //       { name: "Navegacion2", href: "/Navegacion1/sub2" },
+  //       { name: "Navegacion3", href: "/Navegacion1/sub3" },
+  //       { name: "Navegacion4", href: "/Navegacion1/sub4" },
+  //     ]
+  //   },
+  //   {
+  //     label: "Reportes",
+  //     icon: <AiOutlineHome />,
+  //     to: "/Reportes",
+  //     submenu: [
+  //       { name: "Configuracion1", href: "/config/sub1" },
+  //       { name: "Configuracion2", href: "/config/sub2" }
+  //     ]
+  //   },
+  // 
   ];
 
   const arreglos = linksArray.concat(arrayModules);
